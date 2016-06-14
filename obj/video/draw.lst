@@ -1,0 +1,726 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.5.5 #9498 (Mac OS X x86_64)
+                              4 ;--------------------------------------------------------
+                              5 	.module draw
+                              6 	.optsdcc -mz80
+                              7 	
+                              8 ;--------------------------------------------------------
+                              9 ; Public variables in this module
+                             10 ;--------------------------------------------------------
+                             11 	.globl _clearGameScreen
+                             12 	.globl _drawText
+                             13 	.globl _drawNumber
+                             14 	.globl _clearWindow
+                             15 	.globl _cpct_getRandom_mxor_u8
+                             16 	.globl _cpct_getScreenPtr
+                             17 	.globl _cpct_drawSolidBox
+                             18 	.globl _cpct_drawSprite
+                             19 	.globl _cpct_px2byteM0
+                             20 	.globl _cpct_memset
+                             21 	.globl _drawMenu
+                             22 	.globl _drawFrame
+                             23 	.globl _drawStar
+                             24 	.globl _drawStars
+                             25 ;--------------------------------------------------------
+                             26 ; special function registers
+                             27 ;--------------------------------------------------------
+                             28 ;--------------------------------------------------------
+                             29 ; ram data
+                             30 ;--------------------------------------------------------
+                             31 	.area _DATA
+   0000                      32 _drawStars_starsCycles_1_120:
+   0000                      33 	.ds 1
+                             34 ;--------------------------------------------------------
+                             35 ; ram data
+                             36 ;--------------------------------------------------------
+                             37 	.area _INITIALIZED
+                             38 ;--------------------------------------------------------
+                             39 ; absolute external ram data
+                             40 ;--------------------------------------------------------
+                             41 	.area _DABS (ABS)
+                             42 ;--------------------------------------------------------
+                             43 ; global & static initialisations
+                             44 ;--------------------------------------------------------
+                             45 	.area _HOME
+                             46 	.area _GSINIT
+                             47 	.area _GSFINAL
+                             48 	.area _GSINIT
+                             49 ;src/video/draw.c:120: static u8 starsCycles = 1;
+   0000 FD 21r00r00   [14]   50 	ld	iy,#_drawStars_starsCycles_1_120
+   0004 FD 36 00 01   [19]   51 	ld	0 (iy),#0x01
+                             52 ;--------------------------------------------------------
+                             53 ; Home
+                             54 ;--------------------------------------------------------
+                             55 	.area _HOME
+                             56 	.area _HOME
+                             57 ;--------------------------------------------------------
+                             58 ; code
+                             59 ;--------------------------------------------------------
+                             60 	.area _CODE
+                             61 ;src/video/draw.c:22: void drawMenu() {
+                             62 ;	---------------------------------
+                             63 ; Function drawMenu
+                             64 ; ---------------------------------
+   0000                      65 _drawMenu::
+                             66 ;src/video/draw.c:25: cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(5, 5), 0x4000);
+   0000 21 05 05      [10]   67 	ld	hl,#0x0505
+   0003 E5            [11]   68 	push	hl
+   0004 CDr00r00      [17]   69 	call	_cpct_px2byteM0
+   0007 45            [ 4]   70 	ld	b,l
+   0008 21 00 40      [10]   71 	ld	hl,#0x4000
+   000B E5            [11]   72 	push	hl
+   000C C5            [11]   73 	push	bc
+   000D 33            [ 6]   74 	inc	sp
+   000E 26 C0         [ 7]   75 	ld	h, #0xC0
+   0010 E5            [11]   76 	push	hl
+   0011 CDr00r00      [17]   77 	call	_cpct_memset
+                             78 ;src/video/draw.c:27: drawFrame(15, 38, 63, 134);
+   0014 21 3F 86      [10]   79 	ld	hl,#0x863F
+   0017 E5            [11]   80 	push	hl
+   0018 21 0F 26      [10]   81 	ld	hl,#0x260F
+   001B E5            [11]   82 	push	hl
+   001C CDr3Dr01      [17]   83 	call	_drawFrame
+   001F F1            [10]   84 	pop	af
+                             85 ;src/video/draw.c:29: drawText("THREES", 31, 2,1);
+   0020 21 02 01      [10]   86 	ld	hl, #0x0102
+   0023 E3            [19]   87 	ex	(sp),hl
+   0024 3E 1F         [ 7]   88 	ld	a,#0x1F
+   0026 F5            [11]   89 	push	af
+   0027 33            [ 6]   90 	inc	sp
+   0028 21rDDr00      [10]   91 	ld	hl,#___str_0
+   002B E5            [11]   92 	push	hl
+   002C CDr00r00      [17]   93 	call	_drawText
+   002F F1            [10]   94 	pop	af
+                             95 ;src/video/draw.c:31: drawText("TECLADO", 30, 50,0);
+   0030 33            [ 6]   96 	inc	sp
+   0031 21 32 00      [10]   97 	ld	hl,#0x0032
+   0034 E3            [19]   98 	ex	(sp),hl
+   0035 3E 1E         [ 7]   99 	ld	a,#0x1E
+   0037 F5            [11]  100 	push	af
+   0038 33            [ 6]  101 	inc	sp
+   0039 21rE4r00      [10]  102 	ld	hl,#___str_1
+   003C E5            [11]  103 	push	hl
+   003D CDr00r00      [17]  104 	call	_drawText
+   0040 F1            [10]  105 	pop	af
+                            106 ;src/video/draw.c:32: drawText("JOYSTICK", 30, 70,0);
+   0041 33            [ 6]  107 	inc	sp
+   0042 21 46 00      [10]  108 	ld	hl,#0x0046
+   0045 E3            [19]  109 	ex	(sp),hl
+   0046 3E 1E         [ 7]  110 	ld	a,#0x1E
+   0048 F5            [11]  111 	push	af
+   0049 33            [ 6]  112 	inc	sp
+   004A 21rECr00      [10]  113 	ld	hl,#___str_2
+   004D E5            [11]  114 	push	hl
+   004E CDr00r00      [17]  115 	call	_drawText
+   0051 F1            [10]  116 	pop	af
+                            117 ;src/video/draw.c:33: drawText("MUSICA", 30, 90,0);
+   0052 33            [ 6]  118 	inc	sp
+   0053 21 5A 00      [10]  119 	ld	hl,#0x005A
+   0056 E3            [19]  120 	ex	(sp),hl
+   0057 3E 1E         [ 7]  121 	ld	a,#0x1E
+   0059 F5            [11]  122 	push	af
+   005A 33            [ 6]  123 	inc	sp
+   005B 21rF5r00      [10]  124 	ld	hl,#___str_3
+   005E E5            [11]  125 	push	hl
+   005F CDr00r00      [17]  126 	call	_drawText
+   0062 F1            [10]  127 	pop	af
+                            128 ;src/video/draw.c:34: drawText("JUGAR", 30, 110,0);
+   0063 33            [ 6]  129 	inc	sp
+   0064 21 6E 00      [10]  130 	ld	hl,#0x006E
+   0067 E3            [19]  131 	ex	(sp),hl
+   0068 3E 1E         [ 7]  132 	ld	a,#0x1E
+   006A F5            [11]  133 	push	af
+   006B 33            [ 6]  134 	inc	sp
+   006C 21rFCr00      [10]  135 	ld	hl,#___str_4
+   006F E5            [11]  136 	push	hl
+   0070 CDr00r00      [17]  137 	call	_drawText
+   0073 F1            [10]  138 	pop	af
+                            139 ;src/video/draw.c:36: drawNumber(1, 1, 23, 50);
+   0074 33            [ 6]  140 	inc	sp
+   0075 21 17 32      [10]  141 	ld	hl,#0x3217
+   0078 E3            [19]  142 	ex	(sp),hl
+   0079 3E 01         [ 7]  143 	ld	a,#0x01
+   007B F5            [11]  144 	push	af
+   007C 33            [ 6]  145 	inc	sp
+   007D 21 01 00      [10]  146 	ld	hl,#0x0001
+   0080 E5            [11]  147 	push	hl
+   0081 CDr00r00      [17]  148 	call	_drawNumber
+   0084 F1            [10]  149 	pop	af
+                            150 ;src/video/draw.c:37: drawNumber(2, 1, 23, 70);
+   0085 33            [ 6]  151 	inc	sp
+   0086 21 17 46      [10]  152 	ld	hl,#0x4617
+   0089 E3            [19]  153 	ex	(sp),hl
+   008A 3E 01         [ 7]  154 	ld	a,#0x01
+   008C F5            [11]  155 	push	af
+   008D 33            [ 6]  156 	inc	sp
+   008E 21 02 00      [10]  157 	ld	hl,#0x0002
+   0091 E5            [11]  158 	push	hl
+   0092 CDr00r00      [17]  159 	call	_drawNumber
+   0095 F1            [10]  160 	pop	af
+                            161 ;src/video/draw.c:38: drawNumber(3, 1, 23, 90);
+   0096 33            [ 6]  162 	inc	sp
+   0097 21 17 5A      [10]  163 	ld	hl,#0x5A17
+   009A E3            [19]  164 	ex	(sp),hl
+   009B 3E 01         [ 7]  165 	ld	a,#0x01
+   009D F5            [11]  166 	push	af
+   009E 33            [ 6]  167 	inc	sp
+   009F 21 03 00      [10]  168 	ld	hl,#0x0003
+   00A2 E5            [11]  169 	push	hl
+   00A3 CDr00r00      [17]  170 	call	_drawNumber
+   00A6 F1            [10]  171 	pop	af
+                            172 ;src/video/draw.c:39: drawNumber(4, 1, 23, 110);
+   00A7 33            [ 6]  173 	inc	sp
+   00A8 21 17 6E      [10]  174 	ld	hl,#0x6E17
+   00AB E3            [19]  175 	ex	(sp),hl
+   00AC 3E 01         [ 7]  176 	ld	a,#0x01
+   00AE F5            [11]  177 	push	af
+   00AF 33            [ 6]  178 	inc	sp
+   00B0 21 04 00      [10]  179 	ld	hl,#0x0004
+   00B3 E5            [11]  180 	push	hl
+   00B4 CDr00r00      [17]  181 	call	_drawNumber
+   00B7 F1            [10]  182 	pop	af
+                            183 ;src/video/draw.c:42: drawText("JOHN LOBO", 25, 170,1);
+   00B8 33            [ 6]  184 	inc	sp
+   00B9 21 AA 01      [10]  185 	ld	hl,#0x01AA
+   00BC E3            [19]  186 	ex	(sp),hl
+   00BD 3E 19         [ 7]  187 	ld	a,#0x19
+   00BF F5            [11]  188 	push	af
+   00C0 33            [ 6]  189 	inc	sp
+   00C1 21r02r01      [10]  190 	ld	hl,#___str_5
+   00C4 E5            [11]  191 	push	hl
+   00C5 CDr00r00      [17]  192 	call	_drawText
+   00C8 F1            [10]  193 	pop	af
+                            194 ;src/video/draw.c:43: drawText("@ GLASNOST CORP 2015", 11, 185,1);
+   00C9 33            [ 6]  195 	inc	sp
+   00CA 21 B9 01      [10]  196 	ld	hl,#0x01B9
+   00CD E3            [19]  197 	ex	(sp),hl
+   00CE 3E 0B         [ 7]  198 	ld	a,#0x0B
+   00D0 F5            [11]  199 	push	af
+   00D1 33            [ 6]  200 	inc	sp
+   00D2 21r0Cr01      [10]  201 	ld	hl,#___str_6
+   00D5 E5            [11]  202 	push	hl
+   00D6 CDr00r00      [17]  203 	call	_drawText
+   00D9 F1            [10]  204 	pop	af
+   00DA F1            [10]  205 	pop	af
+   00DB 33            [ 6]  206 	inc	sp
+   00DC C9            [10]  207 	ret
+   00DD                     208 ___str_0:
+   00DD 54 48 52 45 45 53   209 	.ascii "THREES"
+   00E3 00                  210 	.db 0x00
+   00E4                     211 ___str_1:
+   00E4 54 45 43 4C 41 44   212 	.ascii "TECLADO"
+        4F
+   00EB 00                  213 	.db 0x00
+   00EC                     214 ___str_2:
+   00EC 4A 4F 59 53 54 49   215 	.ascii "JOYSTICK"
+        43 4B
+   00F4 00                  216 	.db 0x00
+   00F5                     217 ___str_3:
+   00F5 4D 55 53 49 43 41   218 	.ascii "MUSICA"
+   00FB 00                  219 	.db 0x00
+   00FC                     220 ___str_4:
+   00FC 4A 55 47 41 52      221 	.ascii "JUGAR"
+   0101 00                  222 	.db 0x00
+   0102                     223 ___str_5:
+   0102 4A 4F 48 4E 20 4C   224 	.ascii "JOHN LOBO"
+        4F 42 4F
+   010B 00                  225 	.db 0x00
+   010C                     226 ___str_6:
+   010C 40 20 47 4C 41 53   227 	.ascii "@ GLASNOST CORP 2015"
+        4E 4F 53 54 20 43
+        4F 52 50 20 32 30
+        31 35
+   0120 00                  228 	.db 0x00
+                            229 ;src/video/draw.c:47: void clearGameScreen() {
+                            230 ;	---------------------------------
+                            231 ; Function clearGameScreen
+                            232 ; ---------------------------------
+   0121                     233 _clearGameScreen::
+                            234 ;src/video/draw.c:49: u8* pvideo = cpct_getScreenPtr(CPCT_VMEM_START, MIN_X, MIN_Y);
+   0121 21 09 05      [10]  235 	ld	hl,#0x0509
+   0124 E5            [11]  236 	push	hl
+   0125 21 00 C0      [10]  237 	ld	hl,#0xC000
+   0128 E5            [11]  238 	push	hl
+   0129 CDr00r00      [17]  239 	call	_cpct_getScreenPtr
+   012C 4D            [ 4]  240 	ld	c,l
+   012D 44            [ 4]  241 	ld	b,h
+                            242 ;src/video/draw.c:51: cpct_drawSolidBox(pvideo, 0, MAX_X - MIN_X + 1, MAX_Y - MIN_Y);
+   012E 21 44 F1      [10]  243 	ld	hl,#0xF144
+   0131 E5            [11]  244 	push	hl
+   0132 AF            [ 4]  245 	xor	a, a
+   0133 F5            [11]  246 	push	af
+   0134 33            [ 6]  247 	inc	sp
+   0135 C5            [11]  248 	push	bc
+   0136 CDr00r00      [17]  249 	call	_cpct_drawSolidBox
+   0139 F1            [10]  250 	pop	af
+   013A F1            [10]  251 	pop	af
+   013B 33            [ 6]  252 	inc	sp
+   013C C9            [10]  253 	ret
+                            254 ;src/video/draw.c:56: void drawFrame(u8 x1, u8 y1, u8 x2, u8 y2) {
+                            255 ;	---------------------------------
+                            256 ; Function drawFrame
+                            257 ; ---------------------------------
+   013D                     258 _drawFrame::
+   013D DD E5         [15]  259 	push	ix
+   013F DD 21 00 00   [14]  260 	ld	ix,#0
+   0143 DD 39         [15]  261 	add	ix,sp
+   0145 21 F7 FF      [10]  262 	ld	hl,#-9
+   0148 39            [11]  263 	add	hl,sp
+   0149 F9            [ 6]  264 	ld	sp,hl
+                            265 ;src/video/draw.c:61: frame_w = x2 - x1;
+   014A DD 7E 06      [19]  266 	ld	a,6 (ix)
+   014D DD 96 04      [19]  267 	sub	a, 4 (ix)
+   0150 47            [ 4]  268 	ld	b,a
+   0151 DD 70 F7      [19]  269 	ld	-9 (ix),b
+                            270 ;src/video/draw.c:64: clearWindow(x1, y1, x2 - x1, y2 - y1);
+   0154 DD 7E 07      [19]  271 	ld	a,7 (ix)
+   0157 DD 96 05      [19]  272 	sub	a, 5 (ix)
+   015A 57            [ 4]  273 	ld	d,a
+   015B D5            [11]  274 	push	de
+   015C 33            [ 6]  275 	inc	sp
+   015D C5            [11]  276 	push	bc
+   015E 33            [ 6]  277 	inc	sp
+   015F DD 66 05      [19]  278 	ld	h,5 (ix)
+   0162 DD 6E 04      [19]  279 	ld	l,4 (ix)
+   0165 E5            [11]  280 	push	hl
+   0166 CDr00r00      [17]  281 	call	_clearWindow
+   0169 F1            [10]  282 	pop	af
+   016A F1            [10]  283 	pop	af
+                            284 ;src/video/draw.c:67: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, x1, y1);
+   016B DD 66 05      [19]  285 	ld	h,5 (ix)
+   016E DD 6E 04      [19]  286 	ld	l,4 (ix)
+   0171 E5            [11]  287 	push	hl
+   0172 21 00 C0      [10]  288 	ld	hl,#0xC000
+   0175 E5            [11]  289 	push	hl
+   0176 CDr00r00      [17]  290 	call	_cpct_getScreenPtr
+   0179 4D            [ 4]  291 	ld	c,l
+   017A 44            [ 4]  292 	ld	b,h
+                            293 ;src/video/draw.c:68: cpct_drawSprite(g_tile_border_0,  pvideo, 2, 4);
+   017B 59            [ 4]  294 	ld	e, c
+   017C 50            [ 4]  295 	ld	d, b
+   017D C5            [11]  296 	push	bc
+   017E 21 02 04      [10]  297 	ld	hl,#0x0402
+   0181 E5            [11]  298 	push	hl
+   0182 D5            [11]  299 	push	de
+   0183 21r00r00      [10]  300 	ld	hl,#_g_tile_border_0
+   0186 E5            [11]  301 	push	hl
+   0187 CDr00r00      [17]  302 	call	_cpct_drawSprite
+   018A C1            [10]  303 	pop	bc
+                            304 ;src/video/draw.c:72: for (x = x1 + 2; x < (x2 - 2); x = x + 2) {
+   018B DD 7E 04      [19]  305 	ld	a,4 (ix)
+   018E C6 02         [ 7]  306 	add	a, #0x02
+   0190 DD 77 FF      [19]  307 	ld	-1 (ix), a
+   0193 DD 77 FE      [19]  308 	ld	-2 (ix),a
+   0196 11r00r00      [10]  309 	ld	de,#_g_tile_border_4+0
+   0199                     310 00105$:
+   0199 DD 7E 06      [19]  311 	ld	a, 6 (ix)
+   019C 26 00         [ 7]  312 	ld	h, #0x00
+   019E C6 FE         [ 7]  313 	add	a,#0xFE
+   01A0 DD 77 FC      [19]  314 	ld	-4 (ix),a
+   01A3 7C            [ 4]  315 	ld	a,h
+   01A4 CE FF         [ 7]  316 	adc	a,#0xFF
+   01A6 DD 77 FD      [19]  317 	ld	-3 (ix),a
+   01A9 DD 6E FE      [19]  318 	ld	l,-2 (ix)
+   01AC 26 00         [ 7]  319 	ld	h,#0x00
+                            320 ;src/video/draw.c:74: cpct_drawSprite(g_tile_border_4,  pvideo + (x - x1), 2, 4);
+   01AE DD 7E 04      [19]  321 	ld	a,4 (ix)
+   01B1 DD 77 FA      [19]  322 	ld	-6 (ix),a
+   01B4 DD 36 FB 00   [19]  323 	ld	-5 (ix),#0x00
+                            324 ;src/video/draw.c:72: for (x = x1 + 2; x < (x2 - 2); x = x + 2) {
+   01B8 7D            [ 4]  325 	ld	a,l
+   01B9 DD 96 FC      [19]  326 	sub	a, -4 (ix)
+   01BC 7C            [ 4]  327 	ld	a,h
+   01BD DD 9E FD      [19]  328 	sbc	a, -3 (ix)
+   01C0 E2rC5r01      [10]  329 	jp	PO, 00142$
+   01C3 EE 80         [ 7]  330 	xor	a, #0x80
+   01C5                     331 00142$:
+   01C5 F2rEFr01      [10]  332 	jp	P,00101$
+                            333 ;src/video/draw.c:74: cpct_drawSprite(g_tile_border_4,  pvideo + (x - x1), 2, 4);
+   01C8 7D            [ 4]  334 	ld	a,l
+   01C9 DD 96 FA      [19]  335 	sub	a, -6 (ix)
+   01CC 6F            [ 4]  336 	ld	l,a
+   01CD 7C            [ 4]  337 	ld	a,h
+   01CE DD 9E FB      [19]  338 	sbc	a, -5 (ix)
+   01D1 67            [ 4]  339 	ld	h,a
+   01D2 09            [11]  340 	add	hl,bc
+   01D3 E5            [11]  341 	push	hl
+   01D4 FD E1         [14]  342 	pop	iy
+   01D6 C5            [11]  343 	push	bc
+   01D7 D5            [11]  344 	push	de
+   01D8 21 02 04      [10]  345 	ld	hl,#0x0402
+   01DB E5            [11]  346 	push	hl
+   01DC FD E5         [15]  347 	push	iy
+   01DE 21r00r00      [10]  348 	ld	hl,#_g_tile_border_4
+   01E1 E5            [11]  349 	push	hl
+   01E2 CDr00r00      [17]  350 	call	_cpct_drawSprite
+   01E5 D1            [10]  351 	pop	de
+   01E6 C1            [10]  352 	pop	bc
+                            353 ;src/video/draw.c:72: for (x = x1 + 2; x < (x2 - 2); x = x + 2) {
+   01E7 DD 34 FE      [23]  354 	inc	-2 (ix)
+   01EA DD 34 FE      [23]  355 	inc	-2 (ix)
+   01ED 18 AA         [12]  356 	jr	00105$
+   01EF                     357 00101$:
+                            358 ;src/video/draw.c:78: cpct_drawSprite(g_tile_border_1,  pvideo + (frame_w - 2), 2,4);
+   01EF DD 5E F7      [19]  359 	ld	e,-9 (ix)
+   01F2 16 00         [ 7]  360 	ld	d,#0x00
+   01F4 1B            [ 6]  361 	dec	de
+   01F5 1B            [ 6]  362 	dec	de
+   01F6 6B            [ 4]  363 	ld	l, e
+   01F7 62            [ 4]  364 	ld	h, d
+   01F8 09            [11]  365 	add	hl,bc
+   01F9 4D            [ 4]  366 	ld	c, l
+   01FA 44            [ 4]  367 	ld	b, h
+   01FB D5            [11]  368 	push	de
+   01FC 21 02 04      [10]  369 	ld	hl,#0x0402
+   01FF E5            [11]  370 	push	hl
+   0200 C5            [11]  371 	push	bc
+   0201 21r00r00      [10]  372 	ld	hl,#_g_tile_border_1
+   0204 E5            [11]  373 	push	hl
+   0205 CDr00r00      [17]  374 	call	_cpct_drawSprite
+   0208 D1            [10]  375 	pop	de
+                            376 ;src/video/draw.c:82: for (x = y1 + 4; x < (y2 - 4); x = x + 4) {
+   0209 DD 7E 05      [19]  377 	ld	a,5 (ix)
+   020C C6 04         [ 7]  378 	add	a, #0x04
+   020E DD 77 FE      [19]  379 	ld	-2 (ix),a
+   0211                     380 00108$:
+   0211 DD 4E 07      [19]  381 	ld	c,7 (ix)
+   0214 06 00         [ 7]  382 	ld	b,#0x00
+   0216 79            [ 4]  383 	ld	a,c
+   0217 C6 FC         [ 7]  384 	add	a,#0xFC
+   0219 4F            [ 4]  385 	ld	c,a
+   021A 78            [ 4]  386 	ld	a,b
+   021B CE FF         [ 7]  387 	adc	a,#0xFF
+   021D 47            [ 4]  388 	ld	b,a
+   021E DD 7E FE      [19]  389 	ld	a, -2 (ix)
+   0221 26 00         [ 7]  390 	ld	h, #0x00
+   0223 91            [ 4]  391 	sub	a, c
+   0224 7C            [ 4]  392 	ld	a,h
+   0225 98            [ 4]  393 	sbc	a, b
+   0226 E2r2Br02      [10]  394 	jp	PO, 00143$
+   0229 EE 80         [ 7]  395 	xor	a, #0x80
+   022B                     396 00143$:
+   022B F2r73r02      [10]  397 	jp	P,00102$
+                            398 ;src/video/draw.c:84: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, x1, x);
+   022E D5            [11]  399 	push	de
+   022F DD 66 FE      [19]  400 	ld	h,-2 (ix)
+   0232 DD 6E 04      [19]  401 	ld	l,4 (ix)
+   0235 E5            [11]  402 	push	hl
+   0236 21 00 C0      [10]  403 	ld	hl,#0xC000
+   0239 E5            [11]  404 	push	hl
+   023A CDr00r00      [17]  405 	call	_cpct_getScreenPtr
+   023D 4D            [ 4]  406 	ld	c,l
+   023E 44            [ 4]  407 	ld	b,h
+   023F D1            [10]  408 	pop	de
+                            409 ;src/video/draw.c:85: cpct_drawSprite(g_tile_border_5,  pvideo, 2, 4);
+   0240 C5            [11]  410 	push	bc
+   0241 FD E1         [14]  411 	pop	iy
+   0243 C5            [11]  412 	push	bc
+   0244 D5            [11]  413 	push	de
+   0245 21 02 04      [10]  414 	ld	hl,#0x0402
+   0248 E5            [11]  415 	push	hl
+   0249 FD E5         [15]  416 	push	iy
+   024B 21r00r00      [10]  417 	ld	hl,#_g_tile_border_5
+   024E E5            [11]  418 	push	hl
+   024F CDr00r00      [17]  419 	call	_cpct_drawSprite
+   0252 D1            [10]  420 	pop	de
+                            421 ;src/video/draw.c:86: cpct_drawSprite(g_tile_border_6,  pvideo + (frame_w - 2), 2, 4);
+   0253 E1            [10]  422 	pop	hl
+   0254 19            [11]  423 	add	hl,de
+   0255 4D            [ 4]  424 	ld	c, l
+   0256 44            [ 4]  425 	ld	b, h
+   0257 D5            [11]  426 	push	de
+   0258 21 02 04      [10]  427 	ld	hl,#0x0402
+   025B E5            [11]  428 	push	hl
+   025C C5            [11]  429 	push	bc
+   025D 21r00r00      [10]  430 	ld	hl,#_g_tile_border_6
+   0260 E5            [11]  431 	push	hl
+   0261 CDr00r00      [17]  432 	call	_cpct_drawSprite
+   0264 D1            [10]  433 	pop	de
+                            434 ;src/video/draw.c:82: for (x = y1 + 4; x < (y2 - 4); x = x + 4) {
+   0265 DD 34 FE      [23]  435 	inc	-2 (ix)
+   0268 DD 34 FE      [23]  436 	inc	-2 (ix)
+   026B DD 34 FE      [23]  437 	inc	-2 (ix)
+   026E DD 34 FE      [23]  438 	inc	-2 (ix)
+   0271 18 9E         [12]  439 	jr	00108$
+   0273                     440 00102$:
+                            441 ;src/video/draw.c:90: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, x1, y2 - 4);
+   0273 DD 7E 07      [19]  442 	ld	a,7 (ix)
+   0276 C6 FC         [ 7]  443 	add	a,#0xFC
+   0278 47            [ 4]  444 	ld	b,a
+   0279 D5            [11]  445 	push	de
+   027A C5            [11]  446 	push	bc
+   027B 33            [ 6]  447 	inc	sp
+   027C DD 7E 04      [19]  448 	ld	a,4 (ix)
+   027F F5            [11]  449 	push	af
+   0280 33            [ 6]  450 	inc	sp
+   0281 21 00 C0      [10]  451 	ld	hl,#0xC000
+   0284 E5            [11]  452 	push	hl
+   0285 CDr00r00      [17]  453 	call	_cpct_getScreenPtr
+   0288 4D            [ 4]  454 	ld	c,l
+   0289 44            [ 4]  455 	ld	b,h
+   028A D1            [10]  456 	pop	de
+                            457 ;src/video/draw.c:93: cpct_drawSprite(g_tile_border_2,  pvideo, 2, 4);
+   028B DD 71 F8      [19]  458 	ld	-8 (ix),c
+   028E DD 70 F9      [19]  459 	ld	-7 (ix),b
+   0291 C5            [11]  460 	push	bc
+   0292 D5            [11]  461 	push	de
+   0293 21 02 04      [10]  462 	ld	hl,#0x0402
+   0296 E5            [11]  463 	push	hl
+   0297 DD 6E F8      [19]  464 	ld	l,-8 (ix)
+   029A DD 66 F9      [19]  465 	ld	h,-7 (ix)
+   029D E5            [11]  466 	push	hl
+   029E 21r00r00      [10]  467 	ld	hl,#_g_tile_border_2
+   02A1 E5            [11]  468 	push	hl
+   02A2 CDr00r00      [17]  469 	call	_cpct_drawSprite
+   02A5 D1            [10]  470 	pop	de
+   02A6 C1            [10]  471 	pop	bc
+                            472 ;src/video/draw.c:97: for (x = x1 + 2; x < (x2 - 2); x = x + 2) {
+   02A7 DD 7E FF      [19]  473 	ld	a,-1 (ix)
+   02AA DD 77 F8      [19]  474 	ld	-8 (ix),a
+   02AD                     475 00111$:
+   02AD DD 6E F8      [19]  476 	ld	l,-8 (ix)
+   02B0 26 00         [ 7]  477 	ld	h,#0x00
+   02B2 7D            [ 4]  478 	ld	a,l
+   02B3 DD 96 FC      [19]  479 	sub	a, -4 (ix)
+   02B6 7C            [ 4]  480 	ld	a,h
+   02B7 DD 9E FD      [19]  481 	sbc	a, -3 (ix)
+   02BA E2rBFr02      [10]  482 	jp	PO, 00144$
+   02BD EE 80         [ 7]  483 	xor	a, #0x80
+   02BF                     484 00144$:
+   02BF F2rE9r02      [10]  485 	jp	P,00103$
+                            486 ;src/video/draw.c:99: cpct_drawSprite(g_tile_border_7,  pvideo + (x - x1), 2, 4);
+   02C2 7D            [ 4]  487 	ld	a,l
+   02C3 DD 96 FA      [19]  488 	sub	a, -6 (ix)
+   02C6 6F            [ 4]  489 	ld	l,a
+   02C7 7C            [ 4]  490 	ld	a,h
+   02C8 DD 9E FB      [19]  491 	sbc	a, -5 (ix)
+   02CB 67            [ 4]  492 	ld	h,a
+   02CC 09            [11]  493 	add	hl,bc
+   02CD E5            [11]  494 	push	hl
+   02CE FD E1         [14]  495 	pop	iy
+   02D0 C5            [11]  496 	push	bc
+   02D1 D5            [11]  497 	push	de
+   02D2 21 02 04      [10]  498 	ld	hl,#0x0402
+   02D5 E5            [11]  499 	push	hl
+   02D6 FD E5         [15]  500 	push	iy
+   02D8 21r00r00      [10]  501 	ld	hl,#_g_tile_border_7
+   02DB E5            [11]  502 	push	hl
+   02DC CDr00r00      [17]  503 	call	_cpct_drawSprite
+   02DF D1            [10]  504 	pop	de
+   02E0 C1            [10]  505 	pop	bc
+                            506 ;src/video/draw.c:97: for (x = x1 + 2; x < (x2 - 2); x = x + 2) {
+   02E1 DD 34 F8      [23]  507 	inc	-8 (ix)
+   02E4 DD 34 F8      [23]  508 	inc	-8 (ix)
+   02E7 18 C4         [12]  509 	jr	00111$
+   02E9                     510 00103$:
+                            511 ;src/video/draw.c:103: cpct_drawSprite(g_tile_border_3,  pvideo + (frame_w - 2), 2, 4);
+   02E9 69            [ 4]  512 	ld	l, c
+   02EA 60            [ 4]  513 	ld	h, b
+   02EB 19            [11]  514 	add	hl,de
+   02EC 4D            [ 4]  515 	ld	c, l
+   02ED 44            [ 4]  516 	ld	b, h
+   02EE 21 02 04      [10]  517 	ld	hl,#0x0402
+   02F1 E5            [11]  518 	push	hl
+   02F2 C5            [11]  519 	push	bc
+   02F3 21r00r00      [10]  520 	ld	hl,#_g_tile_border_3
+   02F6 E5            [11]  521 	push	hl
+   02F7 CDr00r00      [17]  522 	call	_cpct_drawSprite
+   02FA DD F9         [10]  523 	ld	sp, ix
+   02FC DD E1         [14]  524 	pop	ix
+   02FE C9            [10]  525 	ret
+                            526 ;src/video/draw.c:107: void drawStar(u8 color1, u8 color2, u8 xPos, u8 yPos) {
+                            527 ;	---------------------------------
+                            528 ; Function drawStar
+                            529 ; ---------------------------------
+   02FF                     530 _drawStar::
+                            531 ;src/video/draw.c:109: u8* pvideo = cpct_getScreenPtr(CPCT_VMEM_START, xPos, yPos);
+   02FF 21 05 00      [10]  532 	ld	hl, #5+0
+   0302 39            [11]  533 	add	hl, sp
+   0303 7E            [ 7]  534 	ld	a, (hl)
+   0304 F5            [11]  535 	push	af
+   0305 33            [ 6]  536 	inc	sp
+   0306 21 05 00      [10]  537 	ld	hl, #5+0
+   0309 39            [11]  538 	add	hl, sp
+   030A 7E            [ 7]  539 	ld	a, (hl)
+   030B F5            [11]  540 	push	af
+   030C 33            [ 6]  541 	inc	sp
+   030D 21 00 C0      [10]  542 	ld	hl,#0xC000
+   0310 E5            [11]  543 	push	hl
+   0311 CDr00r00      [17]  544 	call	_cpct_getScreenPtr
+                            545 ;src/video/draw.c:110: cpct_drawSolidBox(pvideo, cpct_px2byteM0(color1, color2), 1, 1);
+   0314 E5            [11]  546 	push	hl
+   0315 21 05 00      [10]  547 	ld	hl, #5+0
+   0318 39            [11]  548 	add	hl, sp
+   0319 7E            [ 7]  549 	ld	a, (hl)
+   031A F5            [11]  550 	push	af
+   031B 33            [ 6]  551 	inc	sp
+   031C 21 05 00      [10]  552 	ld	hl, #5+0
+   031F 39            [11]  553 	add	hl, sp
+   0320 7E            [ 7]  554 	ld	a, (hl)
+   0321 F5            [11]  555 	push	af
+   0322 33            [ 6]  556 	inc	sp
+   0323 CDr00r00      [17]  557 	call	_cpct_px2byteM0
+   0326 55            [ 4]  558 	ld	d,l
+   0327 C1            [10]  559 	pop	bc
+   0328 21 01 01      [10]  560 	ld	hl,#0x0101
+   032B E5            [11]  561 	push	hl
+   032C D5            [11]  562 	push	de
+   032D 33            [ 6]  563 	inc	sp
+   032E C5            [11]  564 	push	bc
+   032F CDr00r00      [17]  565 	call	_cpct_drawSolidBox
+   0332 F1            [10]  566 	pop	af
+   0333 F1            [10]  567 	pop	af
+   0334 33            [ 6]  568 	inc	sp
+   0335 C9            [10]  569 	ret
+                            570 ;src/video/draw.c:115: void drawStars(Coords *stars) {
+                            571 ;	---------------------------------
+                            572 ; Function drawStars
+                            573 ; ---------------------------------
+   0336                     574 _drawStars::
+   0336 DD E5         [15]  575 	push	ix
+   0338 DD 21 00 00   [14]  576 	ld	ix,#0
+   033C DD 39         [15]  577 	add	ix,sp
+   033E F5            [11]  578 	push	af
+   033F 3B            [ 6]  579 	dec	sp
+                            580 ;src/video/draw.c:122: for (x = 0; x < MAX_STARS + MAX_COLOR_STARS; x++) {
+   0340 DD 36 FD 00   [19]  581 	ld	-3 (ix),#0x00
+   0344                     582 00114$:
+                            583 ;src/video/draw.c:128: drawStar(1, 0, stars[x].xPos, stars[x].yPos);
+   0344 DD 6E FD      [19]  584 	ld	l,-3 (ix)
+   0347 26 00         [ 7]  585 	ld	h,#0x00
+   0349 29            [11]  586 	add	hl, hl
+   034A 4D            [ 4]  587 	ld	c, l
+   034B 44            [ 4]  588 	ld	b, h
+   034C DD 7E 04      [19]  589 	ld	a,4 (ix)
+   034F 81            [ 4]  590 	add	a, c
+   0350 4F            [ 4]  591 	ld	c,a
+   0351 DD 7E 05      [19]  592 	ld	a,5 (ix)
+   0354 88            [ 4]  593 	adc	a, b
+   0355 47            [ 4]  594 	ld	b,a
+   0356 0A            [ 7]  595 	ld	a,(bc)
+   0357 DD 77 FF      [19]  596 	ld	-1 (ix),a
+   035A 59            [ 4]  597 	ld	e, c
+   035B 50            [ 4]  598 	ld	d, b
+   035C 13            [ 6]  599 	inc	de
+   035D 1A            [ 7]  600 	ld	a,(de)
+   035E DD 77 FE      [19]  601 	ld	-2 (ix),a
+                            602 ;src/video/draw.c:124: if (x < MAX_STARS) {
+   0361 DD 7E FD      [19]  603 	ld	a,-3 (ix)
+   0364 D6 08         [ 7]  604 	sub	a, #0x08
+   0366 30 3A         [12]  605 	jr	NC,00109$
+                            606 ;src/video/draw.c:126: if (starsCycles == 2) {
+   0368 3Ar00r00      [13]  607 	ld	a,(#_drawStars_starsCycles_1_120 + 0)
+   036B D6 02         [ 7]  608 	sub	a, #0x02
+   036D 20 21         [12]  609 	jr	NZ,00104$
+                            610 ;src/video/draw.c:128: drawStar(1, 0, stars[x].xPos, stars[x].yPos);
+   036F C5            [11]  611 	push	bc
+   0370 DD 66 FE      [19]  612 	ld	h,-2 (ix)
+   0373 DD 6E FF      [19]  613 	ld	l,-1 (ix)
+   0376 E5            [11]  614 	push	hl
+   0377 21 01 00      [10]  615 	ld	hl,#0x0001
+   037A E5            [11]  616 	push	hl
+   037B CDrFFr02      [17]  617 	call	_drawStar
+   037E F1            [10]  618 	pop	af
+   037F F1            [10]  619 	pop	af
+   0380 C1            [10]  620 	pop	bc
+                            621 ;src/video/draw.c:129: stars[x].xPos--;
+   0381 0A            [ 7]  622 	ld	a,(bc)
+   0382 5F            [ 4]  623 	ld	e,a
+   0383 1D            [ 4]  624 	dec	e
+   0384 7B            [ 4]  625 	ld	a,e
+   0385 02            [ 7]  626 	ld	(bc),a
+                            627 ;src/video/draw.c:131: if (stars[x].xPos < MIN_X) {
+   0386 7B            [ 4]  628 	ld	a,e
+   0387 D6 09         [ 7]  629 	sub	a, #0x09
+   0389 30 62         [12]  630 	jr	NC,00115$
+                            631 ;src/video/draw.c:133: stars[x].xPos = MAX_X;
+   038B 3E 4C         [ 7]  632 	ld	a,#0x4C
+   038D 02            [ 7]  633 	ld	(bc),a
+   038E 18 5D         [12]  634 	jr	00115$
+   0390                     635 00104$:
+                            636 ;src/video/draw.c:139: drawStar(0, 1, stars[x].xPos, stars[x].yPos);
+   0390 DD 66 FE      [19]  637 	ld	h,-2 (ix)
+   0393 DD 6E FF      [19]  638 	ld	l,-1 (ix)
+   0396 E5            [11]  639 	push	hl
+   0397 21 00 01      [10]  640 	ld	hl,#0x0100
+   039A E5            [11]  641 	push	hl
+   039B CDrFFr02      [17]  642 	call	_drawStar
+   039E F1            [10]  643 	pop	af
+   039F F1            [10]  644 	pop	af
+   03A0 18 4B         [12]  645 	jr	00115$
+   03A2                     646 00109$:
+                            647 ;src/video/draw.c:145: pvideo = cpct_getScreenPtr(CPCT_VMEM_START,  stars[x].xPos, stars[x].yPos);
+   03A2 C5            [11]  648 	push	bc
+   03A3 D5            [11]  649 	push	de
+   03A4 DD 66 FE      [19]  650 	ld	h,-2 (ix)
+   03A7 DD 6E FF      [19]  651 	ld	l,-1 (ix)
+   03AA E5            [11]  652 	push	hl
+   03AB 21 00 C0      [10]  653 	ld	hl,#0xC000
+   03AE E5            [11]  654 	push	hl
+   03AF CDr00r00      [17]  655 	call	_cpct_getScreenPtr
+   03B2 D1            [10]  656 	pop	de
+   03B3 C1            [10]  657 	pop	bc
+                            658 ;src/video/draw.c:147: cpct_drawSprite(G_bluestar, pvideo, COLOR_STAR_W, COLOR_STAR_H);
+   03B4 E5            [11]  659 	push	hl
+   03B5 FD E1         [14]  660 	pop	iy
+   03B7 C5            [11]  661 	push	bc
+   03B8 D5            [11]  662 	push	de
+   03B9 21 02 07      [10]  663 	ld	hl,#0x0702
+   03BC E5            [11]  664 	push	hl
+   03BD FD E5         [15]  665 	push	iy
+   03BF 21r00r00      [10]  666 	ld	hl,#_G_bluestar
+   03C2 E5            [11]  667 	push	hl
+   03C3 CDr00r00      [17]  668 	call	_cpct_drawSprite
+   03C6 D1            [10]  669 	pop	de
+   03C7 C1            [10]  670 	pop	bc
+                            671 ;src/video/draw.c:149: stars[x].xPos--;
+   03C8 0A            [ 7]  672 	ld	a,(bc)
+   03C9 C6 FF         [ 7]  673 	add	a,#0xFF
+   03CB DD 77 FE      [19]  674 	ld	-2 (ix), a
+   03CE 02            [ 7]  675 	ld	(bc),a
+                            676 ;src/video/draw.c:151: if (stars[x].xPos < MIN_X) {
+   03CF DD 7E FE      [19]  677 	ld	a,-2 (ix)
+   03D2 D6 09         [ 7]  678 	sub	a, #0x09
+   03D4 30 17         [12]  679 	jr	NC,00115$
+                            680 ;src/video/draw.c:153: stars[x].xPos = MAX_X - COLOR_STAR_W;
+   03D6 3E 4A         [ 7]  681 	ld	a,#0x4A
+   03D8 02            [ 7]  682 	ld	(bc),a
+                            683 ;src/video/draw.c:154: stars[x].yPos = MIN_Y + cpct_rand() % (MAX_Y - COLOR_STAR_H - MIN_Y);
+   03D9 D5            [11]  684 	push	de
+   03DA CDr00r00      [17]  685 	call	_cpct_getRandom_mxor_u8
+   03DD 45            [ 4]  686 	ld	b,l
+   03DE 3E EA         [ 7]  687 	ld	a,#0xEA
+   03E0 F5            [11]  688 	push	af
+   03E1 33            [ 6]  689 	inc	sp
+   03E2 C5            [11]  690 	push	bc
+   03E3 33            [ 6]  691 	inc	sp
+   03E4 CDr00r00      [17]  692 	call	__moduchar
+   03E7 F1            [10]  693 	pop	af
+   03E8 D1            [10]  694 	pop	de
+   03E9 7D            [ 4]  695 	ld	a,l
+   03EA C6 05         [ 7]  696 	add	a, #0x05
+   03EC 12            [ 7]  697 	ld	(de),a
+   03ED                     698 00115$:
+                            699 ;src/video/draw.c:122: for (x = 0; x < MAX_STARS + MAX_COLOR_STARS; x++) {
+   03ED DD 34 FD      [23]  700 	inc	-3 (ix)
+   03F0 DD 7E FD      [19]  701 	ld	a,-3 (ix)
+   03F3 D6 0B         [ 7]  702 	sub	a, #0x0B
+   03F5 DAr44r03      [10]  703 	jp	C,00114$
+                            704 ;src/video/draw.c:163: if (starsCycles++ == 2) starsCycles = 1;
+   03F8 21r00r00      [10]  705 	ld	hl,#_drawStars_starsCycles_1_120 + 0
+   03FB 4E            [ 7]  706 	ld	c, (hl)
+   03FC 21r00r00      [10]  707 	ld	hl, #_drawStars_starsCycles_1_120+0
+   03FF 34            [11]  708 	inc	(hl)
+   0400 79            [ 4]  709 	ld	a,c
+   0401 D6 02         [ 7]  710 	sub	a, #0x02
+   0403 20 05         [12]  711 	jr	NZ,00116$
+   0405 21r00r00      [10]  712 	ld	hl,#_drawStars_starsCycles_1_120 + 0
+   0408 36 01         [10]  713 	ld	(hl), #0x01
+   040A                     714 00116$:
+   040A DD F9         [10]  715 	ld	sp, ix
+   040C DD E1         [14]  716 	pop	ix
+   040E C9            [10]  717 	ret
+                            718 	.area _CODE
+                            719 	.area _INITIALIZER
+                            720 	.area _CABS (ABS)

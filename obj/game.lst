@@ -1,0 +1,3213 @@
+                              1 ;--------------------------------------------------------
+                              2 ; File Created by SDCC : free open source ANSI-C Compiler
+                              3 ; Version 3.5.5 #9498 (Mac OS X x86_64)
+                              4 ;--------------------------------------------------------
+                              5 	.module game
+                              6 	.optsdcc -mz80
+                              7 	
+                              8 ;--------------------------------------------------------
+                              9 ; Public variables in this module
+                             10 ;--------------------------------------------------------
+                             11 	.globl _checkKeyboardMenu
+                             12 	.globl _game
+                             13 	.globl _setHighScore
+                             14 	.globl _getName
+                             15 	.globl _drawScore
+                             16 	.globl _printCells
+                             17 	.globl _rotateCellsDown
+                             18 	.globl _rotateCellsUp
+                             19 	.globl _rotateCellsRight
+                             20 	.globl _rotateCellsLeft
+                             21 	.globl _initGame
+                             22 	.globl _initCells
+                             23 	.globl _addRandomCell
+                             24 	.globl _addRandomCellTurn
+                             25 	.globl _anyMovesLeft
+                             26 	.globl _anyOfThisInAdjacents
+                             27 	.globl _getAdjacents
+                             28 	.globl _initAdjacents
+                             29 	.globl _countZeroes
+                             30 	.globl _delay
+                             31 	.globl _renewTileBag
+                             32 	.globl _redefineKey
+                             33 	.globl _waitKeyUp
+                             34 	.globl _wait4UserKeypress
+                             35 	.globl _drawFrame
+                             36 	.globl _drawMenu
+                             37 	.globl _drawFallingText
+                             38 	.globl _drawText
+                             39 	.globl _drawNumber
+                             40 	.globl _clearScreen
+                             41 	.globl _cpct_restoreState_mxor_u8
+                             42 	.globl _cpct_setSeed_mxor
+                             43 	.globl _cpct_getRandom_mxor_u8
+                             44 	.globl _cpct_getScreenPtr
+                             45 	.globl _cpct_drawSolidBox
+                             46 	.globl _cpct_drawSprite
+                             47 	.globl _cpct_px2byteM0
+                             48 	.globl _cpct_isAnyKeyPressed_f
+                             49 	.globl _cpct_isKeyPressed
+                             50 	.globl _cpct_scanKeyboard_f
+                             51 	.globl _cpct_memset
+                             52 	.globl _sprintf
+                             53 	.globl _newNameHighScore
+                             54 	.globl _maxTiles
+                             55 	.globl _currentTile
+                             56 	.globl _tileBag
+                             57 	.globl _aux_txt
+                             58 	.globl _selectedOption
+                             59 	.globl _nextTile
+                             60 	.globl _nameHallOfFame
+                             61 	.globl _scoreHallOfFame
+                             62 	.globl _score
+                             63 	.globl _adjacents
+                             64 	.globl _cells
+                             65 	.globl _keys
+                             66 	.globl _tiles
+                             67 	.globl _scores
+                             68 	.globl _values
+                             69 	.globl _initialization
+                             70 	.globl _drawScoreBoard
+                             71 	.globl _threes
+                             72 ;--------------------------------------------------------
+                             73 ; special function registers
+                             74 ;--------------------------------------------------------
+                             75 ;--------------------------------------------------------
+                             76 ; ram data
+                             77 ;--------------------------------------------------------
+                             78 	.area _DATA
+   0000                      79 _keys::
+   0000                      80 	.ds 14
+   000E                      81 _cells::
+   000E                      82 	.ds 16
+   001E                      83 _adjacents::
+   001E                      84 	.ds 5
+   0023                      85 _score::
+   0023                      86 	.ds 4
+   0027                      87 _scoreHallOfFame::
+   0027                      88 	.ds 32
+   0047                      89 _nameHallOfFame::
+   0047                      90 	.ds 120
+   00BF                      91 _nextTile::
+   00BF                      92 	.ds 1
+   00C0                      93 _selectedOption::
+   00C0                      94 	.ds 1
+   00C1                      95 _aux_txt::
+   00C1                      96 	.ds 2
+   00C3                      97 _tileBag::
+   00C3                      98 	.ds 12
+   00CF                      99 _currentTile::
+   00CF                     100 	.ds 1
+   00D0                     101 _maxTiles::
+   00D0                     102 	.ds 1
+                            103 ;--------------------------------------------------------
+                            104 ; ram data
+                            105 ;--------------------------------------------------------
+                            106 	.area _INITIALIZED
+   0000                     107 _newNameHighScore::
+   0000                     108 	.ds 15
+                            109 ;--------------------------------------------------------
+                            110 ; absolute external ram data
+                            111 ;--------------------------------------------------------
+                            112 	.area _DABS (ABS)
+                            113 ;--------------------------------------------------------
+                            114 ; global & static initialisations
+                            115 ;--------------------------------------------------------
+                            116 	.area _HOME
+                            117 	.area _GSINIT
+                            118 	.area _GSFINAL
+                            119 	.area _GSINIT
+                            120 ;--------------------------------------------------------
+                            121 ; Home
+                            122 ;--------------------------------------------------------
+                            123 	.area _HOME
+                            124 	.area _HOME
+                            125 ;--------------------------------------------------------
+                            126 ; code
+                            127 ;--------------------------------------------------------
+                            128 	.area _CODE
+                            129 ;src/game.c:54: void renewTileBag() {
+                            130 ;	---------------------------------
+                            131 ; Function renewTileBag
+                            132 ; ---------------------------------
+   0000                     133 _renewTileBag::
+   0000 DD E5         [15]  134 	push	ix
+   0002 DD 21 00 00   [14]  135 	ld	ix,#0
+   0006 DD 39         [15]  136 	add	ix,sp
+   0008 F5            [11]  137 	push	af
+   0009 F5            [11]  138 	push	af
+                            139 ;src/game.c:59: counters[0] = 0;
+   000A 21 00 00      [10]  140 	ld	hl,#0x0000
+   000D 39            [11]  141 	add	hl,sp
+   000E 4D            [ 4]  142 	ld	c,l
+   000F 44            [ 4]  143 	ld	b,h
+   0010 AF            [ 4]  144 	xor	a, a
+   0011 02            [ 7]  145 	ld	(bc),a
+                            146 ;src/game.c:60: counters[1] = 0;
+   0012 59            [ 4]  147 	ld	e, c
+   0013 50            [ 4]  148 	ld	d, b
+   0014 13            [ 6]  149 	inc	de
+   0015 AF            [ 4]  150 	xor	a, a
+   0016 12            [ 7]  151 	ld	(de),a
+                            152 ;src/game.c:61: counters[2] = 0;
+   0017 59            [ 4]  153 	ld	e, c
+   0018 50            [ 4]  154 	ld	d, b
+   0019 13            [ 6]  155 	inc	de
+   001A 13            [ 6]  156 	inc	de
+   001B AF            [ 4]  157 	xor	a, a
+   001C 12            [ 7]  158 	ld	(de),a
+                            159 ;src/game.c:64: do
+   001D DD 36 FF 00   [19]  160 	ld	-1 (ix),#0x00
+   0021                     161 00101$:
+                            162 ;src/game.c:65: currentValue = (cpct_rand() / 85) + 1;
+   0021 C5            [11]  163 	push	bc
+   0022 CDr00r00      [17]  164 	call	_cpct_getRandom_mxor_u8
+   0025 55            [ 4]  165 	ld	d,l
+   0026 3E 55         [ 7]  166 	ld	a,#0x55
+   0028 F5            [11]  167 	push	af
+   0029 33            [ 6]  168 	inc	sp
+   002A D5            [11]  169 	push	de
+   002B 33            [ 6]  170 	inc	sp
+   002C CDr00r00      [17]  171 	call	__divuchar
+   002F F1            [10]  172 	pop	af
+   0030 5D            [ 4]  173 	ld	e,l
+   0031 C1            [10]  174 	pop	bc
+   0032 1C            [ 4]  175 	inc	e
+                            176 ;src/game.c:66: while (counters[currentValue - 1] > 3);
+   0033 53            [ 4]  177 	ld	d,e
+   0034 15            [ 4]  178 	dec	d
+   0035 6A            [ 4]  179 	ld	l,d
+   0036 26 00         [ 7]  180 	ld	h,#0x00
+   0038 09            [11]  181 	add	hl,bc
+   0039 56            [ 7]  182 	ld	d,(hl)
+   003A 3E 03         [ 7]  183 	ld	a,#0x03
+   003C 92            [ 4]  184 	sub	a, d
+   003D 38 E2         [12]  185 	jr	C,00101$
+                            186 ;src/game.c:67: counters[currentValue - 1]++;
+   003F 14            [ 4]  187 	inc	d
+   0040 72            [ 7]  188 	ld	(hl),d
+                            189 ;src/game.c:68: tileBag[i] = currentValue;
+   0041 3ErC3         [ 7]  190 	ld	a,#<(_tileBag)
+   0043 DD 86 FF      [19]  191 	add	a, -1 (ix)
+   0046 6F            [ 4]  192 	ld	l,a
+   0047 3Es00         [ 7]  193 	ld	a,#>(_tileBag)
+   0049 CE 00         [ 7]  194 	adc	a, #0x00
+   004B 67            [ 4]  195 	ld	h,a
+   004C 73            [ 7]  196 	ld	(hl),e
+                            197 ;src/game.c:63: for (i = 0; i < 12; i++) {
+   004D DD 34 FF      [23]  198 	inc	-1 (ix)
+   0050 DD 7E FF      [19]  199 	ld	a,-1 (ix)
+   0053 D6 0C         [ 7]  200 	sub	a, #0x0C
+   0055 38 CA         [12]  201 	jr	C,00101$
+                            202 ;src/game.c:70: currentTile = 0;
+   0057 21rCFr00      [10]  203 	ld	hl,#_currentTile + 0
+   005A 36 00         [10]  204 	ld	(hl), #0x00
+   005C DD F9         [10]  205 	ld	sp, ix
+   005E DD E1         [14]  206 	pop	ix
+   0060 C9            [10]  207 	ret
+   0061                     208 _values:
+   0061 00 00               209 	.dw #0x0000
+   0063 01 00               210 	.dw #0x0001
+   0065 02 00               211 	.dw #0x0002
+   0067 03 00               212 	.dw #0x0003
+   0069 06 00               213 	.dw #0x0006
+   006B 0C 00               214 	.dw #0x000C
+   006D 18 00               215 	.dw #0x0018
+   006F 30 00               216 	.dw #0x0030
+   0071 60 00               217 	.dw #0x0060
+   0073 C0 00               218 	.dw #0x00C0
+   0075 80 01               219 	.dw #0x0180
+   0077 00 03               220 	.dw #0x0300
+   0079 00 06               221 	.dw #0x0600
+   007B 00 0C               222 	.dw #0x0C00
+   007D 00 18               223 	.dw #0x1800
+   007F                     224 _scores:
+   007F 00 00 00 00         225 	.byte #0x00,#0x00,#0x00,#0x00	; 0
+   0083 00 00 00 00         226 	.byte #0x00,#0x00,#0x00,#0x00	; 0
+   0087 00 00 00 00         227 	.byte #0x00,#0x00,#0x00,#0x00	; 0
+   008B 03 00 00 00         228 	.byte #0x03,#0x00,#0x00,#0x00	; 3
+   008F 09 00 00 00         229 	.byte #0x09,#0x00,#0x00,#0x00	; 9
+   0093 1B 00 00 00         230 	.byte #0x1B,#0x00,#0x00,#0x00	; 27
+   0097 51 00 00 00         231 	.byte #0x51,#0x00,#0x00,#0x00	; 81
+   009B F3 00 00 00         232 	.byte #0xF3,#0x00,#0x00,#0x00	; 243
+   009F D9 02 00 00         233 	.byte #0xD9,#0x02,#0x00,#0x00	; 729
+   00A3 8B 08 00 00         234 	.byte #0x8B,#0x08,#0x00,#0x00	; 2187
+   00A7 A1 19 00 00         235 	.byte #0xA1,#0x19,#0x00,#0x00	; 6561
+   00AB E3 4C 00 00         236 	.byte #0xE3,#0x4C,#0x00,#0x00	; 19683
+   00AF A9 E6 00 00         237 	.byte #0xA9,#0xE6,#0x00,#0x00	; 59049
+   00B3 FB B3 02 00         238 	.byte #0xFB,#0xB3,#0x02,#0x00	; 177147
+   00B7 F1 1B 08 00         239 	.byte #0xF1,#0x1B,#0x08,#0x00	; 531441
+   00BB                     240 _tiles:
+   00BBr00r00               241 	.dw _tile_tiles_00
+   00BDr00r00               242 	.dw _tile_tiles_01
+   00BFr00r00               243 	.dw _tile_tiles_02
+   00C1r00r00               244 	.dw _tile_tiles_03
+   00C3r00r00               245 	.dw _tile_tiles_04
+   00C5r00r00               246 	.dw _tile_tiles_05
+   00C7r00r00               247 	.dw _tile_tiles_06
+   00C9r00r00               248 	.dw _tile_tiles_07
+   00CBr00r00               249 	.dw _tile_tiles_08
+   00CDr00r00               250 	.dw _tile_tiles_09
+   00CFr00r00               251 	.dw _tile_tiles_10
+   00D1r00r00               252 	.dw _tile_tiles_11
+   00D3r00r00               253 	.dw _tile_tiles_12
+   00D5r00r00               254 	.dw _tile_tiles_13
+   00D7r00r00               255 	.dw _tile_tiles_14
+                            256 ;src/game.c:81: void delay(u32 cycles) {
+                            257 ;	---------------------------------
+                            258 ; Function delay
+                            259 ; ---------------------------------
+   00D9                     260 _delay::
+                            261 ;src/game.c:83: for (i = 0; i < cycles; i++) {
+   00D9 01 00 00      [10]  262 	ld	bc,#0x0000
+   00DC 11 00 00      [10]  263 	ld	de,#0x0000
+   00DF                     264 00103$:
+   00DF 21 02 00      [10]  265 	ld	hl,#2
+   00E2 39            [11]  266 	add	hl,sp
+   00E3 79            [ 4]  267 	ld	a,c
+   00E4 96            [ 7]  268 	sub	a, (hl)
+   00E5 78            [ 4]  269 	ld	a,b
+   00E6 23            [ 6]  270 	inc	hl
+   00E7 9E            [ 7]  271 	sbc	a, (hl)
+   00E8 7B            [ 4]  272 	ld	a,e
+   00E9 23            [ 6]  273 	inc	hl
+   00EA 9E            [ 7]  274 	sbc	a, (hl)
+   00EB 7A            [ 4]  275 	ld	a,d
+   00EC 23            [ 6]  276 	inc	hl
+   00ED 9E            [ 7]  277 	sbc	a, (hl)
+   00EE D0            [11]  278 	ret	NC
+                            279 ;src/game.c:86: __endasm;
+   00EF 76            [ 4]  280 	halt
+                            281 ;src/game.c:83: for (i = 0; i < cycles; i++) {
+   00F0 0C            [ 4]  282 	inc	c
+   00F1 20 EC         [12]  283 	jr	NZ,00103$
+   00F3 04            [ 4]  284 	inc	b
+   00F4 20 E9         [12]  285 	jr	NZ,00103$
+   00F6 1C            [ 4]  286 	inc	e
+   00F7 20 E6         [12]  287 	jr	NZ,00103$
+   00F9 14            [ 4]  288 	inc	d
+   00FA 18 E3         [12]  289 	jr	00103$
+                            290 ;src/game.c:98: u8 countZeroes() {
+                            291 ;	---------------------------------
+                            292 ; Function countZeroes
+                            293 ; ---------------------------------
+   00FC                     294 _countZeroes::
+                            295 ;src/game.c:102: count = 0;
+   00FC 1E 00         [ 7]  296 	ld	e,#0x00
+                            297 ;src/game.c:103: for (i = 0; i < 4; i++) {
+   00FE 0E 00         [ 7]  298 	ld	c,#0x00
+                            299 ;src/game.c:104: for (j = 0; j < 4; j++) {
+   0100                     300 00112$:
+   0100 43            [ 4]  301 	ld	b,e
+   0101 1E 00         [ 7]  302 	ld	e,#0x00
+   0103                     303 00105$:
+                            304 ;src/game.c:105: if (cells[i][j] == 0)
+   0103 69            [ 4]  305 	ld	l,c
+   0104 26 00         [ 7]  306 	ld	h,#0x00
+   0106 29            [11]  307 	add	hl, hl
+   0107 29            [11]  308 	add	hl, hl
+   0108 3Er0E         [ 7]  309 	ld	a,#<(_cells)
+   010A 85            [ 4]  310 	add	a, l
+   010B 6F            [ 4]  311 	ld	l,a
+   010C 3Es00         [ 7]  312 	ld	a,#>(_cells)
+   010E 8C            [ 4]  313 	adc	a, h
+   010F 67            [ 4]  314 	ld	h,a
+   0110 16 00         [ 7]  315 	ld	d,#0x00
+   0112 19            [11]  316 	add	hl, de
+   0113 7E            [ 7]  317 	ld	a,(hl)
+   0114 B7            [ 4]  318 	or	a, a
+   0115 20 01         [12]  319 	jr	NZ,00106$
+                            320 ;src/game.c:106: count++;
+   0117 04            [ 4]  321 	inc	b
+   0118                     322 00106$:
+                            323 ;src/game.c:104: for (j = 0; j < 4; j++) {
+   0118 1C            [ 4]  324 	inc	e
+   0119 7B            [ 4]  325 	ld	a,e
+   011A D6 04         [ 7]  326 	sub	a, #0x04
+   011C 38 E5         [12]  327 	jr	C,00105$
+                            328 ;src/game.c:103: for (i = 0; i < 4; i++) {
+   011E 58            [ 4]  329 	ld	e,b
+   011F 0C            [ 4]  330 	inc	c
+   0120 79            [ 4]  331 	ld	a,c
+   0121 D6 04         [ 7]  332 	sub	a, #0x04
+   0123 38 DB         [12]  333 	jr	C,00112$
+                            334 ;src/game.c:109: return count;
+   0125 68            [ 4]  335 	ld	l,b
+   0126 C9            [10]  336 	ret
+                            337 ;src/game.c:122: void initAdjacents() {
+                            338 ;	---------------------------------
+                            339 ; Function initAdjacents
+                            340 ; ---------------------------------
+   0127                     341 _initAdjacents::
+                            342 ;src/game.c:125: for (i = 0; i < 4; i++) {
+   0127 01r1Fr00      [10]  343 	ld	bc,#_adjacents + 1
+   012A 1E 00         [ 7]  344 	ld	e,#0x00
+   012C                     345 00102$:
+                            346 ;src/game.c:126: adjacents.values[i] = 255;
+   012C 6B            [ 4]  347 	ld	l,e
+   012D 26 00         [ 7]  348 	ld	h,#0x00
+   012F 09            [11]  349 	add	hl,bc
+   0130 36 FF         [10]  350 	ld	(hl),#0xFF
+                            351 ;src/game.c:125: for (i = 0; i < 4; i++) {
+   0132 1C            [ 4]  352 	inc	e
+   0133 7B            [ 4]  353 	ld	a,e
+   0134 D6 04         [ 7]  354 	sub	a, #0x04
+   0136 38 F4         [12]  355 	jr	C,00102$
+                            356 ;src/game.c:128: adjacents.count = 0;
+   0138 21r1Er00      [10]  357 	ld	hl,#_adjacents
+   013B 36 00         [10]  358 	ld	(hl),#0x00
+   013D C9            [10]  359 	ret
+                            360 ;src/game.c:139: void getAdjacents(u8 i, u8 j) {
+                            361 ;	---------------------------------
+                            362 ; Function getAdjacents
+                            363 ; ---------------------------------
+   013E                     364 _getAdjacents::
+   013E DD E5         [15]  365 	push	ix
+   0140 DD 21 00 00   [14]  366 	ld	ix,#0
+   0144 DD 39         [15]  367 	add	ix,sp
+   0146 F5            [11]  368 	push	af
+   0147 3B            [ 6]  369 	dec	sp
+                            370 ;src/game.c:142: initAdjacents();
+   0148 CDr27r01      [17]  371 	call	_initAdjacents
+                            372 ;src/game.c:144: count = 0;
+   014B DD 36 FD 00   [19]  373 	ld	-3 (ix),#0x00
+                            374 ;src/game.c:146: adjacents.values[count] = cells [i - 1][j];
+   014F DD 4E 05      [19]  375 	ld	c,5 (ix)
+                            376 ;src/game.c:145: if (i != 0) {
+   0152 DD 7E 04      [19]  377 	ld	a,4 (ix)
+   0155 B7            [ 4]  378 	or	a, a
+   0156 28 19         [12]  379 	jr	Z,00102$
+                            380 ;src/game.c:146: adjacents.values[count] = cells [i - 1][j];
+   0158 11r0Er00      [10]  381 	ld	de,#_cells+0
+   015B DD 6E 04      [19]  382 	ld	l,4 (ix)
+   015E 2D            [ 4]  383 	dec	l
+   015F 26 00         [ 7]  384 	ld	h,#0x00
+   0161 29            [11]  385 	add	hl, hl
+   0162 29            [11]  386 	add	hl, hl
+   0163 19            [11]  387 	add	hl,de
+   0164 59            [ 4]  388 	ld	e,c
+   0165 16 00         [ 7]  389 	ld	d,#0x00
+   0167 19            [11]  390 	add	hl,de
+   0168 46            [ 7]  391 	ld	b,(hl)
+   0169 21r1Fr00      [10]  392 	ld	hl,#(_adjacents + 0x0001)
+   016C 70            [ 7]  393 	ld	(hl),b
+                            394 ;src/game.c:147: count++;
+   016D DD 36 FD 01   [19]  395 	ld	-3 (ix),#0x01
+   0171                     396 00102$:
+                            397 ;src/game.c:150: adjacents.values[count] = cells [i][j + 1];
+   0171 DD 6E 04      [19]  398 	ld	l,4 (ix)
+   0174 26 00         [ 7]  399 	ld	h,#0x00
+   0176 29            [11]  400 	add	hl, hl
+   0177 29            [11]  401 	add	hl, hl
+   0178 DD 75 FE      [19]  402 	ld	-2 (ix),l
+   017B DD 74 FF      [19]  403 	ld	-1 (ix),h
+                            404 ;src/game.c:149: if (j != 3) {
+   017E DD 7E 05      [19]  405 	ld	a,5 (ix)
+   0181 D6 03         [ 7]  406 	sub	a, #0x03
+   0183 28 27         [12]  407 	jr	Z,00104$
+                            408 ;src/game.c:150: adjacents.values[count] = cells [i][j + 1];
+   0185 DD 7E FD      [19]  409 	ld	a,-3 (ix)
+   0188 C6r1F         [ 7]  410 	add	a, #<((_adjacents + 0x0001))
+   018A 5F            [ 4]  411 	ld	e,a
+   018B 3E 00         [ 7]  412 	ld	a,#0x00
+   018D CEs00         [ 7]  413 	adc	a, #>((_adjacents + 0x0001))
+   018F 57            [ 4]  414 	ld	d,a
+   0190 DD 7E FE      [19]  415 	ld	a,-2 (ix)
+   0193 C6r0E         [ 7]  416 	add	a, #<(_cells)
+   0195 6F            [ 4]  417 	ld	l,a
+   0196 DD 7E FF      [19]  418 	ld	a,-1 (ix)
+   0199 CEs00         [ 7]  419 	adc	a, #>(_cells)
+   019B 67            [ 4]  420 	ld	h,a
+   019C DD 46 05      [19]  421 	ld	b,5 (ix)
+   019F 04            [ 4]  422 	inc	b
+   01A0 78            [ 4]  423 	ld	a,b
+   01A1 85            [ 4]  424 	add	a, l
+   01A2 6F            [ 4]  425 	ld	l,a
+   01A3 3E 00         [ 7]  426 	ld	a,#0x00
+   01A5 8C            [ 4]  427 	adc	a, h
+   01A6 67            [ 4]  428 	ld	h,a
+   01A7 7E            [ 7]  429 	ld	a,(hl)
+   01A8 12            [ 7]  430 	ld	(de),a
+                            431 ;src/game.c:151: count++;
+   01A9 DD 34 FD      [23]  432 	inc	-3 (ix)
+   01AC                     433 00104$:
+                            434 ;src/game.c:153: if (i != 3) {
+   01AC DD 7E 04      [19]  435 	ld	a,4 (ix)
+   01AF D6 03         [ 7]  436 	sub	a, #0x03
+   01B1 28 23         [12]  437 	jr	Z,00106$
+                            438 ;src/game.c:154: adjacents.values[count] = cells [i + 1][j];
+   01B3 DD 7E FD      [19]  439 	ld	a,-3 (ix)
+   01B6 C6r1F         [ 7]  440 	add	a, #<((_adjacents + 0x0001))
+   01B8 5F            [ 4]  441 	ld	e,a
+   01B9 3E 00         [ 7]  442 	ld	a,#0x00
+   01BB CEs00         [ 7]  443 	adc	a, #>((_adjacents + 0x0001))
+   01BD 57            [ 4]  444 	ld	d,a
+   01BE DD 6E 04      [19]  445 	ld	l,4 (ix)
+   01C1 2C            [ 4]  446 	inc	l
+   01C2 26 00         [ 7]  447 	ld	h,#0x00
+   01C4 29            [11]  448 	add	hl, hl
+   01C5 29            [11]  449 	add	hl, hl
+   01C6 3Er0E         [ 7]  450 	ld	a,#<(_cells)
+   01C8 85            [ 4]  451 	add	a, l
+   01C9 6F            [ 4]  452 	ld	l,a
+   01CA 3Es00         [ 7]  453 	ld	a,#>(_cells)
+   01CC 8C            [ 4]  454 	adc	a, h
+   01CD 67            [ 4]  455 	ld	h,a
+   01CE 06 00         [ 7]  456 	ld	b,#0x00
+   01D0 09            [11]  457 	add	hl,bc
+   01D1 7E            [ 7]  458 	ld	a,(hl)
+   01D2 12            [ 7]  459 	ld	(de),a
+                            460 ;src/game.c:155: count++;
+   01D3 DD 34 FD      [23]  461 	inc	-3 (ix)
+   01D6                     462 00106$:
+                            463 ;src/game.c:157: if (j != 0) {
+   01D6 DD 7E 05      [19]  464 	ld	a,5 (ix)
+   01D9 B7            [ 4]  465 	or	a, a
+   01DA 28 21         [12]  466 	jr	Z,00108$
+                            467 ;src/game.c:158: adjacents.values[count] = cells [i][j - 1];
+   01DC DD 7E FD      [19]  468 	ld	a,-3 (ix)
+   01DF C6r1F         [ 7]  469 	add	a, #<((_adjacents + 0x0001))
+   01E1 4F            [ 4]  470 	ld	c,a
+   01E2 3E 00         [ 7]  471 	ld	a,#0x00
+   01E4 CEs00         [ 7]  472 	adc	a, #>((_adjacents + 0x0001))
+   01E6 47            [ 4]  473 	ld	b,a
+   01E7 11r0Er00      [10]  474 	ld	de,#_cells+0
+   01EA DD 6E FE      [19]  475 	ld	l,-2 (ix)
+   01ED DD 66 FF      [19]  476 	ld	h,-1 (ix)
+   01F0 19            [11]  477 	add	hl,de
+   01F1 DD 5E 05      [19]  478 	ld	e,5 (ix)
+   01F4 1D            [ 4]  479 	dec	e
+   01F5 16 00         [ 7]  480 	ld	d,#0x00
+   01F7 19            [11]  481 	add	hl,de
+   01F8 7E            [ 7]  482 	ld	a,(hl)
+   01F9 02            [ 7]  483 	ld	(bc),a
+                            484 ;src/game.c:159: count++;
+   01FA DD 34 FD      [23]  485 	inc	-3 (ix)
+   01FD                     486 00108$:
+                            487 ;src/game.c:162: adjacents.count = count;
+   01FD 21r1Er00      [10]  488 	ld	hl,#_adjacents
+   0200 DD 7E FD      [19]  489 	ld	a,-3 (ix)
+   0203 77            [ 7]  490 	ld	(hl),a
+   0204 DD F9         [10]  491 	ld	sp, ix
+   0206 DD E1         [14]  492 	pop	ix
+   0208 C9            [10]  493 	ret
+                            494 ;src/game.c:173: u8 anyOfThisInAdjacents(u8 value) {
+                            495 ;	---------------------------------
+                            496 ; Function anyOfThisInAdjacents
+                            497 ; ---------------------------------
+   0209                     498 _anyOfThisInAdjacents::
+   0209 DD E5         [15]  499 	push	ix
+   020B DD 21 00 00   [14]  500 	ld	ix,#0
+   020F DD 39         [15]  501 	add	ix,sp
+                            502 ;src/game.c:177: result = 0;
+   0211 0E 00         [ 7]  503 	ld	c,#0x00
+                            504 ;src/game.c:178: for (i = 0; i < adjacents.count; i++) {
+   0213 1E 00         [ 7]  505 	ld	e,#0x00
+   0215                     506 00105$:
+   0215 21r1Er00      [10]  507 	ld	hl, #_adjacents + 0
+   0218 46            [ 7]  508 	ld	b,(hl)
+   0219 7B            [ 4]  509 	ld	a,e
+   021A 90            [ 4]  510 	sub	a, b
+   021B 30 13         [12]  511 	jr	NC,00103$
+                            512 ;src/game.c:179: if (adjacents.values[i] == value) {
+   021D 21r1Fr00      [10]  513 	ld	hl,#(_adjacents + 0x0001)
+   0220 16 00         [ 7]  514 	ld	d,#0x00
+   0222 19            [11]  515 	add	hl, de
+   0223 DD 7E 04      [19]  516 	ld	a,4 (ix)
+   0226 96            [ 7]  517 	sub	a,(hl)
+   0227 20 04         [12]  518 	jr	NZ,00106$
+                            519 ;src/game.c:180: result = 1;
+   0229 0E 01         [ 7]  520 	ld	c,#0x01
+                            521 ;src/game.c:181: break;
+   022B 18 03         [12]  522 	jr	00103$
+   022D                     523 00106$:
+                            524 ;src/game.c:178: for (i = 0; i < adjacents.count; i++) {
+   022D 1C            [ 4]  525 	inc	e
+   022E 18 E5         [12]  526 	jr	00105$
+   0230                     527 00103$:
+                            528 ;src/game.c:184: return result;
+   0230 69            [ 4]  529 	ld	l,c
+   0231 DD E1         [14]  530 	pop	ix
+   0233 C9            [10]  531 	ret
+                            532 ;src/game.c:195: u8 anyMovesLeft() {
+                            533 ;	---------------------------------
+                            534 ; Function anyMovesLeft
+                            535 ; ---------------------------------
+   0234                     536 _anyMovesLeft::
+                            537 ;src/game.c:199: movesLeft = 0;
+   0234 0E 00         [ 7]  538 	ld	c,#0x00
+                            539 ;src/game.c:201: if (countZeroes() == 0) {
+   0236 C5            [11]  540 	push	bc
+   0237 CDrFCr00      [17]  541 	call	_countZeroes
+   023A C1            [10]  542 	pop	bc
+   023B 7D            [ 4]  543 	ld	a,l
+                            544 ;src/game.c:202: for (i = 0; i < 4; i++) {
+   023C B7            [ 4]  545 	or	a,a
+   023D C2rB7r02      [10]  546 	jp	NZ,00113$
+   0240 47            [ 4]  547 	ld	b,a
+                            548 ;src/game.c:203: for (j = 0; j < 4; j++) {
+   0241                     549 00125$:
+   0241 1E 00         [ 7]  550 	ld	e,#0x00
+   0243                     551 00115$:
+                            552 ;src/game.c:204: getAdjacents(i, j);
+   0243 C5            [11]  553 	push	bc
+   0244 D5            [11]  554 	push	de
+   0245 7B            [ 4]  555 	ld	a,e
+   0246 F5            [11]  556 	push	af
+   0247 33            [ 6]  557 	inc	sp
+   0248 C5            [11]  558 	push	bc
+   0249 33            [ 6]  559 	inc	sp
+   024A CDr3Er01      [17]  560 	call	_getAdjacents
+   024D F1            [10]  561 	pop	af
+   024E D1            [10]  562 	pop	de
+   024F C1            [10]  563 	pop	bc
+                            564 ;src/game.c:205: if (((cells[i][j] == 1) && anyOfThisInAdjacents(2)) ||
+   0250 68            [ 4]  565 	ld	l,b
+   0251 26 00         [ 7]  566 	ld	h,#0x00
+   0253 29            [11]  567 	add	hl, hl
+   0254 29            [11]  568 	add	hl, hl
+   0255 3Er0E         [ 7]  569 	ld	a,#<(_cells)
+   0257 85            [ 4]  570 	add	a, l
+   0258 6F            [ 4]  571 	ld	l,a
+   0259 3Es00         [ 7]  572 	ld	a,#>(_cells)
+   025B 8C            [ 4]  573 	adc	a, h
+   025C 67            [ 4]  574 	ld	h,a
+   025D 16 00         [ 7]  575 	ld	d,#0x00
+   025F 19            [11]  576 	add	hl, de
+   0260 56            [ 7]  577 	ld	d,(hl)
+   0261 15            [ 4]  578 	dec	d
+   0262 20 12         [12]  579 	jr	NZ,00105$
+   0264 E5            [11]  580 	push	hl
+   0265 C5            [11]  581 	push	bc
+   0266 D5            [11]  582 	push	de
+   0267 3E 02         [ 7]  583 	ld	a,#0x02
+   0269 F5            [11]  584 	push	af
+   026A 33            [ 6]  585 	inc	sp
+   026B CDr09r02      [17]  586 	call	_anyOfThisInAdjacents
+   026E 33            [ 6]  587 	inc	sp
+   026F 7D            [ 4]  588 	ld	a,l
+   0270 D1            [10]  589 	pop	de
+   0271 C1            [10]  590 	pop	bc
+   0272 E1            [10]  591 	pop	hl
+   0273 B7            [ 4]  592 	or	a, a
+   0274 20 2B         [12]  593 	jr	NZ,00101$
+   0276                     594 00105$:
+                            595 ;src/game.c:206: ((cells[i][j] == 2) && anyOfThisInAdjacents(1)) ||
+   0276 7E            [ 7]  596 	ld	a,(hl)
+   0277 D6 02         [ 7]  597 	sub	a, #0x02
+   0279 20 12         [12]  598 	jr	NZ,00107$
+   027B E5            [11]  599 	push	hl
+   027C C5            [11]  600 	push	bc
+   027D D5            [11]  601 	push	de
+   027E 3E 01         [ 7]  602 	ld	a,#0x01
+   0280 F5            [11]  603 	push	af
+   0281 33            [ 6]  604 	inc	sp
+   0282 CDr09r02      [17]  605 	call	_anyOfThisInAdjacents
+   0285 33            [ 6]  606 	inc	sp
+   0286 7D            [ 4]  607 	ld	a,l
+   0287 D1            [10]  608 	pop	de
+   0288 C1            [10]  609 	pop	bc
+   0289 E1            [10]  610 	pop	hl
+   028A B7            [ 4]  611 	or	a, a
+   028B 20 14         [12]  612 	jr	NZ,00101$
+   028D                     613 00107$:
+                            614 ;src/game.c:207: ((cells[i][j] > 2) && anyOfThisInAdjacents(cells[i][j]))) {
+   028D 56            [ 7]  615 	ld	d,(hl)
+   028E 3E 02         [ 7]  616 	ld	a,#0x02
+   0290 92            [ 4]  617 	sub	a, d
+   0291 30 12         [12]  618 	jr	NC,00116$
+   0293 C5            [11]  619 	push	bc
+   0294 D5            [11]  620 	push	de
+   0295 D5            [11]  621 	push	de
+   0296 33            [ 6]  622 	inc	sp
+   0297 CDr09r02      [17]  623 	call	_anyOfThisInAdjacents
+   029A 33            [ 6]  624 	inc	sp
+   029B D1            [10]  625 	pop	de
+   029C C1            [10]  626 	pop	bc
+   029D 7D            [ 4]  627 	ld	a,l
+   029E B7            [ 4]  628 	or	a, a
+   029F 28 04         [12]  629 	jr	Z,00116$
+   02A1                     630 00101$:
+                            631 ;src/game.c:208: movesLeft = 1;
+   02A1 0E 01         [ 7]  632 	ld	c,#0x01
+                            633 ;src/game.c:209: break;
+   02A3 18 06         [12]  634 	jr	00108$
+   02A5                     635 00116$:
+                            636 ;src/game.c:203: for (j = 0; j < 4; j++) {
+   02A5 1C            [ 4]  637 	inc	e
+   02A6 7B            [ 4]  638 	ld	a,e
+   02A7 D6 04         [ 7]  639 	sub	a, #0x04
+   02A9 38 98         [12]  640 	jr	C,00115$
+   02AB                     641 00108$:
+                            642 ;src/game.c:212: if (movesLeft)
+   02AB 79            [ 4]  643 	ld	a,c
+   02AC B7            [ 4]  644 	or	a, a
+   02AD 20 0A         [12]  645 	jr	NZ,00114$
+                            646 ;src/game.c:202: for (i = 0; i < 4; i++) {
+   02AF 04            [ 4]  647 	inc	b
+   02B0 78            [ 4]  648 	ld	a,b
+   02B1 D6 04         [ 7]  649 	sub	a, #0x04
+   02B3 38 8C         [12]  650 	jr	C,00125$
+   02B5 18 02         [12]  651 	jr	00114$
+   02B7                     652 00113$:
+                            653 ;src/game.c:217: movesLeft = 1;
+   02B7 0E 01         [ 7]  654 	ld	c,#0x01
+   02B9                     655 00114$:
+                            656 ;src/game.c:218: return movesLeft;
+   02B9 69            [ 4]  657 	ld	l,c
+   02BA C9            [10]  658 	ret
+                            659 ;src/game.c:229: void addRandomCellTurn(u8 dir) {
+                            660 ;	---------------------------------
+                            661 ; Function addRandomCellTurn
+                            662 ; ---------------------------------
+   02BB                     663 _addRandomCellTurn::
+   02BB DD E5         [15]  664 	push	ix
+   02BD DD 21 00 00   [14]  665 	ld	ix,#0
+   02C1 DD 39         [15]  666 	add	ix,sp
+   02C3 F5            [11]  667 	push	af
+                            668 ;src/game.c:230: u8 i = 0;
+   02C4 DD 36 FF 00   [19]  669 	ld	-1 (ix),#0x00
+                            670 ;src/game.c:231: u8 j = 0;
+   02C8 0E 00         [ 7]  671 	ld	c,#0x00
+                            672 ;src/game.c:234: switch (dir) {
+   02CA 3E 03         [ 7]  673 	ld	a,#0x03
+   02CC DD 96 04      [19]  674 	sub	a, 4 (ix)
+   02CF 38 25         [12]  675 	jr	C,00105$
+   02D1 DD 5E 04      [19]  676 	ld	e,4 (ix)
+   02D4 16 00         [ 7]  677 	ld	d,#0x00
+   02D6 21rDCr02      [10]  678 	ld	hl,#00146$
+   02D9 19            [11]  679 	add	hl,de
+   02DA 19            [11]  680 	add	hl,de
+                            681 ;src/game.c:235: case LEFT:
+   02DB E9            [ 4]  682 	jp	(hl)
+   02DC                     683 00146$:
+   02DC 18 06         [12]  684 	jr	00101$
+   02DE 18 08         [12]  685 	jr	00102$
+   02E0 18 0A         [12]  686 	jr	00103$
+   02E2 18 0E         [12]  687 	jr	00104$
+   02E4                     688 00101$:
+                            689 ;src/game.c:236: j = 3;
+   02E4 0E 03         [ 7]  690 	ld	c,#0x03
+                            691 ;src/game.c:237: break;
+   02E6 18 0E         [12]  692 	jr	00105$
+                            693 ;src/game.c:238: case RIGHT:
+   02E8                     694 00102$:
+                            695 ;src/game.c:239: j = 0;
+   02E8 0E 00         [ 7]  696 	ld	c,#0x00
+                            697 ;src/game.c:240: break;
+   02EA 18 0A         [12]  698 	jr	00105$
+                            699 ;src/game.c:241: case UP:
+   02EC                     700 00103$:
+                            701 ;src/game.c:242: i = 3;
+   02EC DD 36 FF 03   [19]  702 	ld	-1 (ix),#0x03
+                            703 ;src/game.c:243: break;
+   02F0 18 04         [12]  704 	jr	00105$
+                            705 ;src/game.c:244: case DOWN:
+   02F2                     706 00104$:
+                            707 ;src/game.c:245: i = 0;
+   02F2 DD 36 FF 00   [19]  708 	ld	-1 (ix),#0x00
+                            709 ;src/game.c:247: }
+   02F6                     710 00105$:
+                            711 ;src/game.c:248: if ((dir == LEFT) || (dir == RIGHT))
+   02F6 DD 7E 04      [19]  712 	ld	a,4 (ix)
+   02F9 3D            [ 4]  713 	dec	a
+   02FA 20 04         [12]  714 	jr	NZ,00147$
+   02FC 3E 01         [ 7]  715 	ld	a,#0x01
+   02FE 18 01         [12]  716 	jr	00148$
+   0300                     717 00147$:
+   0300 AF            [ 4]  718 	xor	a,a
+   0301                     719 00148$:
+   0301 47            [ 4]  720 	ld	b,a
+   0302 DD 7E 04      [19]  721 	ld	a,4 (ix)
+   0305 B7            [ 4]  722 	or	a, a
+   0306 28 04         [12]  723 	jr	Z,00106$
+   0308 78            [ 4]  724 	ld	a,b
+   0309 B7            [ 4]  725 	or	a, a
+   030A 28 0F         [12]  726 	jr	Z,00107$
+   030C                     727 00106$:
+                            728 ;src/game.c:249: i = cpct_rand() / 64;
+   030C C5            [11]  729 	push	bc
+   030D CDr00r00      [17]  730 	call	_cpct_getRandom_mxor_u8
+   0310 C1            [10]  731 	pop	bc
+   0311 7D            [ 4]  732 	ld	a,l
+   0312 07            [ 4]  733 	rlca
+   0313 07            [ 4]  734 	rlca
+   0314 E6 03         [ 7]  735 	and	a,#0x03
+   0316 DD 77 FF      [19]  736 	ld	-1 (ix),a
+   0319 18 0B         [12]  737 	jr	00126$
+   031B                     738 00107$:
+                            739 ;src/game.c:251: j = cpct_rand() / 64;
+   031B C5            [11]  740 	push	bc
+   031C CDr00r00      [17]  741 	call	_cpct_getRandom_mxor_u8
+   031F C1            [10]  742 	pop	bc
+   0320 7D            [ 4]  743 	ld	a,l
+   0321 07            [ 4]  744 	rlca
+   0322 07            [ 4]  745 	rlca
+   0323 E6 03         [ 7]  746 	and	a,#0x03
+   0325 4F            [ 4]  747 	ld	c,a
+                            748 ;src/game.c:252: while (cells[i][j] != 0) {
+   0326                     749 00126$:
+   0326 DD 70 FE      [19]  750 	ld	-2 (ix),b
+   0329                     751 00114$:
+   0329 DD 6E FF      [19]  752 	ld	l,-1 (ix)
+   032C 26 00         [ 7]  753 	ld	h,#0x00
+   032E 29            [11]  754 	add	hl, hl
+   032F 29            [11]  755 	add	hl, hl
+   0330 11r0Er00      [10]  756 	ld	de,#_cells
+   0333 19            [11]  757 	add	hl,de
+   0334 7D            [ 4]  758 	ld	a,l
+   0335 81            [ 4]  759 	add	a, c
+   0336 5F            [ 4]  760 	ld	e,a
+   0337 7C            [ 4]  761 	ld	a,h
+   0338 CE 00         [ 7]  762 	adc	a, #0x00
+   033A 57            [ 4]  763 	ld	d,a
+   033B 1A            [ 7]  764 	ld	a,(de)
+   033C B7            [ 4]  765 	or	a, a
+   033D 28 26         [12]  766 	jr	Z,00116$
+                            767 ;src/game.c:253: if ((dir == LEFT) || (dir == RIGHT))
+   033F DD 7E 04      [19]  768 	ld	a,4 (ix)
+   0342 B7            [ 4]  769 	or	a, a
+   0343 28 06         [12]  770 	jr	Z,00110$
+   0345 DD 7E FE      [19]  771 	ld	a,-2 (ix)
+   0348 B7            [ 4]  772 	or	a, a
+   0349 28 0F         [12]  773 	jr	Z,00111$
+   034B                     774 00110$:
+                            775 ;src/game.c:254: i = cpct_rand() / 64;
+   034B C5            [11]  776 	push	bc
+   034C CDr00r00      [17]  777 	call	_cpct_getRandom_mxor_u8
+   034F C1            [10]  778 	pop	bc
+   0350 7D            [ 4]  779 	ld	a,l
+   0351 07            [ 4]  780 	rlca
+   0352 07            [ 4]  781 	rlca
+   0353 E6 03         [ 7]  782 	and	a,#0x03
+   0355 DD 77 FF      [19]  783 	ld	-1 (ix),a
+   0358 18 CF         [12]  784 	jr	00114$
+   035A                     785 00111$:
+                            786 ;src/game.c:256: j = cpct_rand() / 64;
+   035A CDr00r00      [17]  787 	call	_cpct_getRandom_mxor_u8
+   035D 7D            [ 4]  788 	ld	a,l
+   035E 07            [ 4]  789 	rlca
+   035F 07            [ 4]  790 	rlca
+   0360 E6 03         [ 7]  791 	and	a,#0x03
+   0362 4F            [ 4]  792 	ld	c,a
+   0363 18 C4         [12]  793 	jr	00114$
+   0365                     794 00116$:
+                            795 ;src/game.c:260: cells[i][j] = tileBag[currentTile];
+   0365 3ArCFr00      [13]  796 	ld	a,(#_currentTile + 0)
+   0368 C6rC3         [ 7]  797 	add	a, #<(_tileBag)
+   036A 4F            [ 4]  798 	ld	c,a
+   036B 3E 00         [ 7]  799 	ld	a,#0x00
+   036D CEs00         [ 7]  800 	adc	a, #>(_tileBag)
+   036F 47            [ 4]  801 	ld	b,a
+   0370 0A            [ 7]  802 	ld	a,(bc)
+   0371 12            [ 7]  803 	ld	(de),a
+                            804 ;src/game.c:261: if (currentTile<11)
+   0372 3ArCFr00      [13]  805 	ld	a,(#_currentTile + 0)
+   0375 D6 0B         [ 7]  806 	sub	a, #0x0B
+   0377 30 06         [12]  807 	jr	NC,00118$
+                            808 ;src/game.c:262: currentTile++;
+   0379 21rCFr00      [10]  809 	ld	hl, #_currentTile+0
+   037C 34            [11]  810 	inc	(hl)
+   037D 18 03         [12]  811 	jr	00120$
+   037F                     812 00118$:
+                            813 ;src/game.c:264: renewTileBag();
+   037F CDr00r00      [17]  814 	call	_renewTileBag
+   0382                     815 00120$:
+   0382 DD F9         [10]  816 	ld	sp, ix
+   0384 DD E1         [14]  817 	pop	ix
+   0386 C9            [10]  818 	ret
+                            819 ;src/game.c:275: void addRandomCell() {
+                            820 ;	---------------------------------
+                            821 ; Function addRandomCell
+                            822 ; ---------------------------------
+   0387                     823 _addRandomCell::
+                            824 ;src/game.c:278: i = cpct_rand() / 64;
+   0387 CDr00r00      [17]  825 	call	_cpct_getRandom_mxor_u8
+   038A 7D            [ 4]  826 	ld	a,l
+   038B 07            [ 4]  827 	rlca
+   038C 07            [ 4]  828 	rlca
+   038D E6 03         [ 7]  829 	and	a,#0x03
+   038F 4F            [ 4]  830 	ld	c,a
+                            831 ;src/game.c:279: j = cpct_rand() / 64;
+   0390 C5            [11]  832 	push	bc
+   0391 CDr00r00      [17]  833 	call	_cpct_getRandom_mxor_u8
+   0394 C1            [10]  834 	pop	bc
+   0395 7D            [ 4]  835 	ld	a,l
+   0396 07            [ 4]  836 	rlca
+   0397 07            [ 4]  837 	rlca
+   0398 E6 03         [ 7]  838 	and	a,#0x03
+   039A 47            [ 4]  839 	ld	b,a
+                            840 ;src/game.c:280: while (cells[i][j] != 0) {
+   039B                     841 00101$:
+   039B 69            [ 4]  842 	ld	l,c
+   039C 26 00         [ 7]  843 	ld	h,#0x00
+   039E 29            [11]  844 	add	hl, hl
+   039F 29            [11]  845 	add	hl, hl
+   03A0 11r0Er00      [10]  846 	ld	de,#_cells
+   03A3 19            [11]  847 	add	hl,de
+   03A4 7D            [ 4]  848 	ld	a,l
+   03A5 80            [ 4]  849 	add	a, b
+   03A6 4F            [ 4]  850 	ld	c,a
+   03A7 7C            [ 4]  851 	ld	a,h
+   03A8 CE 00         [ 7]  852 	adc	a, #0x00
+   03AA 47            [ 4]  853 	ld	b,a
+   03AB 0A            [ 7]  854 	ld	a,(bc)
+   03AC B7            [ 4]  855 	or	a, a
+   03AD 28 16         [12]  856 	jr	Z,00103$
+                            857 ;src/game.c:281: i = cpct_rand() / 64;
+   03AF CDr00r00      [17]  858 	call	_cpct_getRandom_mxor_u8
+   03B2 7D            [ 4]  859 	ld	a,l
+   03B3 07            [ 4]  860 	rlca
+   03B4 07            [ 4]  861 	rlca
+   03B5 E6 03         [ 7]  862 	and	a,#0x03
+   03B7 4F            [ 4]  863 	ld	c,a
+                            864 ;src/game.c:282: j = cpct_rand() / 64;
+   03B8 C5            [11]  865 	push	bc
+   03B9 CDr00r00      [17]  866 	call	_cpct_getRandom_mxor_u8
+   03BC C1            [10]  867 	pop	bc
+   03BD 7D            [ 4]  868 	ld	a,l
+   03BE 07            [ 4]  869 	rlca
+   03BF 07            [ 4]  870 	rlca
+   03C0 E6 03         [ 7]  871 	and	a,#0x03
+   03C2 47            [ 4]  872 	ld	b,a
+   03C3 18 D6         [12]  873 	jr	00101$
+   03C5                     874 00103$:
+                            875 ;src/game.c:286: cells[i][j] = (cpct_rand() / 85) + 1;
+   03C5 C5            [11]  876 	push	bc
+   03C6 CDr00r00      [17]  877 	call	_cpct_getRandom_mxor_u8
+   03C9 55            [ 4]  878 	ld	d,l
+   03CA 3E 55         [ 7]  879 	ld	a,#0x55
+   03CC F5            [11]  880 	push	af
+   03CD 33            [ 6]  881 	inc	sp
+   03CE D5            [11]  882 	push	de
+   03CF 33            [ 6]  883 	inc	sp
+   03D0 CDr00r00      [17]  884 	call	__divuchar
+   03D3 F1            [10]  885 	pop	af
+   03D4 C1            [10]  886 	pop	bc
+   03D5 7D            [ 4]  887 	ld	a,l
+   03D6 3C            [ 4]  888 	inc	a
+   03D7 02            [ 7]  889 	ld	(bc),a
+   03D8 C9            [10]  890 	ret
+                            891 ;src/game.c:297: void initCells() {
+                            892 ;	---------------------------------
+                            893 ; Function initCells
+                            894 ; ---------------------------------
+   03D9                     895 _initCells::
+                            896 ;src/game.c:300: for (i = 0; i < 4; i++) {
+   03D9 0E 00         [ 7]  897 	ld	c,#0x00
+                            898 ;src/game.c:301: for (j = 0; j < 4; j++) {
+   03DB                     899 00109$:
+   03DB 06 00         [ 7]  900 	ld	b,#0x00
+   03DD                     901 00103$:
+                            902 ;src/game.c:302: cells[i][j] = 0;
+   03DD 69            [ 4]  903 	ld	l,c
+   03DE 26 00         [ 7]  904 	ld	h,#0x00
+   03E0 29            [11]  905 	add	hl, hl
+   03E1 29            [11]  906 	add	hl, hl
+   03E2 11r0Er00      [10]  907 	ld	de,#_cells
+   03E5 19            [11]  908 	add	hl,de
+   03E6 58            [ 4]  909 	ld	e,b
+   03E7 16 00         [ 7]  910 	ld	d,#0x00
+   03E9 19            [11]  911 	add	hl,de
+   03EA 36 00         [10]  912 	ld	(hl),#0x00
+                            913 ;src/game.c:301: for (j = 0; j < 4; j++) {
+   03EC 04            [ 4]  914 	inc	b
+   03ED 78            [ 4]  915 	ld	a,b
+   03EE D6 04         [ 7]  916 	sub	a, #0x04
+   03F0 38 EB         [12]  917 	jr	C,00103$
+                            918 ;src/game.c:300: for (i = 0; i < 4; i++) {
+   03F2 0C            [ 4]  919 	inc	c
+   03F3 79            [ 4]  920 	ld	a,c
+   03F4 D6 04         [ 7]  921 	sub	a, #0x04
+   03F6 38 E3         [12]  922 	jr	C,00109$
+   03F8 C9            [10]  923 	ret
+                            924 ;src/game.c:316: void initialization() {
+                            925 ;	---------------------------------
+                            926 ; Function initialization
+                            927 ; ---------------------------------
+   03F9                     928 _initialization::
+                            929 ;src/game.c:319: drawText("THREES IS READY", 31, 76, 1);
+   03F9 21 4C 01      [10]  930 	ld	hl,#0x014C
+   03FC E5            [11]  931 	push	hl
+   03FD 3E 1F         [ 7]  932 	ld	a,#0x1F
+   03FF F5            [11]  933 	push	af
+   0400 33            [ 6]  934 	inc	sp
+   0401 21r21r05      [10]  935 	ld	hl,#___str_0
+   0404 E5            [11]  936 	push	hl
+   0405 CDr00r00      [17]  937 	call	_drawText
+   0408 F1            [10]  938 	pop	af
+                            939 ;src/game.c:320: drawText("PRESS ANY KEY", 20, 90, 1);
+   0409 33            [ 6]  940 	inc	sp
+   040A 21 5A 01      [10]  941 	ld	hl,#0x015A
+   040D E3            [19]  942 	ex	(sp),hl
+   040E 3E 14         [ 7]  943 	ld	a,#0x14
+   0410 F5            [11]  944 	push	af
+   0411 33            [ 6]  945 	inc	sp
+   0412 21r31r05      [10]  946 	ld	hl,#___str_1
+   0415 E5            [11]  947 	push	hl
+   0416 CDr00r00      [17]  948 	call	_drawText
+   0419 F1            [10]  949 	pop	af
+   041A F1            [10]  950 	pop	af
+   041B 33            [ 6]  951 	inc	sp
+                            952 ;src/game.c:322: seed = wait4UserKeypress();
+   041C CDr00r00      [17]  953 	call	_wait4UserKeypress
+                            954 ;src/game.c:324: if (!seed)
+   041F 7A            [ 4]  955 	ld	a,d
+   0420 B3            [ 4]  956 	or	a, e
+   0421 B4            [ 4]  957 	or	a, h
+   0422 B5            [ 4]  958 	or	a,l
+   0423 20 0A         [12]  959 	jr	NZ,00102$
+                            960 ;src/game.c:325: seed++;
+   0425 2C            [ 4]  961 	inc	l
+   0426 20 07         [12]  962 	jr	NZ,00109$
+   0428 24            [ 4]  963 	inc	h
+   0429 20 04         [12]  964 	jr	NZ,00109$
+   042B 1C            [ 4]  965 	inc	e
+   042C 20 01         [12]  966 	jr	NZ,00109$
+   042E 14            [ 4]  967 	inc	d
+   042F                     968 00109$:
+   042F                     969 00102$:
+                            970 ;src/game.c:326: cpct_srand(seed);
+   042F CDr00r00      [17]  971 	call	_cpct_setSeed_mxor
+   0432 CDr00r00      [17]  972 	call	_cpct_restoreState_mxor_u8
+                            973 ;src/game.c:328: scoreHallOfFame[0] = 6000;
+   0435 21 70 17      [10]  974 	ld	hl,#0x1770
+   0438 22r27r00      [16]  975 	ld	(_scoreHallOfFame), hl
+   043B 21 00 00      [10]  976 	ld	hl,#0x0000
+   043E 22r29r00      [16]  977 	ld	(_scoreHallOfFame+2), hl
+                            978 ;src/game.c:329: scoreHallOfFame[1] = 5000;
+   0441 21 88 13      [10]  979 	ld	hl,#0x1388
+   0444 22r2Br00      [16]  980 	ld	((_scoreHallOfFame + 0x0004)), hl
+   0447 21 00 00      [10]  981 	ld	hl,#0x0000
+   044A 22r2Dr00      [16]  982 	ld	((_scoreHallOfFame + 0x0004)+2), hl
+                            983 ;src/game.c:330: scoreHallOfFame[2] = 4000;
+   044D 21 A0 0F      [10]  984 	ld	hl,#0x0FA0
+   0450 22r2Fr00      [16]  985 	ld	((_scoreHallOfFame + 0x0008)), hl
+   0453 21 00 00      [10]  986 	ld	hl,#0x0000
+   0456 22r31r00      [16]  987 	ld	((_scoreHallOfFame + 0x0008)+2), hl
+                            988 ;src/game.c:331: scoreHallOfFame[3] = 3000;
+   0459 21 B8 0B      [10]  989 	ld	hl,#0x0BB8
+   045C 22r33r00      [16]  990 	ld	((_scoreHallOfFame + 0x000c)), hl
+   045F 21 00 00      [10]  991 	ld	hl,#0x0000
+   0462 22r35r00      [16]  992 	ld	((_scoreHallOfFame + 0x000c)+2), hl
+                            993 ;src/game.c:332: scoreHallOfFame[4] = 1500;
+   0465 21 DC 05      [10]  994 	ld	hl,#0x05DC
+   0468 22r37r00      [16]  995 	ld	((_scoreHallOfFame + 0x0010)), hl
+   046B 21 00 00      [10]  996 	ld	hl,#0x0000
+   046E 22r39r00      [16]  997 	ld	((_scoreHallOfFame + 0x0010)+2), hl
+                            998 ;src/game.c:333: scoreHallOfFame[5] = 1000;
+   0471 21 E8 03      [10]  999 	ld	hl,#0x03E8
+   0474 22r3Br00      [16] 1000 	ld	((_scoreHallOfFame + 0x0014)), hl
+   0477 21 00 00      [10] 1001 	ld	hl,#0x0000
+   047A 22r3Dr00      [16] 1002 	ld	((_scoreHallOfFame + 0x0014)+2), hl
+                           1003 ;src/game.c:334: scoreHallOfFame[6] = 500;
+   047D 21 F4 01      [10] 1004 	ld	hl,#0x01F4
+   0480 22r3Fr00      [16] 1005 	ld	((_scoreHallOfFame + 0x0018)), hl
+   0483 21 00 00      [10] 1006 	ld	hl,#0x0000
+   0486 22r41r00      [16] 1007 	ld	((_scoreHallOfFame + 0x0018)+2), hl
+                           1008 ;src/game.c:335: scoreHallOfFame[7] = 300;
+   0489 21 2C 01      [10] 1009 	ld	hl,#0x012C
+   048C 22r43r00      [16] 1010 	ld	((_scoreHallOfFame + 0x001c)), hl
+   048F 21 00 00      [10] 1011 	ld	hl,#0x0000
+   0492 22r45r00      [16] 1012 	ld	((_scoreHallOfFame + 0x001c)+2), hl
+                           1013 ;src/game.c:337: strcpy(nameHallOfFame[0], "MARTIN");
+   0495 11r47r00      [10] 1014 	ld	de,#_nameHallOfFame
+   0498 21r3Fr05      [10] 1015 	ld	hl,#___str_2
+   049B AF            [ 4] 1016 	xor	a, a
+   049C                    1017 00110$:
+   049C BE            [ 7] 1018 	cp	a, (hl)
+   049D ED A0         [16] 1019 	ldi
+   049F 20 FB         [12] 1020 	jr	NZ, 00110$
+                           1021 ;src/game.c:338: strcpy(nameHallOfFame[1], "DIEGO");
+   04A1 11r56r00      [10] 1022 	ld	de,#(_nameHallOfFame + 0x000f)
+   04A4 21r46r05      [10] 1023 	ld	hl,#___str_3
+   04A7 AF            [ 4] 1024 	xor	a, a
+   04A8                    1025 00111$:
+   04A8 BE            [ 7] 1026 	cp	a, (hl)
+   04A9 ED A0         [16] 1027 	ldi
+   04AB 20 FB         [12] 1028 	jr	NZ, 00111$
+                           1029 ;src/game.c:339: strcpy(nameHallOfFame[2], "MARIA");
+   04AD 11r65r00      [10] 1030 	ld	de,#(_nameHallOfFame + 0x001e)
+   04B0 21r4Cr05      [10] 1031 	ld	hl,#___str_4
+   04B3 AF            [ 4] 1032 	xor	a, a
+   04B4                    1033 00112$:
+   04B4 BE            [ 7] 1034 	cp	a, (hl)
+   04B5 ED A0         [16] 1035 	ldi
+   04B7 20 FB         [12] 1036 	jr	NZ, 00112$
+                           1037 ;src/game.c:340: strcpy(nameHallOfFame[3], "DAVID");
+   04B9 11r74r00      [10] 1038 	ld	de,#(_nameHallOfFame + 0x002d)
+   04BC 21r52r05      [10] 1039 	ld	hl,#___str_5
+   04BF AF            [ 4] 1040 	xor	a, a
+   04C0                    1041 00113$:
+   04C0 BE            [ 7] 1042 	cp	a, (hl)
+   04C1 ED A0         [16] 1043 	ldi
+   04C3 20 FB         [12] 1044 	jr	NZ, 00113$
+                           1045 ;src/game.c:341: strcpy(nameHallOfFame[4], "MASTER");
+   04C5 11r83r00      [10] 1046 	ld	de,#(_nameHallOfFame + 0x003c)
+   04C8 21r58r05      [10] 1047 	ld	hl,#___str_6
+   04CB AF            [ 4] 1048 	xor	a, a
+   04CC                    1049 00114$:
+   04CC BE            [ 7] 1050 	cp	a, (hl)
+   04CD ED A0         [16] 1051 	ldi
+   04CF 20 FB         [12] 1052 	jr	NZ, 00114$
+                           1053 ;src/game.c:342: strcpy(nameHallOfFame[5], "EXPERT");
+   04D1 11r92r00      [10] 1054 	ld	de,#(_nameHallOfFame + 0x004b)
+   04D4 21r5Fr05      [10] 1055 	ld	hl,#___str_7
+   04D7 AF            [ 4] 1056 	xor	a, a
+   04D8                    1057 00115$:
+   04D8 BE            [ 7] 1058 	cp	a, (hl)
+   04D9 ED A0         [16] 1059 	ldi
+   04DB 20 FB         [12] 1060 	jr	NZ, 00115$
+                           1061 ;src/game.c:343: strcpy(nameHallOfFame[6], "INTERMEDIATE");
+   04DD 11rA1r00      [10] 1062 	ld	de,#(_nameHallOfFame + 0x005a)
+   04E0 21r66r05      [10] 1063 	ld	hl,#___str_8
+   04E3 AF            [ 4] 1064 	xor	a, a
+   04E4                    1065 00116$:
+   04E4 BE            [ 7] 1066 	cp	a, (hl)
+   04E5 ED A0         [16] 1067 	ldi
+   04E7 20 FB         [12] 1068 	jr	NZ, 00116$
+                           1069 ;src/game.c:344: strcpy(nameHallOfFame[7], "BEGINNER");
+   04E9 11rB0r00      [10] 1070 	ld	de,#(_nameHallOfFame + 0x0069)
+   04EC 21r73r05      [10] 1071 	ld	hl,#___str_9
+   04EF AF            [ 4] 1072 	xor	a, a
+   04F0                    1073 00117$:
+   04F0 BE            [ 7] 1074 	cp	a, (hl)
+   04F1 ED A0         [16] 1075 	ldi
+   04F3 20 FB         [12] 1076 	jr	NZ, 00117$
+                           1077 ;src/game.c:347: clearScreen();
+   04F5 CDr00r00      [17] 1078 	call	_clearScreen
+                           1079 ;src/game.c:349: keys.up    = Key_Q;
+   04F8 21 08 08      [10] 1080 	ld	hl,#0x0808
+   04FB 22r00r00      [16] 1081 	ld	(_keys), hl
+                           1082 ;src/game.c:350: keys.down  = Key_A;
+   04FE 26 20         [ 7] 1083 	ld	h, #0x20
+   0500 22r02r00      [16] 1084 	ld	((_keys + 0x0002)), hl
+                           1085 ;src/game.c:351: keys.left  = Key_O;
+   0503 21 04 04      [10] 1086 	ld	hl,#0x0404
+   0506 22r04r00      [16] 1087 	ld	((_keys + 0x0004)), hl
+                           1088 ;src/game.c:352: keys.right = Key_P;
+   0509 21 03 08      [10] 1089 	ld	hl,#0x0803
+   050C 22r06r00      [16] 1090 	ld	((_keys + 0x0006)), hl
+                           1091 ;src/game.c:354: keys.pause = Key_Del;
+   050F 21 09 80      [10] 1092 	ld	hl,#0x8009
+   0512 22r0Ar00      [16] 1093 	ld	((_keys + 0x000a)), hl
+                           1094 ;src/game.c:355: keys.abort = Key_Esc;
+   0515 21 08 04      [10] 1095 	ld	hl,#0x0408
+   0518 22r0Cr00      [16] 1096 	ld	((_keys + 0x000c)), hl
+                           1097 ;src/game.c:357: selectedOption = 1;
+   051B 21rC0r00      [10] 1098 	ld	hl,#_selectedOption + 0
+   051E 36 01         [10] 1099 	ld	(hl), #0x01
+   0520 C9            [10] 1100 	ret
+   0521                    1101 ___str_0:
+   0521 54 48 52 45 45 53  1102 	.ascii "THREES IS READY"
+        20 49 53 20 52 45
+        41 44 59
+   0530 00                 1103 	.db 0x00
+   0531                    1104 ___str_1:
+   0531 50 52 45 53 53 20  1105 	.ascii "PRESS ANY KEY"
+        41 4E 59 20 4B 45
+        59
+   053E 00                 1106 	.db 0x00
+   053F                    1107 ___str_2:
+   053F 4D 41 52 54 49 4E  1108 	.ascii "MARTIN"
+   0545 00                 1109 	.db 0x00
+   0546                    1110 ___str_3:
+   0546 44 49 45 47 4F     1111 	.ascii "DIEGO"
+   054B 00                 1112 	.db 0x00
+   054C                    1113 ___str_4:
+   054C 4D 41 52 49 41     1114 	.ascii "MARIA"
+   0551 00                 1115 	.db 0x00
+   0552                    1116 ___str_5:
+   0552 44 41 56 49 44     1117 	.ascii "DAVID"
+   0557 00                 1118 	.db 0x00
+   0558                    1119 ___str_6:
+   0558 4D 41 53 54 45 52  1120 	.ascii "MASTER"
+   055E 00                 1121 	.db 0x00
+   055F                    1122 ___str_7:
+   055F 45 58 50 45 52 54  1123 	.ascii "EXPERT"
+   0565 00                 1124 	.db 0x00
+   0566                    1125 ___str_8:
+   0566 49 4E 54 45 52 4D  1126 	.ascii "INTERMEDIATE"
+        45 44 49 41 54 45
+   0572 00                 1127 	.db 0x00
+   0573                    1128 ___str_9:
+   0573 42 45 47 49 4E 4E  1129 	.ascii "BEGINNER"
+        45 52
+   057B 00                 1130 	.db 0x00
+                           1131 ;src/game.c:369: void initGame() {
+                           1132 ;	---------------------------------
+                           1133 ; Function initGame
+                           1134 ; ---------------------------------
+   057C                    1135 _initGame::
+                           1136 ;src/game.c:372: initCells();
+   057C CDrD9r03      [17] 1137 	call	_initCells
+                           1138 ;src/game.c:374: for (i = 0; i < 9; i++) {
+   057F 0E 09         [ 7] 1139 	ld	c,#0x09
+   0581                    1140 00104$:
+                           1141 ;src/game.c:375: addRandomCell();
+   0581 C5            [11] 1142 	push	bc
+   0582 CDr87r03      [17] 1143 	call	_addRandomCell
+   0585 C1            [10] 1144 	pop	bc
+   0586 41            [ 4] 1145 	ld	b,c
+   0587 05            [ 4] 1146 	dec	b
+                           1147 ;src/game.c:374: for (i = 0; i < 9; i++) {
+   0588 78            [ 4] 1148 	ld	a,b
+   0589 4F            [ 4] 1149 	ld	c,a
+   058A B7            [ 4] 1150 	or	a, a
+   058B 20 F4         [12] 1151 	jr	NZ,00104$
+                           1152 ;src/game.c:378: score = 0;
+   058D AF            [ 4] 1153 	xor	a, a
+   058E 32r23r00      [13] 1154 	ld	(#_score + 0),a
+   0591 32r24r00      [13] 1155 	ld	(#_score + 1),a
+   0594 32r25r00      [13] 1156 	ld	(#_score + 2),a
+   0597 32r26r00      [13] 1157 	ld	(#_score + 3),a
+                           1158 ;src/game.c:381: renewTileBag();
+   059A C3r00r00      [10] 1159 	jp  _renewTileBag
+                           1160 ;src/game.c:394: u8 rotateCellsLeft() {
+                           1161 ;	---------------------------------
+                           1162 ; Function rotateCellsLeft
+                           1163 ; ---------------------------------
+   059D                    1164 _rotateCellsLeft::
+   059D DD E5         [15] 1165 	push	ix
+   059F DD 21 00 00   [14] 1166 	ld	ix,#0
+   05A3 DD 39         [15] 1167 	add	ix,sp
+   05A5 F5            [11] 1168 	push	af
+   05A6 F5            [11] 1169 	push	af
+   05A7 3B            [ 6] 1170 	dec	sp
+                           1171 ;src/game.c:398: matched = 0;
+   05A8 0E 00         [ 7] 1172 	ld	c,#0x00
+                           1173 ;src/game.c:399: for (i = 0; i < 4; i++) {
+   05AA DD 36 FB 00   [19] 1174 	ld	-5 (ix),#0x00
+                           1175 ;src/game.c:400: for (j = 1; j < 4; j++) {
+   05AE                    1176 00129$:
+   05AE 1E 01         [ 7] 1177 	ld	e,#0x01
+   05B0                    1178 00117$:
+                           1179 ;src/game.c:401: if (cells[i][j] != 0) {
+   05B0 DD 6E FB      [19] 1180 	ld	l,-5 (ix)
+   05B3 26 00         [ 7] 1181 	ld	h,#0x00
+   05B5 29            [11] 1182 	add	hl, hl
+   05B6 29            [11] 1183 	add	hl, hl
+   05B7 3Er0E         [ 7] 1184 	ld	a,#<(_cells)
+   05B9 85            [ 4] 1185 	add	a, l
+   05BA DD 77 FE      [19] 1186 	ld	-2 (ix),a
+   05BD 3Es00         [ 7] 1187 	ld	a,#>(_cells)
+   05BF 8C            [ 4] 1188 	adc	a, h
+   05C0 DD 77 FF      [19] 1189 	ld	-1 (ix),a
+   05C3 DD 7E FE      [19] 1190 	ld	a,-2 (ix)
+   05C6 83            [ 4] 1191 	add	a, e
+   05C7 DD 77 FC      [19] 1192 	ld	-4 (ix),a
+   05CA DD 7E FF      [19] 1193 	ld	a,-1 (ix)
+   05CD CE 00         [ 7] 1194 	adc	a, #0x00
+   05CF DD 77 FD      [19] 1195 	ld	-3 (ix),a
+   05D2 DD 6E FC      [19] 1196 	ld	l,-4 (ix)
+   05D5 DD 66 FD      [19] 1197 	ld	h,-3 (ix)
+   05D8 46            [ 7] 1198 	ld	b,(hl)
+   05D9 78            [ 4] 1199 	ld	a,b
+   05DA B7            [ 4] 1200 	or	a, a
+   05DB 28 63         [12] 1201 	jr	Z,00118$
+                           1202 ;src/game.c:403: if (cells[i][j - 1] == 0) {
+   05DD 53            [ 4] 1203 	ld	d,e
+   05DE 15            [ 4] 1204 	dec	d
+   05DF E5            [11] 1205 	push	hl
+   05E0 DD 6E FE      [19] 1206 	ld	l,-2 (ix)
+   05E3 DD 66 FF      [19] 1207 	ld	h,-1 (ix)
+   05E6 E5            [11] 1208 	push	hl
+   05E7 FD E1         [14] 1209 	pop	iy
+   05E9 E1            [10] 1210 	pop	hl
+   05EA C5            [11] 1211 	push	bc
+   05EB 4A            [ 4] 1212 	ld	c,d
+   05EC 06 00         [ 7] 1213 	ld	b,#0x00
+   05EE FD 09         [15] 1214 	add	iy, bc
+   05F0 C1            [10] 1215 	pop	bc
+   05F1 FD 56 00      [19] 1216 	ld	d, 0 (iy)
+   05F4 7A            [ 4] 1217 	ld	a,d
+   05F5 B7            [ 4] 1218 	or	a, a
+   05F6 20 0F         [12] 1219 	jr	NZ,00111$
+                           1220 ;src/game.c:404: cells[i][j - 1] = cells[i][j];
+   05F8 FD 70 00      [19] 1221 	ld	0 (iy), b
+                           1222 ;src/game.c:405: cells[i][j] = 0;
+   05FB DD 6E FC      [19] 1223 	ld	l,-4 (ix)
+   05FE DD 66 FD      [19] 1224 	ld	h,-3 (ix)
+   0601 36 00         [10] 1225 	ld	(hl),#0x00
+                           1226 ;src/game.c:406: matched = 1;
+   0603 0E 01         [ 7] 1227 	ld	c,#0x01
+   0605 18 39         [12] 1228 	jr	00118$
+   0607                    1229 00111$:
+                           1230 ;src/game.c:407: } else if (((cells[i][j - 1] == 1) && (cells[i][j] == 2)) ||
+   0607 7A            [ 4] 1231 	ld	a,d
+   0608 3D            [ 4] 1232 	dec	a
+   0609 20 05         [12] 1233 	jr	NZ,00109$
+   060B 78            [ 4] 1234 	ld	a,b
+   060C D6 02         [ 7] 1235 	sub	a, #0x02
+   060E 28 09         [12] 1236 	jr	Z,00104$
+   0610                    1237 00109$:
+                           1238 ;src/game.c:408: ((cells[i][j - 1] == 2) && (cells[i][j] == 1))) {
+   0610 7A            [ 4] 1239 	ld	a,d
+   0611 D6 02         [ 7] 1240 	sub	a, #0x02
+   0613 20 14         [12] 1241 	jr	NZ,00105$
+   0615 78            [ 4] 1242 	ld	a,b
+   0616 3D            [ 4] 1243 	dec	a
+   0617 20 10         [12] 1244 	jr	NZ,00105$
+   0619                    1245 00104$:
+                           1246 ;src/game.c:409: cells[i][j - 1] = 3;
+   0619 FD 36 00 03   [19] 1247 	ld	0 (iy), #0x03
+                           1248 ;src/game.c:410: cells[i][j] = 0;
+   061D DD 6E FC      [19] 1249 	ld	l,-4 (ix)
+   0620 DD 66 FD      [19] 1250 	ld	h,-3 (ix)
+   0623 36 00         [10] 1251 	ld	(hl),#0x00
+                           1252 ;src/game.c:411: matched = 1;
+   0625 0E 01         [ 7] 1253 	ld	c,#0x01
+   0627 18 17         [12] 1254 	jr	00118$
+   0629                    1255 00105$:
+                           1256 ;src/game.c:412: } else if ((cells[i][j - 1] == cells[i][j]) && (cells[i][j] > 2)) {
+   0629 78            [ 4] 1257 	ld	a,b
+   062A 92            [ 4] 1258 	sub	a, d
+   062B 20 13         [12] 1259 	jr	NZ,00118$
+   062D 3E 02         [ 7] 1260 	ld	a,#0x02
+   062F 90            [ 4] 1261 	sub	a, b
+   0630 30 0E         [12] 1262 	jr	NC,00118$
+                           1263 ;src/game.c:413: cells[i][j - 1]++;
+   0632 14            [ 4] 1264 	inc	d
+   0633 FD 72 00      [19] 1265 	ld	0 (iy), d
+                           1266 ;src/game.c:414: cells[i][j] = 0;
+   0636 DD 6E FC      [19] 1267 	ld	l,-4 (ix)
+   0639 DD 66 FD      [19] 1268 	ld	h,-3 (ix)
+   063C 36 00         [10] 1269 	ld	(hl),#0x00
+                           1270 ;src/game.c:415: matched = 1;
+   063E 0E 01         [ 7] 1271 	ld	c,#0x01
+   0640                    1272 00118$:
+                           1273 ;src/game.c:400: for (j = 1; j < 4; j++) {
+   0640 1C            [ 4] 1274 	inc	e
+   0641 7B            [ 4] 1275 	ld	a,e
+   0642 D6 04         [ 7] 1276 	sub	a, #0x04
+   0644 DArB0r05      [10] 1277 	jp	C,00117$
+                           1278 ;src/game.c:399: for (i = 0; i < 4; i++) {
+   0647 DD 34 FB      [23] 1279 	inc	-5 (ix)
+   064A DD 7E FB      [19] 1280 	ld	a,-5 (ix)
+   064D D6 04         [ 7] 1281 	sub	a, #0x04
+   064F DArAEr05      [10] 1282 	jp	C,00129$
+                           1283 ;src/game.c:420: return matched;
+   0652 69            [ 4] 1284 	ld	l,c
+   0653 DD F9         [10] 1285 	ld	sp, ix
+   0655 DD E1         [14] 1286 	pop	ix
+   0657 C9            [10] 1287 	ret
+                           1288 ;src/game.c:431: u8 rotateCellsRight() {
+                           1289 ;	---------------------------------
+                           1290 ; Function rotateCellsRight
+                           1291 ; ---------------------------------
+   0658                    1292 _rotateCellsRight::
+   0658 DD E5         [15] 1293 	push	ix
+   065A DD 21 00 00   [14] 1294 	ld	ix,#0
+   065E DD 39         [15] 1295 	add	ix,sp
+   0660 F5            [11] 1296 	push	af
+   0661 F5            [11] 1297 	push	af
+   0662 3B            [ 6] 1298 	dec	sp
+                           1299 ;src/game.c:435: matched = 0;
+   0663 0E 00         [ 7] 1300 	ld	c,#0x00
+                           1301 ;src/game.c:436: for (i = 0; i < 4; i++) {
+   0665 DD 36 FB 00   [19] 1302 	ld	-5 (ix),#0x00
+                           1303 ;src/game.c:438: do {
+   0669                    1304 00128$:
+   0669 1E 03         [ 7] 1305 	ld	e,#0x03
+   066B                    1306 00114$:
+                           1307 ;src/game.c:439: j--;
+   066B 1D            [ 4] 1308 	dec	e
+                           1309 ;src/game.c:440: if (cells[i][j] != 0) {
+   066C DD 6E FB      [19] 1310 	ld	l,-5 (ix)
+   066F 26 00         [ 7] 1311 	ld	h,#0x00
+   0671 29            [11] 1312 	add	hl, hl
+   0672 29            [11] 1313 	add	hl, hl
+   0673 3Er0E         [ 7] 1314 	ld	a,#<(_cells)
+   0675 85            [ 4] 1315 	add	a, l
+   0676 DD 77 FC      [19] 1316 	ld	-4 (ix),a
+   0679 3Es00         [ 7] 1317 	ld	a,#>(_cells)
+   067B 8C            [ 4] 1318 	adc	a, h
+   067C DD 77 FD      [19] 1319 	ld	-3 (ix),a
+   067F DD 7E FC      [19] 1320 	ld	a,-4 (ix)
+   0682 83            [ 4] 1321 	add	a, e
+   0683 DD 77 FE      [19] 1322 	ld	-2 (ix),a
+   0686 DD 7E FD      [19] 1323 	ld	a,-3 (ix)
+   0689 CE 00         [ 7] 1324 	adc	a, #0x00
+   068B DD 77 FF      [19] 1325 	ld	-1 (ix),a
+   068E DD 6E FE      [19] 1326 	ld	l,-2 (ix)
+   0691 DD 66 FF      [19] 1327 	ld	h,-1 (ix)
+   0694 46            [ 7] 1328 	ld	b,(hl)
+   0695 78            [ 4] 1329 	ld	a,b
+   0696 B7            [ 4] 1330 	or	a, a
+   0697 28 6A         [12] 1331 	jr	Z,00115$
+                           1332 ;src/game.c:442: if (cells[i][j + 1] == 0) {
+   0699 53            [ 4] 1333 	ld	d,e
+   069A 14            [ 4] 1334 	inc	d
+   069B E5            [11] 1335 	push	hl
+   069C DD 6E FC      [19] 1336 	ld	l,-4 (ix)
+   069F DD 66 FD      [19] 1337 	ld	h,-3 (ix)
+   06A2 E5            [11] 1338 	push	hl
+   06A3 FD E1         [14] 1339 	pop	iy
+   06A5 E1            [10] 1340 	pop	hl
+   06A6 C5            [11] 1341 	push	bc
+   06A7 4A            [ 4] 1342 	ld	c,d
+   06A8 06 00         [ 7] 1343 	ld	b,#0x00
+   06AA FD 09         [15] 1344 	add	iy, bc
+   06AC C1            [10] 1345 	pop	bc
+   06AD FD 7E 00      [19] 1346 	ld	a, 0 (iy)
+   06B0 B7            [ 4] 1347 	or	a, a
+   06B1 20 0D         [12] 1348 	jr	NZ,00102$
+                           1349 ;src/game.c:443: cells[i][j + 1] = cells[i][j];
+   06B3 FD 70 00      [19] 1350 	ld	0 (iy), b
+                           1351 ;src/game.c:444: cells[i][j] = 0;
+   06B6 DD 6E FE      [19] 1352 	ld	l,-2 (ix)
+   06B9 DD 66 FF      [19] 1353 	ld	h,-1 (ix)
+   06BC 36 00         [10] 1354 	ld	(hl),#0x00
+                           1355 ;src/game.c:445: matched = 1;
+   06BE 0E 01         [ 7] 1356 	ld	c,#0x01
+   06C0                    1357 00102$:
+                           1358 ;src/game.c:446: } if (((cells[i][j + 1] == 1) && (cells[i][j] == 2)) ||
+   06C0 FD 46 00      [19] 1359 	ld	b, 0 (iy)
+   06C3 DD 6E FE      [19] 1360 	ld	l,-2 (ix)
+   06C6 DD 66 FF      [19] 1361 	ld	h,-1 (ix)
+   06C9 56            [ 7] 1362 	ld	d,(hl)
+   06CA 78            [ 4] 1363 	ld	a,b
+   06CB 3D            [ 4] 1364 	dec	a
+   06CC 20 05         [12] 1365 	jr	NZ,00111$
+   06CE 7A            [ 4] 1366 	ld	a,d
+   06CF D6 02         [ 7] 1367 	sub	a, #0x02
+   06D1 28 09         [12] 1368 	jr	Z,00106$
+   06D3                    1369 00111$:
+                           1370 ;src/game.c:447: ((cells[i][j + 1] == 2) && (cells[i][j] == 1))) {
+   06D3 78            [ 4] 1371 	ld	a,b
+   06D4 D6 02         [ 7] 1372 	sub	a, #0x02
+   06D6 20 14         [12] 1373 	jr	NZ,00107$
+   06D8 7A            [ 4] 1374 	ld	a,d
+   06D9 3D            [ 4] 1375 	dec	a
+   06DA 20 10         [12] 1376 	jr	NZ,00107$
+   06DC                    1377 00106$:
+                           1378 ;src/game.c:448: cells[i][j + 1] = 3;
+   06DC FD 36 00 03   [19] 1379 	ld	0 (iy), #0x03
+                           1380 ;src/game.c:449: cells[i][j] = 0;
+   06E0 DD 6E FE      [19] 1381 	ld	l,-2 (ix)
+   06E3 DD 66 FF      [19] 1382 	ld	h,-1 (ix)
+   06E6 36 00         [10] 1383 	ld	(hl),#0x00
+                           1384 ;src/game.c:450: matched = 1;
+   06E8 0E 01         [ 7] 1385 	ld	c,#0x01
+   06EA 18 17         [12] 1386 	jr	00115$
+   06EC                    1387 00107$:
+                           1388 ;src/game.c:451: } else if ((cells[i][j + 1] == cells[i][j]) && (cells[i][j] > 2)) {
+   06EC 78            [ 4] 1389 	ld	a,b
+   06ED 92            [ 4] 1390 	sub	a, d
+   06EE 20 13         [12] 1391 	jr	NZ,00115$
+   06F0 3E 02         [ 7] 1392 	ld	a,#0x02
+   06F2 92            [ 4] 1393 	sub	a, d
+   06F3 30 0E         [12] 1394 	jr	NC,00115$
+                           1395 ;src/game.c:452: cells[i][j + 1]++;
+   06F5 04            [ 4] 1396 	inc	b
+   06F6 FD 70 00      [19] 1397 	ld	0 (iy), b
+                           1398 ;src/game.c:453: cells[i][j] = 0;
+   06F9 DD 6E FE      [19] 1399 	ld	l,-2 (ix)
+   06FC DD 66 FF      [19] 1400 	ld	h,-1 (ix)
+   06FF 36 00         [10] 1401 	ld	(hl),#0x00
+                           1402 ;src/game.c:454: matched = 1;
+   0701 0E 01         [ 7] 1403 	ld	c,#0x01
+   0703                    1404 00115$:
+                           1405 ;src/game.c:457: } while (j > 0);
+   0703 7B            [ 4] 1406 	ld	a,e
+   0704 B7            [ 4] 1407 	or	a, a
+   0705 C2r6Br06      [10] 1408 	jp	NZ,00114$
+                           1409 ;src/game.c:436: for (i = 0; i < 4; i++) {
+   0708 DD 34 FB      [23] 1410 	inc	-5 (ix)
+   070B DD 7E FB      [19] 1411 	ld	a,-5 (ix)
+   070E D6 04         [ 7] 1412 	sub	a, #0x04
+   0710 DAr69r06      [10] 1413 	jp	C,00128$
+                           1414 ;src/game.c:459: return matched;
+   0713 69            [ 4] 1415 	ld	l,c
+   0714 DD F9         [10] 1416 	ld	sp, ix
+   0716 DD E1         [14] 1417 	pop	ix
+   0718 C9            [10] 1418 	ret
+                           1419 ;src/game.c:470: u8 rotateCellsUp() {
+                           1420 ;	---------------------------------
+                           1421 ; Function rotateCellsUp
+                           1422 ; ---------------------------------
+   0719                    1423 _rotateCellsUp::
+   0719 DD E5         [15] 1424 	push	ix
+   071B DD 21 00 00   [14] 1425 	ld	ix,#0
+   071F DD 39         [15] 1426 	add	ix,sp
+   0721 F5            [11] 1427 	push	af
+   0722 F5            [11] 1428 	push	af
+                           1429 ;src/game.c:474: matched = 0;
+                           1430 ;src/game.c:475: for (i = 1; i < 4; i++) {
+   0723 01 00 01      [10] 1431 	ld	bc,#0x0100
+                           1432 ;src/game.c:476: for (j = 0; j < 4; j++) {
+   0726                    1433 00129$:
+   0726 78            [ 4] 1434 	ld	a,b
+   0727 C6 FF         [ 7] 1435 	add	a,#0xFF
+   0729 DD 77 FE      [19] 1436 	ld	-2 (ix),a
+   072C 1E 00         [ 7] 1437 	ld	e,#0x00
+   072E                    1438 00117$:
+                           1439 ;src/game.c:477: if (cells[i][j] != 0) {
+   072E 68            [ 4] 1440 	ld	l,b
+   072F 26 00         [ 7] 1441 	ld	h,#0x00
+   0731 29            [11] 1442 	add	hl, hl
+   0732 29            [11] 1443 	add	hl, hl
+   0733 3Er0E         [ 7] 1444 	ld	a,#<(_cells)
+   0735 85            [ 4] 1445 	add	a, l
+   0736 57            [ 4] 1446 	ld	d,a
+   0737 3Es00         [ 7] 1447 	ld	a,#>(_cells)
+   0739 8C            [ 4] 1448 	adc	a, h
+   073A 6F            [ 4] 1449 	ld	l,a
+   073B 7A            [ 4] 1450 	ld	a,d
+   073C 83            [ 4] 1451 	add	a, e
+   073D DD 77 FC      [19] 1452 	ld	-4 (ix),a
+   0740 7D            [ 4] 1453 	ld	a,l
+   0741 CE 00         [ 7] 1454 	adc	a, #0x00
+   0743 DD 77 FD      [19] 1455 	ld	-3 (ix),a
+                           1456 ;src/game.c:484: ((cells[i - 1][j] == 2) && (cells[i][j] == 1))) {
+   0746 E1            [10] 1457 	pop	hl
+   0747 E5            [11] 1458 	push	hl
+   0748 56            [ 7] 1459 	ld	d,(hl)
+                           1460 ;src/game.c:477: if (cells[i][j] != 0) {
+   0749 7A            [ 4] 1461 	ld	a,d
+   074A B7            [ 4] 1462 	or	a, a
+   074B 28 65         [12] 1463 	jr	Z,00118$
+                           1464 ;src/game.c:479: if (cells[i - 1][j] == 0) {
+   074D DD 6E FE      [19] 1465 	ld	l,-2 (ix)
+   0750 26 00         [ 7] 1466 	ld	h,#0x00
+   0752 29            [11] 1467 	add	hl, hl
+   0753 29            [11] 1468 	add	hl, hl
+   0754 FD 21r0Er00   [14] 1469 	ld	iy,#_cells
+   0758 C5            [11] 1470 	push	bc
+   0759 4D            [ 4] 1471 	ld	c, l
+   075A 44            [ 4] 1472 	ld	b, h
+   075B FD 09         [15] 1473 	add	iy, bc
+   075D C1            [10] 1474 	pop	bc
+   075E D5            [11] 1475 	push	de
+   075F 16 00         [ 7] 1476 	ld	d,#0x00
+   0761 FD 19         [15] 1477 	add	iy, de
+   0763 D1            [10] 1478 	pop	de
+   0764 FD 7E 00      [19] 1479 	ld	a, 0 (iy)
+   0767 DD 77 FF      [19] 1480 	ld	-1 (ix), a
+   076A B7            [ 4] 1481 	or	a, a
+   076B 20 0B         [12] 1482 	jr	NZ,00111$
+                           1483 ;src/game.c:480: cells[i - 1][j] = cells[i][j];
+   076D FD 72 00      [19] 1484 	ld	0 (iy), d
+                           1485 ;src/game.c:481: cells[i][j] = 0;
+   0770 E1            [10] 1486 	pop	hl
+   0771 E5            [11] 1487 	push	hl
+   0772 36 00         [10] 1488 	ld	(hl),#0x00
+                           1489 ;src/game.c:482: matched = 1;
+   0774 0E 01         [ 7] 1490 	ld	c,#0x01
+   0776 18 3A         [12] 1491 	jr	00118$
+   0778                    1492 00111$:
+                           1493 ;src/game.c:483: } else if (((cells[i - 1][j] == 1) && (cells[i][j] == 2)) ||
+   0778 DD 7E FF      [19] 1494 	ld	a,-1 (ix)
+   077B 3D            [ 4] 1495 	dec	a
+   077C 20 05         [12] 1496 	jr	NZ,00109$
+   077E 7A            [ 4] 1497 	ld	a,d
+   077F D6 02         [ 7] 1498 	sub	a, #0x02
+   0781 28 0B         [12] 1499 	jr	Z,00104$
+   0783                    1500 00109$:
+                           1501 ;src/game.c:484: ((cells[i - 1][j] == 2) && (cells[i][j] == 1))) {
+   0783 DD 7E FF      [19] 1502 	ld	a,-1 (ix)
+   0786 D6 02         [ 7] 1503 	sub	a, #0x02
+   0788 20 10         [12] 1504 	jr	NZ,00105$
+   078A 7A            [ 4] 1505 	ld	a,d
+   078B 3D            [ 4] 1506 	dec	a
+   078C 20 0C         [12] 1507 	jr	NZ,00105$
+   078E                    1508 00104$:
+                           1509 ;src/game.c:485: cells[i - 1][j] = 3;
+   078E FD 36 00 03   [19] 1510 	ld	0 (iy), #0x03
+                           1511 ;src/game.c:486: cells[i][j] = 0;
+   0792 E1            [10] 1512 	pop	hl
+   0793 E5            [11] 1513 	push	hl
+   0794 36 00         [10] 1514 	ld	(hl),#0x00
+                           1515 ;src/game.c:487: matched = 1;
+   0796 0E 01         [ 7] 1516 	ld	c,#0x01
+   0798 18 18         [12] 1517 	jr	00118$
+   079A                    1518 00105$:
+                           1519 ;src/game.c:488: } else if ((cells[i - 1][j] == cells[i][j]) && (cells[i][j] > 2)) {
+   079A 7A            [ 4] 1520 	ld	a,d
+   079B DD 96 FF      [19] 1521 	sub	a, -1 (ix)
+   079E 20 12         [12] 1522 	jr	NZ,00118$
+   07A0 3E 02         [ 7] 1523 	ld	a,#0x02
+   07A2 92            [ 4] 1524 	sub	a, d
+   07A3 30 0D         [12] 1525 	jr	NC,00118$
+                           1526 ;src/game.c:489: cells[i - 1][j]++;
+   07A5 DD 4E FF      [19] 1527 	ld	c,-1 (ix)
+   07A8 0C            [ 4] 1528 	inc	c
+   07A9 FD 71 00      [19] 1529 	ld	0 (iy), c
+                           1530 ;src/game.c:490: cells[i][j] = 0;
+   07AC E1            [10] 1531 	pop	hl
+   07AD E5            [11] 1532 	push	hl
+   07AE 36 00         [10] 1533 	ld	(hl),#0x00
+                           1534 ;src/game.c:491: matched = 1;
+   07B0 0E 01         [ 7] 1535 	ld	c,#0x01
+   07B2                    1536 00118$:
+                           1537 ;src/game.c:476: for (j = 0; j < 4; j++) {
+   07B2 1C            [ 4] 1538 	inc	e
+   07B3 7B            [ 4] 1539 	ld	a,e
+   07B4 D6 04         [ 7] 1540 	sub	a, #0x04
+   07B6 DAr2Er07      [10] 1541 	jp	C,00117$
+                           1542 ;src/game.c:475: for (i = 1; i < 4; i++) {
+   07B9 04            [ 4] 1543 	inc	b
+   07BA 78            [ 4] 1544 	ld	a,b
+   07BB D6 04         [ 7] 1545 	sub	a, #0x04
+   07BD DAr26r07      [10] 1546 	jp	C,00129$
+                           1547 ;src/game.c:496: return matched;
+   07C0 69            [ 4] 1548 	ld	l,c
+   07C1 DD F9         [10] 1549 	ld	sp, ix
+   07C3 DD E1         [14] 1550 	pop	ix
+   07C5 C9            [10] 1551 	ret
+                           1552 ;src/game.c:507: u8 rotateCellsDown() {
+                           1553 ;	---------------------------------
+                           1554 ; Function rotateCellsDown
+                           1555 ; ---------------------------------
+   07C6                    1556 _rotateCellsDown::
+   07C6 DD E5         [15] 1557 	push	ix
+   07C8 DD 21 00 00   [14] 1558 	ld	ix,#0
+   07CC DD 39         [15] 1559 	add	ix,sp
+   07CE F5            [11] 1560 	push	af
+   07CF F5            [11] 1561 	push	af
+                           1562 ;src/game.c:511: matched = 0;
+   07D0 0E 00         [ 7] 1563 	ld	c,#0x00
+                           1564 ;src/game.c:513: do {
+   07D2 DD 36 FC 03   [19] 1565 	ld	-4 (ix),#0x03
+   07D6                    1566 00115$:
+                           1567 ;src/game.c:514: i--;
+   07D6 DD 35 FC      [23] 1568 	dec	-4 (ix)
+                           1569 ;src/game.c:515: for (j = 0; j < 4; j++) {
+   07D9 DD 7E FC      [19] 1570 	ld	a,-4 (ix)
+   07DC 3C            [ 4] 1571 	inc	a
+   07DD DD 77 FD      [19] 1572 	ld	-3 (ix),a
+   07E0 1E 00         [ 7] 1573 	ld	e,#0x00
+   07E2                    1574 00118$:
+                           1575 ;src/game.c:516: if (cells[i][j] != 0) {
+   07E2 DD 6E FC      [19] 1576 	ld	l,-4 (ix)
+   07E5 26 00         [ 7] 1577 	ld	h,#0x00
+   07E7 29            [11] 1578 	add	hl, hl
+   07E8 29            [11] 1579 	add	hl, hl
+   07E9 3Er0E         [ 7] 1580 	ld	a,#<(_cells)
+   07EB 85            [ 4] 1581 	add	a, l
+   07EC 47            [ 4] 1582 	ld	b,a
+   07ED 3Es00         [ 7] 1583 	ld	a,#>(_cells)
+   07EF 8C            [ 4] 1584 	adc	a, h
+   07F0 57            [ 4] 1585 	ld	d,a
+   07F1 78            [ 4] 1586 	ld	a,b
+   07F2 83            [ 4] 1587 	add	a, e
+   07F3 DD 77 FE      [19] 1588 	ld	-2 (ix),a
+   07F6 7A            [ 4] 1589 	ld	a,d
+   07F7 CE 00         [ 7] 1590 	adc	a, #0x00
+   07F9 DD 77 FF      [19] 1591 	ld	-1 (ix),a
+   07FC DD 6E FE      [19] 1592 	ld	l,-2 (ix)
+   07FF DD 66 FF      [19] 1593 	ld	h,-1 (ix)
+   0802 46            [ 7] 1594 	ld	b,(hl)
+   0803 78            [ 4] 1595 	ld	a,b
+   0804 B7            [ 4] 1596 	or	a, a
+   0805 28 6D         [12] 1597 	jr	Z,00119$
+                           1598 ;src/game.c:518: if (cells[i + 1][j] == 0) {
+   0807 DD 6E FD      [19] 1599 	ld	l,-3 (ix)
+   080A 26 00         [ 7] 1600 	ld	h,#0x00
+   080C 29            [11] 1601 	add	hl, hl
+   080D 29            [11] 1602 	add	hl, hl
+   080E FD 21r0Er00   [14] 1603 	ld	iy,#_cells
+   0812 C5            [11] 1604 	push	bc
+   0813 4D            [ 4] 1605 	ld	c, l
+   0814 44            [ 4] 1606 	ld	b, h
+   0815 FD 09         [15] 1607 	add	iy, bc
+   0817 C1            [10] 1608 	pop	bc
+   0818 D5            [11] 1609 	push	de
+   0819 16 00         [ 7] 1610 	ld	d,#0x00
+   081B FD 19         [15] 1611 	add	iy, de
+   081D D1            [10] 1612 	pop	de
+   081E FD 7E 00      [19] 1613 	ld	a, 0 (iy)
+   0821 B7            [ 4] 1614 	or	a, a
+   0822 20 0D         [12] 1615 	jr	NZ,00102$
+                           1616 ;src/game.c:519: cells[i + 1][j] = cells[i][j];
+   0824 FD 70 00      [19] 1617 	ld	0 (iy), b
+                           1618 ;src/game.c:520: cells[i][j] = 0;
+   0827 DD 6E FE      [19] 1619 	ld	l,-2 (ix)
+   082A DD 66 FF      [19] 1620 	ld	h,-1 (ix)
+   082D 36 00         [10] 1621 	ld	(hl),#0x00
+                           1622 ;src/game.c:521: matched = 1;
+   082F 0E 01         [ 7] 1623 	ld	c,#0x01
+   0831                    1624 00102$:
+                           1625 ;src/game.c:518: if (cells[i + 1][j] == 0) {
+   0831 FD 46 00      [19] 1626 	ld	b, 0 (iy)
+                           1627 ;src/game.c:516: if (cells[i][j] != 0) {
+   0834 DD 6E FE      [19] 1628 	ld	l,-2 (ix)
+   0837 DD 66 FF      [19] 1629 	ld	h,-1 (ix)
+   083A 56            [ 7] 1630 	ld	d,(hl)
+                           1631 ;src/game.c:522: } if (((cells[i + 1][j] == 1) && (cells[i][j] == 2)) ||
+   083B 78            [ 4] 1632 	ld	a,b
+   083C 3D            [ 4] 1633 	dec	a
+   083D 20 05         [12] 1634 	jr	NZ,00111$
+   083F 7A            [ 4] 1635 	ld	a,d
+   0840 D6 02         [ 7] 1636 	sub	a, #0x02
+   0842 28 09         [12] 1637 	jr	Z,00106$
+   0844                    1638 00111$:
+                           1639 ;src/game.c:523: ((cells[i + 1][j] == 2) && (cells[i][j] == 1))) {
+   0844 78            [ 4] 1640 	ld	a,b
+   0845 D6 02         [ 7] 1641 	sub	a, #0x02
+   0847 20 14         [12] 1642 	jr	NZ,00107$
+   0849 7A            [ 4] 1643 	ld	a,d
+   084A 3D            [ 4] 1644 	dec	a
+   084B 20 10         [12] 1645 	jr	NZ,00107$
+   084D                    1646 00106$:
+                           1647 ;src/game.c:524: cells[i + 1][j] = 3;
+   084D FD 36 00 03   [19] 1648 	ld	0 (iy), #0x03
+                           1649 ;src/game.c:525: cells[i][j] = 0;
+   0851 DD 6E FE      [19] 1650 	ld	l,-2 (ix)
+   0854 DD 66 FF      [19] 1651 	ld	h,-1 (ix)
+   0857 36 00         [10] 1652 	ld	(hl),#0x00
+                           1653 ;src/game.c:526: matched = 1;
+   0859 0E 01         [ 7] 1654 	ld	c,#0x01
+   085B 18 17         [12] 1655 	jr	00119$
+   085D                    1656 00107$:
+                           1657 ;src/game.c:527: } else if ((cells[i + 1][j] == cells[i][j]) && (cells[i][j] > 2)) {
+   085D 78            [ 4] 1658 	ld	a,b
+   085E 92            [ 4] 1659 	sub	a, d
+   085F 20 13         [12] 1660 	jr	NZ,00119$
+   0861 3E 02         [ 7] 1661 	ld	a,#0x02
+   0863 92            [ 4] 1662 	sub	a, d
+   0864 30 0E         [12] 1663 	jr	NC,00119$
+                           1664 ;src/game.c:528: cells[i + 1][j]++;
+   0866 04            [ 4] 1665 	inc	b
+   0867 FD 70 00      [19] 1666 	ld	0 (iy), b
+                           1667 ;src/game.c:529: cells[i][j] = 0;
+   086A DD 6E FE      [19] 1668 	ld	l,-2 (ix)
+   086D DD 66 FF      [19] 1669 	ld	h,-1 (ix)
+   0870 36 00         [10] 1670 	ld	(hl),#0x00
+                           1671 ;src/game.c:530: matched = 1;
+   0872 0E 01         [ 7] 1672 	ld	c,#0x01
+   0874                    1673 00119$:
+                           1674 ;src/game.c:515: for (j = 0; j < 4; j++) {
+   0874 1C            [ 4] 1675 	inc	e
+   0875 7B            [ 4] 1676 	ld	a,e
+   0876 D6 04         [ 7] 1677 	sub	a, #0x04
+   0878 DArE2r07      [10] 1678 	jp	C,00118$
+                           1679 ;src/game.c:535: } while (i > 0);
+   087B DD 7E FC      [19] 1680 	ld	a,-4 (ix)
+   087E B7            [ 4] 1681 	or	a, a
+   087F C2rD6r07      [10] 1682 	jp	NZ,00115$
+                           1683 ;src/game.c:537: return matched;
+   0882 69            [ 4] 1684 	ld	l,c
+   0883 DD F9         [10] 1685 	ld	sp, ix
+   0885 DD E1         [14] 1686 	pop	ix
+   0887 C9            [10] 1687 	ret
+                           1688 ;src/game.c:548: void printCells() {
+                           1689 ;	---------------------------------
+                           1690 ; Function printCells
+                           1691 ; ---------------------------------
+   0888                    1692 _printCells::
+   0888 DD E5         [15] 1693 	push	ix
+   088A DD 21 00 00   [14] 1694 	ld	ix,#0
+   088E DD 39         [15] 1695 	add	ix,sp
+   0890 F5            [11] 1696 	push	af
+   0891 F5            [11] 1697 	push	af
+   0892 3B            [ 6] 1698 	dec	sp
+                           1699 ;src/game.c:555: for (i = 0; i < 4; i++) {
+   0893 0E 00         [ 7] 1700 	ld	c,#0x00
+   0895 DD 36 FD 00   [19] 1701 	ld	-3 (ix),#0x00
+   0899                    1702 00105$:
+                           1703 ;src/game.c:557: y = 6 + (i * 44);
+   0899 DD 7E FD      [19] 1704 	ld	a,-3 (ix)
+   089C C6 06         [ 7] 1705 	add	a, #0x06
+   089E DD 77 FB      [19] 1706 	ld	-5 (ix),a
+                           1707 ;src/game.c:558: for (j = 0; j < 4; j++) {
+   08A1 DD 36 FC 00   [19] 1708 	ld	-4 (ix),#0x00
+   08A5 06 00         [ 7] 1709 	ld	b,#0x00
+   08A7                    1710 00103$:
+                           1711 ;src/game.c:560: x = 4 + (j * 11);
+   08A7 50            [ 4] 1712 	ld	d,b
+   08A8 14            [ 4] 1713 	inc	d
+   08A9 14            [ 4] 1714 	inc	d
+   08AA 14            [ 4] 1715 	inc	d
+   08AB 14            [ 4] 1716 	inc	d
+                           1717 ;src/game.c:561: pvmem = cpct_getScreenPtr(CPCT_VMEM_START, x, y);
+   08AC C5            [11] 1718 	push	bc
+   08AD DD 7E FB      [19] 1719 	ld	a,-5 (ix)
+   08B0 F5            [11] 1720 	push	af
+   08B1 33            [ 6] 1721 	inc	sp
+   08B2 D5            [11] 1722 	push	de
+   08B3 33            [ 6] 1723 	inc	sp
+   08B4 21 00 C0      [10] 1724 	ld	hl,#0xC000
+   08B7 E5            [11] 1725 	push	hl
+   08B8 CDr00r00      [17] 1726 	call	_cpct_getScreenPtr
+   08BB C1            [10] 1727 	pop	bc
+                           1728 ;src/game.c:562: cpct_drawSprite(tiles[cells[i][j]], pvmem, 10, 40);
+   08BC DD 75 FE      [19] 1729 	ld	-2 (ix),l
+   08BF DD 74 FF      [19] 1730 	ld	-1 (ix),h
+   08C2 69            [ 4] 1731 	ld	l,c
+   08C3 26 00         [ 7] 1732 	ld	h,#0x00
+   08C5 29            [11] 1733 	add	hl, hl
+   08C6 29            [11] 1734 	add	hl, hl
+   08C7 11r0Er00      [10] 1735 	ld	de,#_cells
+   08CA 19            [11] 1736 	add	hl,de
+   08CB DD 5E FC      [19] 1737 	ld	e,-4 (ix)
+   08CE 16 00         [ 7] 1738 	ld	d,#0x00
+   08D0 19            [11] 1739 	add	hl,de
+   08D1 6E            [ 7] 1740 	ld	l,(hl)
+   08D2 26 00         [ 7] 1741 	ld	h,#0x00
+   08D4 29            [11] 1742 	add	hl, hl
+   08D5 11rBBr00      [10] 1743 	ld	de,#_tiles
+   08D8 19            [11] 1744 	add	hl,de
+   08D9 5E            [ 7] 1745 	ld	e,(hl)
+   08DA 23            [ 6] 1746 	inc	hl
+   08DB 56            [ 7] 1747 	ld	d,(hl)
+   08DC C5            [11] 1748 	push	bc
+   08DD 21 0A 28      [10] 1749 	ld	hl,#0x280A
+   08E0 E5            [11] 1750 	push	hl
+   08E1 DD 6E FE      [19] 1751 	ld	l,-2 (ix)
+   08E4 DD 66 FF      [19] 1752 	ld	h,-1 (ix)
+   08E7 E5            [11] 1753 	push	hl
+   08E8 D5            [11] 1754 	push	de
+   08E9 CDr00r00      [17] 1755 	call	_cpct_drawSprite
+   08EC C1            [10] 1756 	pop	bc
+                           1757 ;src/game.c:558: for (j = 0; j < 4; j++) {
+   08ED 78            [ 4] 1758 	ld	a,b
+   08EE C6 0B         [ 7] 1759 	add	a, #0x0B
+   08F0 47            [ 4] 1760 	ld	b,a
+   08F1 DD 34 FC      [23] 1761 	inc	-4 (ix)
+   08F4 DD 7E FC      [19] 1762 	ld	a,-4 (ix)
+   08F7 D6 04         [ 7] 1763 	sub	a, #0x04
+   08F9 38 AC         [12] 1764 	jr	C,00103$
+                           1765 ;src/game.c:555: for (i = 0; i < 4; i++) {
+   08FB DD 7E FD      [19] 1766 	ld	a,-3 (ix)
+   08FE C6 2C         [ 7] 1767 	add	a, #0x2C
+   0900 DD 77 FD      [19] 1768 	ld	-3 (ix),a
+   0903 0C            [ 4] 1769 	inc	c
+   0904 79            [ 4] 1770 	ld	a,c
+   0905 D6 04         [ 7] 1771 	sub	a, #0x04
+   0907 38 90         [12] 1772 	jr	C,00105$
+                           1773 ;src/game.c:565: pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 62, 20);
+   0909 21 3E 14      [10] 1774 	ld	hl,#0x143E
+   090C E5            [11] 1775 	push	hl
+   090D 21 00 C0      [10] 1776 	ld	hl,#0xC000
+   0910 E5            [11] 1777 	push	hl
+   0911 CDr00r00      [17] 1778 	call	_cpct_getScreenPtr
+   0914 4D            [ 4] 1779 	ld	c,l
+   0915 44            [ 4] 1780 	ld	b,h
+                           1781 ;src/game.c:566: cpct_drawSprite(tiles[tileBag[currentTile]], pvmem, 10, 40);
+   0916 FD 21rC3r00   [14] 1782 	ld	iy,#_tileBag
+   091A ED 5BrCFr00   [20] 1783 	ld	de,(_currentTile)
+   091E 16 00         [ 7] 1784 	ld	d,#0x00
+   0920 FD 19         [15] 1785 	add	iy, de
+   0922 FD 6E 00      [19] 1786 	ld	l, 0 (iy)
+   0925 26 00         [ 7] 1787 	ld	h,#0x00
+   0927 29            [11] 1788 	add	hl, hl
+   0928 11rBBr00      [10] 1789 	ld	de,#_tiles
+   092B 19            [11] 1790 	add	hl,de
+   092C 5E            [ 7] 1791 	ld	e,(hl)
+   092D 23            [ 6] 1792 	inc	hl
+   092E 56            [ 7] 1793 	ld	d,(hl)
+   092F 21 0A 28      [10] 1794 	ld	hl,#0x280A
+   0932 E5            [11] 1795 	push	hl
+   0933 C5            [11] 1796 	push	bc
+   0934 D5            [11] 1797 	push	de
+   0935 CDr00r00      [17] 1798 	call	_cpct_drawSprite
+   0938 DD F9         [10] 1799 	ld	sp, ix
+   093A DD E1         [14] 1800 	pop	ix
+   093C C9            [10] 1801 	ret
+                           1802 ;src/game.c:577: void drawScore() {
+                           1803 ;	---------------------------------
+                           1804 ; Function drawScore
+                           1805 ; ---------------------------------
+   093D                    1806 _drawScore::
+   093D DD E5         [15] 1807 	push	ix
+   093F DD 21 00 00   [14] 1808 	ld	ix,#0
+   0943 DD 39         [15] 1809 	add	ix,sp
+   0945 21 F9 FF      [10] 1810 	ld	hl,#-7
+   0948 39            [11] 1811 	add	hl,sp
+   0949 F9            [ 6] 1812 	ld	sp,hl
+                           1813 ;src/game.c:581: for (i = 0; i < 4; i++) {
+   094A 0E 00         [ 7] 1814 	ld	c,#0x00
+   094C DD 36 FE 00   [19] 1815 	ld	-2 (ix),#0x00
+                           1816 ;src/game.c:582: for (j = 0; j < 4; j++) {
+   0950                    1817 00116$:
+   0950 DD 7E FE      [19] 1818 	ld	a,-2 (ix)
+   0953 C6 06         [ 7] 1819 	add	a, #0x06
+   0955 DD 77 FF      [19] 1820 	ld	-1 (ix),a
+   0958 DD 36 F9 00   [19] 1821 	ld	-7 (ix),#0x00
+   095C 06 00         [ 7] 1822 	ld	b,#0x00
+   095E                    1823 00108$:
+                           1824 ;src/game.c:584: z = cells[i][j];
+   095E 69            [ 4] 1825 	ld	l,c
+   095F 26 00         [ 7] 1826 	ld	h,#0x00
+   0961 29            [11] 1827 	add	hl, hl
+   0962 29            [11] 1828 	add	hl, hl
+   0963 11r0Er00      [10] 1829 	ld	de,#_cells
+   0966 19            [11] 1830 	add	hl,de
+   0967 DD 5E F9      [19] 1831 	ld	e,-7 (ix)
+   096A 16 00         [ 7] 1832 	ld	d,#0x00
+   096C 19            [11] 1833 	add	hl,de
+   096D 5E            [ 7] 1834 	ld	e,(hl)
+                           1835 ;src/game.c:585: if (z >= 3) {
+                           1836 ;src/game.c:586: if (z == 3) {
+   096E 7B            [ 4] 1837 	ld	a,e
+   096F FE 03         [ 7] 1838 	cp	a,#0x03
+   0971 38 65         [12] 1839 	jr	C,00109$
+   0973 D6 03         [ 7] 1840 	sub	a, #0x03
+   0975 20 10         [12] 1841 	jr	NZ,00102$
+                           1842 ;src/game.c:587: partialScore = 1;
+   0977 DD 36 FA 01   [19] 1843 	ld	-6 (ix),#0x01
+   097B AF            [ 4] 1844 	xor	a, a
+   097C DD 77 FB      [19] 1845 	ld	-5 (ix),a
+   097F DD 77 FC      [19] 1846 	ld	-4 (ix),a
+   0982 DD 77 FD      [19] 1847 	ld	-3 (ix),a
+   0985 18 16         [12] 1848 	jr	00103$
+   0987                    1849 00102$:
+                           1850 ;src/game.c:589: partialScore = scores[z];
+   0987 26 00         [ 7] 1851 	ld	h,#0x00
+   0989 6B            [ 4] 1852 	ld	l, e
+   098A 29            [11] 1853 	add	hl, hl
+   098B 29            [11] 1854 	add	hl, hl
+   098C 11r7Fr00      [10] 1855 	ld	de,#_scores
+   098F 19            [11] 1856 	add	hl,de
+   0990 C5            [11] 1857 	push	bc
+   0991 EB            [ 4] 1858 	ex	de,hl
+   0992 21 03 00      [10] 1859 	ld	hl, #0x0003
+   0995 39            [11] 1860 	add	hl, sp
+   0996 EB            [ 4] 1861 	ex	de, hl
+   0997 01 04 00      [10] 1862 	ld	bc, #0x0004
+   099A ED B0         [21] 1863 	ldir
+   099C C1            [10] 1864 	pop	bc
+   099D                    1865 00103$:
+                           1866 ;src/game.c:591: score += partialScore;
+   099D 21r23r00      [10] 1867 	ld	hl,#_score
+   09A0 7E            [ 7] 1868 	ld	a,(hl)
+   09A1 DD 86 FA      [19] 1869 	add	a, -6 (ix)
+   09A4 77            [ 7] 1870 	ld	(hl),a
+   09A5 23            [ 6] 1871 	inc	hl
+   09A6 7E            [ 7] 1872 	ld	a,(hl)
+   09A7 DD 8E FB      [19] 1873 	adc	a, -5 (ix)
+   09AA 77            [ 7] 1874 	ld	(hl),a
+   09AB 23            [ 6] 1875 	inc	hl
+   09AC 7E            [ 7] 1876 	ld	a,(hl)
+   09AD DD 8E FC      [19] 1877 	adc	a, -4 (ix)
+   09B0 77            [ 7] 1878 	ld	(hl),a
+   09B1 23            [ 6] 1879 	inc	hl
+   09B2 7E            [ 7] 1880 	ld	a,(hl)
+   09B3 DD 8E FD      [19] 1881 	adc	a, -3 (ix)
+   09B6 77            [ 7] 1882 	ld	(hl),a
+                           1883 ;src/game.c:592: drawNumber(partialScore, 4, 3 + (11 * j), 6 + (44 * i));
+   09B7 50            [ 4] 1884 	ld	d,b
+   09B8 14            [ 4] 1885 	inc	d
+   09B9 14            [ 4] 1886 	inc	d
+   09BA 14            [ 4] 1887 	inc	d
+   09BB E5            [11] 1888 	push	hl
+   09BC DD 6E FA      [19] 1889 	ld	l,-6 (ix)
+   09BF DD 66 FB      [19] 1890 	ld	h,-5 (ix)
+   09C2 E5            [11] 1891 	push	hl
+   09C3 FD E1         [14] 1892 	pop	iy
+   09C5 E1            [10] 1893 	pop	hl
+   09C6 C5            [11] 1894 	push	bc
+   09C7 DD 7E FF      [19] 1895 	ld	a,-1 (ix)
+   09CA F5            [11] 1896 	push	af
+   09CB 33            [ 6] 1897 	inc	sp
+   09CC 1E 04         [ 7] 1898 	ld	e, #0x04
+   09CE D5            [11] 1899 	push	de
+   09CF FD E5         [15] 1900 	push	iy
+   09D1 CDr00r00      [17] 1901 	call	_drawNumber
+   09D4 F1            [10] 1902 	pop	af
+   09D5 F1            [10] 1903 	pop	af
+   09D6 33            [ 6] 1904 	inc	sp
+   09D7 C1            [10] 1905 	pop	bc
+   09D8                    1906 00109$:
+                           1907 ;src/game.c:582: for (j = 0; j < 4; j++) {
+   09D8 78            [ 4] 1908 	ld	a,b
+   09D9 C6 0B         [ 7] 1909 	add	a, #0x0B
+   09DB 47            [ 4] 1910 	ld	b,a
+   09DC DD 34 F9      [23] 1911 	inc	-7 (ix)
+   09DF DD 7E F9      [19] 1912 	ld	a,-7 (ix)
+   09E2 D6 04         [ 7] 1913 	sub	a, #0x04
+   09E4 DAr5Er09      [10] 1914 	jp	C,00108$
+                           1915 ;src/game.c:581: for (i = 0; i < 4; i++) {
+   09E7 DD 7E FE      [19] 1916 	ld	a,-2 (ix)
+   09EA C6 2C         [ 7] 1917 	add	a, #0x2C
+   09EC DD 77 FE      [19] 1918 	ld	-2 (ix),a
+   09EF 0C            [ 4] 1919 	inc	c
+   09F0 79            [ 4] 1920 	ld	a,c
+   09F1 D6 04         [ 7] 1921 	sub	a, #0x04
+   09F3 DAr50r09      [10] 1922 	jp	C,00116$
+   09F6 DD F9         [10] 1923 	ld	sp, ix
+   09F8 DD E1         [14] 1924 	pop	ix
+   09FA C9            [10] 1925 	ret
+                           1926 ;src/game.c:606: void getName() {
+                           1927 ;	---------------------------------
+                           1928 ; Function getName
+                           1929 ; ---------------------------------
+   09FB                    1930 _getName::
+   09FB DD E5         [15] 1931 	push	ix
+   09FD DD 21 00 00   [14] 1932 	ld	ix,#0
+   0A01 DD 39         [15] 1933 	add	ix,sp
+   0A03 21 F6 FF      [10] 1934 	ld	hl,#-10
+   0A06 39            [11] 1935 	add	hl,sp
+   0A07 F9            [ 6] 1936 	ld	sp,hl
+                           1937 ;src/game.c:610: drawFrame(10, 60, 72, 140);
+   0A08 21 48 8C      [10] 1938 	ld	hl,#0x8C48
+   0A0B E5            [11] 1939 	push	hl
+   0A0C 21 0A 3C      [10] 1940 	ld	hl,#0x3C0A
+   0A0F E5            [11] 1941 	push	hl
+   0A10 CDr00r00      [17] 1942 	call	_drawFrame
+   0A13 F1            [10] 1943 	pop	af
+   0A14 F1            [10] 1944 	pop	af
+                           1945 ;src/game.c:611: strcpy(newNameHighScore, "A");
+   0A15 11r00r00      [10] 1946 	ld	de,#_newNameHighScore
+   0A18 21rB6r0B      [10] 1947 	ld	hl,#___str_10
+   0A1B AF            [ 4] 1948 	xor	a, a
+   0A1C                    1949 00159$:
+   0A1C BE            [ 7] 1950 	cp	a, (hl)
+   0A1D ED A0         [16] 1951 	ldi
+   0A1F 20 FB         [12] 1952 	jr	NZ, 00159$
+                           1953 ;src/game.c:612: drawText(newNameHighScore, 0, 120, 1);
+   0A21 21 78 01      [10] 1954 	ld	hl,#0x0178
+   0A24 E5            [11] 1955 	push	hl
+   0A25 AF            [ 4] 1956 	xor	a, a
+   0A26 F5            [11] 1957 	push	af
+   0A27 33            [ 6] 1958 	inc	sp
+   0A28 21r00r00      [10] 1959 	ld	hl,#_newNameHighScore
+   0A2B E5            [11] 1960 	push	hl
+   0A2C CDr00r00      [17] 1961 	call	_drawText
+   0A2F F1            [10] 1962 	pop	af
+                           1963 ;src/game.c:613: drawText("NEW HIGH SCORE", 20, 70, 1);
+   0A30 33            [ 6] 1964 	inc	sp
+   0A31 21 46 01      [10] 1965 	ld	hl,#0x0146
+   0A34 E3            [19] 1966 	ex	(sp),hl
+   0A35 3E 14         [ 7] 1967 	ld	a,#0x14
+   0A37 F5            [11] 1968 	push	af
+   0A38 33            [ 6] 1969 	inc	sp
+   0A39 21rB8r0B      [10] 1970 	ld	hl,#___str_11
+   0A3C E5            [11] 1971 	push	hl
+   0A3D CDr00r00      [17] 1972 	call	_drawText
+   0A40 F1            [10] 1973 	pop	af
+                           1974 ;src/game.c:614: drawText("ENTER YOUR NAME", 18, 85, 1);
+   0A41 33            [ 6] 1975 	inc	sp
+   0A42 21 55 01      [10] 1976 	ld	hl,#0x0155
+   0A45 E3            [19] 1977 	ex	(sp),hl
+   0A46 3E 12         [ 7] 1978 	ld	a,#0x12
+   0A48 F5            [11] 1979 	push	af
+   0A49 33            [ 6] 1980 	inc	sp
+   0A4A 21rC7r0B      [10] 1981 	ld	hl,#___str_12
+   0A4D E5            [11] 1982 	push	hl
+   0A4E CDr00r00      [17] 1983 	call	_drawText
+   0A51 F1            [10] 1984 	pop	af
+                           1985 ;src/game.c:615: drawText("UP DOWN CHANGE LETTER", 18, 100, 1);
+   0A52 33            [ 6] 1986 	inc	sp
+   0A53 21 64 01      [10] 1987 	ld	hl,#0x0164
+   0A56 E3            [19] 1988 	ex	(sp),hl
+   0A57 3E 12         [ 7] 1989 	ld	a,#0x12
+   0A59 F5            [11] 1990 	push	af
+   0A5A 33            [ 6] 1991 	inc	sp
+   0A5B 21rD7r0B      [10] 1992 	ld	hl,#___str_13
+   0A5E E5            [11] 1993 	push	hl
+   0A5F CDr00r00      [17] 1994 	call	_drawText
+   0A62 F1            [10] 1995 	pop	af
+   0A63 F1            [10] 1996 	pop	af
+   0A64 33            [ 6] 1997 	inc	sp
+                           1998 ;src/game.c:616: pos = 0;
+   0A65 DD 36 F9 00   [19] 1999 	ld	-7 (ix),#0x00
+                           2000 ;src/game.c:617: chr = 65;
+   0A69 DD 36 F8 41   [19] 2001 	ld	-8 (ix),#0x41
+                           2002 ;src/game.c:618: moved = 0;
+   0A6D DD 36 FA 00   [19] 2003 	ld	-6 (ix),#0x00
+                           2004 ;src/game.c:619: while (1) {
+   0A71                    2005 00123$:
+                           2006 ;src/game.c:620: delay(24);
+   0A71 21 00 00      [10] 2007 	ld	hl,#0x0000
+   0A74 E5            [11] 2008 	push	hl
+   0A75 21 18 00      [10] 2009 	ld	hl,#0x0018
+   0A78 E5            [11] 2010 	push	hl
+   0A79 CDrD9r00      [17] 2011 	call	_delay
+   0A7C F1            [10] 2012 	pop	af
+   0A7D F1            [10] 2013 	pop	af
+                           2014 ;src/game.c:621: cpct_scanKeyboard_f();
+   0A7E CDr00r00      [17] 2015 	call	_cpct_scanKeyboard_f
+                           2016 ;src/game.c:623: if (cpct_isKeyPressed(keys.down)) {
+   0A81 2Ar02r00      [16] 2017 	ld	hl, (#_keys + 2)
+   0A84 CDr00r00      [17] 2018 	call	_cpct_isKeyPressed
+   0A87 DD 75 FF      [19] 2019 	ld	-1 (ix),l
+                           2020 ;src/game.c:631: newNameHighScore[pos] = 65;
+   0A8A 3Er00         [ 7] 2021 	ld	a,#<(_newNameHighScore)
+   0A8C DD 86 F9      [19] 2022 	add	a, -7 (ix)
+   0A8F DD 77 FD      [19] 2023 	ld	-3 (ix),a
+   0A92 3Es00         [ 7] 2024 	ld	a,#>(_newNameHighScore)
+   0A94 CE 00         [ 7] 2025 	adc	a, #0x00
+   0A96 DD 77 FE      [19] 2026 	ld	-2 (ix),a
+                           2027 ;src/game.c:623: if (cpct_isKeyPressed(keys.down)) {
+   0A99 DD 7E FF      [19] 2028 	ld	a,-1 (ix)
+   0A9C B7            [ 4] 2029 	or	a, a
+   0A9D 28 0A         [12] 2030 	jr	Z,00113$
+                           2031 ;src/game.c:624: chr++;
+   0A9F DD 34 F8      [23] 2032 	inc	-8 (ix)
+                           2033 ;src/game.c:625: moved = 1;
+   0AA2 DD 36 FA 01   [19] 2034 	ld	-6 (ix),#0x01
+   0AA6 C3r36r0B      [10] 2035 	jp	00114$
+   0AA9                    2036 00113$:
+                           2037 ;src/game.c:626: } else if (cpct_isKeyPressed(keys.up)) {
+   0AA9 2Ar00r00      [16] 2038 	ld	hl, (#_keys + 0)
+   0AAC CDr00r00      [17] 2039 	call	_cpct_isKeyPressed
+   0AAF 7D            [ 4] 2040 	ld	a,l
+   0AB0 B7            [ 4] 2041 	or	a, a
+   0AB1 28 0A         [12] 2042 	jr	Z,00110$
+                           2043 ;src/game.c:627: chr--;
+   0AB3 DD 35 F8      [23] 2044 	dec	-8 (ix)
+                           2045 ;src/game.c:628: moved = 1;
+   0AB6 DD 36 FA 01   [19] 2046 	ld	-6 (ix),#0x01
+   0ABA C3r36r0B      [10] 2047 	jp	00114$
+   0ABD                    2048 00110$:
+                           2049 ;src/game.c:629: } else if (cpct_isKeyPressed(keys.right)) {
+   0ABD 2Ar06r00      [16] 2050 	ld	hl, (#_keys + 6)
+   0AC0 CDr00r00      [17] 2051 	call	_cpct_isKeyPressed
+   0AC3 7D            [ 4] 2052 	ld	a,l
+   0AC4 B7            [ 4] 2053 	or	a, a
+   0AC5 28 30         [12] 2054 	jr	Z,00107$
+                           2055 ;src/game.c:630: pos++;
+   0AC7 DD 34 F9      [23] 2056 	inc	-7 (ix)
+                           2057 ;src/game.c:631: newNameHighScore[pos] = 65;
+   0ACA 3Er00         [ 7] 2058 	ld	a,#<(_newNameHighScore)
+   0ACC DD 86 F9      [19] 2059 	add	a, -7 (ix)
+   0ACF DD 77 FD      [19] 2060 	ld	-3 (ix),a
+   0AD2 3Es00         [ 7] 2061 	ld	a,#>(_newNameHighScore)
+   0AD4 CE 00         [ 7] 2062 	adc	a, #0x00
+   0AD6 DD 77 FE      [19] 2063 	ld	-2 (ix),a
+   0AD9 DD 6E FD      [19] 2064 	ld	l,-3 (ix)
+   0ADC DD 66 FE      [19] 2065 	ld	h,-2 (ix)
+   0ADF 36 41         [10] 2066 	ld	(hl),#0x41
+                           2067 ;src/game.c:632: newNameHighScore[pos + 1] = '\0';
+   0AE1 DD 4E F9      [19] 2068 	ld	c,-7 (ix)
+   0AE4 0C            [ 4] 2069 	inc	c
+   0AE5 21r00r00      [10] 2070 	ld	hl,#_newNameHighScore
+   0AE8 06 00         [ 7] 2071 	ld	b,#0x00
+   0AEA 09            [11] 2072 	add	hl, bc
+   0AEB 36 00         [10] 2073 	ld	(hl),#0x00
+                           2074 ;src/game.c:633: chr = 65;
+   0AED DD 36 F8 41   [19] 2075 	ld	-8 (ix),#0x41
+                           2076 ;src/game.c:634: moved = 1;
+   0AF1 DD 36 FA 01   [19] 2077 	ld	-6 (ix),#0x01
+   0AF5 18 3F         [12] 2078 	jr	00114$
+   0AF7                    2079 00107$:
+                           2080 ;src/game.c:635: }else if (cpct_isKeyPressed(keys.left)) {
+   0AF7 2Ar04r00      [16] 2081 	ld	hl, (#_keys + 4)
+   0AFA CDr00r00      [17] 2082 	call	_cpct_isKeyPressed
+   0AFD 7D            [ 4] 2083 	ld	a,l
+   0AFE B7            [ 4] 2084 	or	a, a
+   0AFF 28 2A         [12] 2085 	jr	Z,00104$
+                           2086 ;src/game.c:636: newNameHighScore[pos] = '\0';
+   0B01 DD 6E FD      [19] 2087 	ld	l,-3 (ix)
+   0B04 DD 66 FE      [19] 2088 	ld	h,-2 (ix)
+   0B07 36 00         [10] 2089 	ld	(hl),#0x00
+                           2090 ;src/game.c:637: pos--;
+   0B09 DD 35 F9      [23] 2091 	dec	-7 (ix)
+                           2092 ;src/game.c:631: newNameHighScore[pos] = 65;
+   0B0C 3Er00         [ 7] 2093 	ld	a,#<(_newNameHighScore)
+   0B0E DD 86 F9      [19] 2094 	add	a, -7 (ix)
+   0B11 DD 77 FD      [19] 2095 	ld	-3 (ix),a
+   0B14 3Es00         [ 7] 2096 	ld	a,#>(_newNameHighScore)
+   0B16 CE 00         [ 7] 2097 	adc	a, #0x00
+   0B18 DD 77 FE      [19] 2098 	ld	-2 (ix),a
+                           2099 ;src/game.c:638: chr = newNameHighScore[pos];
+   0B1B DD 6E FD      [19] 2100 	ld	l,-3 (ix)
+   0B1E DD 66 FE      [19] 2101 	ld	h,-2 (ix)
+   0B21 7E            [ 7] 2102 	ld	a,(hl)
+   0B22 DD 77 F8      [19] 2103 	ld	-8 (ix),a
+                           2104 ;src/game.c:639: moved = 1;
+   0B25 DD 36 FA 01   [19] 2105 	ld	-6 (ix),#0x01
+   0B29 18 0B         [12] 2106 	jr	00114$
+   0B2B                    2107 00104$:
+                           2108 ;src/game.c:640: } else if (cpct_isKeyPressed(keys.abort)) {
+   0B2B 2Ar0Cr00      [16] 2109 	ld	hl, (#_keys + 12)
+   0B2E CDr00r00      [17] 2110 	call	_cpct_isKeyPressed
+   0B31 7D            [ 4] 2111 	ld	a,l
+   0B32 B7            [ 4] 2112 	or	a, a
+   0B33 C2rB1r0B      [10] 2113 	jp	NZ,00125$
+                           2114 ;src/game.c:641: break;
+   0B36                    2115 00114$:
+                           2116 ;src/game.c:643: if (moved) {
+   0B36 DD 7E FA      [19] 2117 	ld	a,-6 (ix)
+   0B39 B7            [ 4] 2118 	or	a, a
+   0B3A CAr71r0A      [10] 2119 	jp	Z,00123$
+                           2120 ;src/game.c:644: moved = 0;
+   0B3D DD 36 FA 00   [19] 2121 	ld	-6 (ix),#0x00
+                           2122 ;src/game.c:645: if (chr > 90)
+   0B41 3E 5A         [ 7] 2123 	ld	a,#0x5A
+   0B43 DD 96 F8      [19] 2124 	sub	a, -8 (ix)
+   0B46 30 06         [12] 2125 	jr	NC,00118$
+                           2126 ;src/game.c:646: chr = 65;
+   0B48 DD 36 F8 41   [19] 2127 	ld	-8 (ix),#0x41
+   0B4C 18 0B         [12] 2128 	jr	00119$
+   0B4E                    2129 00118$:
+                           2130 ;src/game.c:647: else if (chr < 65)
+   0B4E DD 7E F8      [19] 2131 	ld	a,-8 (ix)
+   0B51 D6 41         [ 7] 2132 	sub	a, #0x41
+   0B53 30 04         [12] 2133 	jr	NC,00119$
+                           2134 ;src/game.c:648: chr = 90;
+   0B55 DD 36 F8 5A   [19] 2135 	ld	-8 (ix),#0x5A
+   0B59                    2136 00119$:
+                           2137 ;src/game.c:649: newNameHighScore[pos] = chr;
+   0B59 DD 6E FD      [19] 2138 	ld	l,-3 (ix)
+   0B5C DD 66 FE      [19] 2139 	ld	h,-2 (ix)
+   0B5F DD 7E F8      [19] 2140 	ld	a,-8 (ix)
+   0B62 77            [ 7] 2141 	ld	(hl),a
+                           2142 ;src/game.c:650: pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 20, 120);
+   0B63 21 14 78      [10] 2143 	ld	hl,#0x7814
+   0B66 E5            [11] 2144 	push	hl
+   0B67 21 00 C0      [10] 2145 	ld	hl,#0xC000
+   0B6A E5            [11] 2146 	push	hl
+   0B6B CDr00r00      [17] 2147 	call	_cpct_getScreenPtr
+   0B6E 33            [ 6] 2148 	inc	sp
+   0B6F 33            [ 6] 2149 	inc	sp
+   0B70 E5            [11] 2150 	push	hl
+                           2151 ;src/game.c:651: cpct_drawSolidBox(pvmem, cpct_px2byteM0(5, 5), 60, 11);
+   0B71 21 05 05      [10] 2152 	ld	hl,#0x0505
+   0B74 E5            [11] 2153 	push	hl
+   0B75 CDr00r00      [17] 2154 	call	_cpct_px2byteM0
+   0B78 DD 75 FD      [19] 2155 	ld	-3 (ix),l
+   0B7B DD 7E F6      [19] 2156 	ld	a,-10 (ix)
+   0B7E DD 77 FB      [19] 2157 	ld	-5 (ix),a
+   0B81 DD 7E F7      [19] 2158 	ld	a,-9 (ix)
+   0B84 DD 77 FC      [19] 2159 	ld	-4 (ix),a
+   0B87 21 3C 0B      [10] 2160 	ld	hl,#0x0B3C
+   0B8A E5            [11] 2161 	push	hl
+   0B8B DD 7E FD      [19] 2162 	ld	a,-3 (ix)
+   0B8E F5            [11] 2163 	push	af
+   0B8F 33            [ 6] 2164 	inc	sp
+   0B90 DD 6E FB      [19] 2165 	ld	l,-5 (ix)
+   0B93 DD 66 FC      [19] 2166 	ld	h,-4 (ix)
+   0B96 E5            [11] 2167 	push	hl
+   0B97 CDr00r00      [17] 2168 	call	_cpct_drawSolidBox
+   0B9A F1            [10] 2169 	pop	af
+                           2170 ;src/game.c:653: drawText(newNameHighScore, 20, 120, 1);
+   0B9B 33            [ 6] 2171 	inc	sp
+   0B9C 21 78 01      [10] 2172 	ld	hl,#0x0178
+   0B9F E3            [19] 2173 	ex	(sp),hl
+   0BA0 3E 14         [ 7] 2174 	ld	a,#0x14
+   0BA2 F5            [11] 2175 	push	af
+   0BA3 33            [ 6] 2176 	inc	sp
+   0BA4 21r00r00      [10] 2177 	ld	hl,#_newNameHighScore
+   0BA7 E5            [11] 2178 	push	hl
+   0BA8 CDr00r00      [17] 2179 	call	_drawText
+   0BAB F1            [10] 2180 	pop	af
+   0BAC F1            [10] 2181 	pop	af
+   0BAD 33            [ 6] 2182 	inc	sp
+   0BAE C3r71r0A      [10] 2183 	jp	00123$
+   0BB1                    2184 00125$:
+   0BB1 DD F9         [10] 2185 	ld	sp, ix
+   0BB3 DD E1         [14] 2186 	pop	ix
+   0BB5 C9            [10] 2187 	ret
+   0BB6                    2188 ___str_10:
+   0BB6 41                 2189 	.ascii "A"
+   0BB7 00                 2190 	.db 0x00
+   0BB8                    2191 ___str_11:
+   0BB8 4E 45 57 20 48 49  2192 	.ascii "NEW HIGH SCORE"
+        47 48 20 53 43 4F
+        52 45
+   0BC6 00                 2193 	.db 0x00
+   0BC7                    2194 ___str_12:
+   0BC7 45 4E 54 45 52 20  2195 	.ascii "ENTER YOUR NAME"
+        59 4F 55 52 20 4E
+        41 4D 45
+   0BD6 00                 2196 	.db 0x00
+   0BD7                    2197 ___str_13:
+   0BD7 55 50 20 44 4F 57  2198 	.ascii "UP DOWN CHANGE LETTER"
+        4E 20 43 48 41 4E
+        47 45 20 4C 45 54
+        54 45 52
+   0BEC 00                 2199 	.db 0x00
+                           2200 ;src/game.c:668: void setHighScore(u32 score) {
+                           2201 ;	---------------------------------
+                           2202 ; Function setHighScore
+                           2203 ; ---------------------------------
+   0BED                    2204 _setHighScore::
+   0BED DD E5         [15] 2205 	push	ix
+   0BEF DD 21 00 00   [14] 2206 	ld	ix,#0
+   0BF3 DD 39         [15] 2207 	add	ix,sp
+   0BF5 21 F6 FF      [10] 2208 	ld	hl,#-10
+   0BF8 39            [11] 2209 	add	hl,sp
+   0BF9 F9            [ 6] 2210 	ld	sp,hl
+                           2211 ;src/game.c:671: i = 8;
+   0BFA 0E 08         [ 7] 2212 	ld	c,#0x08
+                           2213 ;src/game.c:672: while ((score > scoreHallOfFame[i - 1]) && (i>0)) {
+   0BFC 11r27r00      [10] 2214 	ld	de,#_scoreHallOfFame+0
+   0BFF                    2215 00102$:
+   0BFF 41            [ 4] 2216 	ld	b,c
+   0C00 05            [ 4] 2217 	dec	b
+   0C01 68            [ 4] 2218 	ld	l,b
+   0C02 26 00         [ 7] 2219 	ld	h,#0x00
+   0C04 29            [11] 2220 	add	hl, hl
+   0C05 29            [11] 2221 	add	hl, hl
+   0C06 19            [11] 2222 	add	hl,de
+   0C07 D5            [11] 2223 	push	de
+   0C08 C5            [11] 2224 	push	bc
+   0C09 EB            [ 4] 2225 	ex	de,hl
+   0C0A 21 0A 00      [10] 2226 	ld	hl, #0x000A
+   0C0D 39            [11] 2227 	add	hl, sp
+   0C0E EB            [ 4] 2228 	ex	de, hl
+   0C0F 01 04 00      [10] 2229 	ld	bc, #0x0004
+   0C12 ED B0         [21] 2230 	ldir
+   0C14 C1            [10] 2231 	pop	bc
+   0C15 D1            [10] 2232 	pop	de
+   0C16 DD 7E FC      [19] 2233 	ld	a,-4 (ix)
+   0C19 DD 96 04      [19] 2234 	sub	a, 4 (ix)
+   0C1C DD 7E FD      [19] 2235 	ld	a,-3 (ix)
+   0C1F DD 9E 05      [19] 2236 	sbc	a, 5 (ix)
+   0C22 DD 7E FE      [19] 2237 	ld	a,-2 (ix)
+   0C25 DD 9E 06      [19] 2238 	sbc	a, 6 (ix)
+   0C28 DD 7E FF      [19] 2239 	ld	a,-1 (ix)
+   0C2B DD 9E 07      [19] 2240 	sbc	a, 7 (ix)
+   0C2E 30 07         [12] 2241 	jr	NC,00104$
+   0C30 79            [ 4] 2242 	ld	a,c
+   0C31 B7            [ 4] 2243 	or	a, a
+   0C32 28 03         [12] 2244 	jr	Z,00104$
+                           2245 ;src/game.c:673: i--;
+   0C34 48            [ 4] 2246 	ld	c,b
+   0C35 18 C8         [12] 2247 	jr	00102$
+   0C37                    2248 00104$:
+                           2249 ;src/game.c:675: j = 7;
+                           2250 ;src/game.c:676: if (i <= j) {
+   0C37 3E 07         [ 7] 2251 	ld	a,#0x07
+   0C39 47            [ 4] 2252 	ld	b,a
+   0C3A 91            [ 4] 2253 	sub	a, c
+   0C3B DArEEr0C      [10] 2254 	jp	C,00111$
+                           2255 ;src/game.c:677: while ((i < j) && (j>0)) {
+   0C3E                    2256 00106$:
+                           2257 ;src/game.c:678: scoreHallOfFame[j] = scoreHallOfFame[j - 1];
+   0C3E DD 70 FC      [19] 2258 	ld	-4 (ix),b
+   0C41 DD 36 FD 00   [19] 2259 	ld	-3 (ix),#0x00
+                           2260 ;src/game.c:679: strcpy(nameHallOfFame[j], nameHallOfFame[j - 1]);
+   0C45 D5            [11] 2261 	push	de
+   0C46 58            [ 4] 2262 	ld	e,b
+   0C47 16 00         [ 7] 2263 	ld	d,#0x00
+   0C49 6B            [ 4] 2264 	ld	l, e
+   0C4A 62            [ 4] 2265 	ld	h, d
+   0C4B 29            [11] 2266 	add	hl, hl
+   0C4C 19            [11] 2267 	add	hl, de
+   0C4D 29            [11] 2268 	add	hl, hl
+   0C4E 19            [11] 2269 	add	hl, de
+   0C4F 29            [11] 2270 	add	hl, hl
+   0C50 19            [11] 2271 	add	hl, de
+   0C51 D1            [10] 2272 	pop	de
+   0C52 DD 75 FA      [19] 2273 	ld	-6 (ix),l
+   0C55 DD 74 FB      [19] 2274 	ld	-5 (ix),h
+                           2275 ;src/game.c:678: scoreHallOfFame[j] = scoreHallOfFame[j - 1];
+   0C58 DD 6E FC      [19] 2276 	ld	l,-4 (ix)
+   0C5B DD 66 FD      [19] 2277 	ld	h,-3 (ix)
+   0C5E 29            [11] 2278 	add	hl, hl
+   0C5F 29            [11] 2279 	add	hl, hl
+                           2280 ;src/game.c:679: strcpy(nameHallOfFame[j], nameHallOfFame[j - 1]);
+   0C60 3Er47         [ 7] 2281 	ld	a,#<(_nameHallOfFame)
+   0C62 DD 86 FA      [19] 2282 	add	a, -6 (ix)
+   0C65 DD 77 FA      [19] 2283 	ld	-6 (ix),a
+   0C68 3Es00         [ 7] 2284 	ld	a,#>(_nameHallOfFame)
+   0C6A DD 8E FB      [19] 2285 	adc	a, -5 (ix)
+   0C6D DD 77 FB      [19] 2286 	ld	-5 (ix),a
+                           2287 ;src/game.c:678: scoreHallOfFame[j] = scoreHallOfFame[j - 1];
+   0C70 19            [11] 2288 	add	hl,de
+   0C71 DD 75 FC      [19] 2289 	ld	-4 (ix),l
+   0C74 DD 74 FD      [19] 2290 	ld	-3 (ix),h
+                           2291 ;src/game.c:679: strcpy(nameHallOfFame[j], nameHallOfFame[j - 1]);
+                           2292 ;src/game.c:677: while ((i < j) && (j>0)) {
+   0C77 79            [ 4] 2293 	ld	a,c
+   0C78 90            [ 4] 2294 	sub	a, b
+   0C79 30 4F         [12] 2295 	jr	NC,00108$
+   0C7B 78            [ 4] 2296 	ld	a,b
+   0C7C B7            [ 4] 2297 	or	a, a
+   0C7D 28 4B         [12] 2298 	jr	Z,00108$
+                           2299 ;src/game.c:678: scoreHallOfFame[j] = scoreHallOfFame[j - 1];
+   0C7F 05            [ 4] 2300 	dec	b
+   0C80 68            [ 4] 2301 	ld	l,b
+   0C81 26 00         [ 7] 2302 	ld	h,#0x00
+   0C83 29            [11] 2303 	add	hl, hl
+   0C84 29            [11] 2304 	add	hl, hl
+   0C85 19            [11] 2305 	add	hl,de
+   0C86 D5            [11] 2306 	push	de
+   0C87 C5            [11] 2307 	push	bc
+   0C88 EB            [ 4] 2308 	ex	de,hl
+   0C89 21 04 00      [10] 2309 	ld	hl, #0x0004
+   0C8C 39            [11] 2310 	add	hl, sp
+   0C8D EB            [ 4] 2311 	ex	de, hl
+   0C8E 01 04 00      [10] 2312 	ld	bc, #0x0004
+   0C91 ED B0         [21] 2313 	ldir
+   0C93 DD 5E FC      [19] 2314 	ld	e,-4 (ix)
+   0C96 DD 56 FD      [19] 2315 	ld	d,-3 (ix)
+   0C99 21 04 00      [10] 2316 	ld	hl, #0x0004
+   0C9C 39            [11] 2317 	add	hl, sp
+   0C9D 01 04 00      [10] 2318 	ld	bc, #0x0004
+   0CA0 ED B0         [21] 2319 	ldir
+   0CA2 C1            [10] 2320 	pop	bc
+   0CA3 58            [ 4] 2321 	ld	e,b
+   0CA4 16 00         [ 7] 2322 	ld	d,#0x00
+   0CA6 6B            [ 4] 2323 	ld	l, e
+   0CA7 62            [ 4] 2324 	ld	h, d
+   0CA8 29            [11] 2325 	add	hl, hl
+   0CA9 19            [11] 2326 	add	hl, de
+   0CAA 29            [11] 2327 	add	hl, hl
+   0CAB 19            [11] 2328 	add	hl, de
+   0CAC 29            [11] 2329 	add	hl, hl
+   0CAD 19            [11] 2330 	add	hl, de
+   0CAE D1            [10] 2331 	pop	de
+   0CAF 3Er47         [ 7] 2332 	ld	a,#<(_nameHallOfFame)
+   0CB1 85            [ 4] 2333 	add	a, l
+   0CB2 6F            [ 4] 2334 	ld	l,a
+   0CB3 3Es00         [ 7] 2335 	ld	a,#>(_nameHallOfFame)
+   0CB5 8C            [ 4] 2336 	adc	a, h
+   0CB6 67            [ 4] 2337 	ld	h,a
+   0CB7 C5            [11] 2338 	push	bc
+   0CB8 D5            [11] 2339 	push	de
+   0CB9 DD 5E FA      [19] 2340 	ld	e,-6 (ix)
+   0CBC DD 56 FB      [19] 2341 	ld	d,-5 (ix)
+   0CBF AF            [ 4] 2342 	xor	a, a
+   0CC0                    2343 00140$:
+   0CC0 BE            [ 7] 2344 	cp	a, (hl)
+   0CC1 ED A0         [16] 2345 	ldi
+   0CC3 20 FB         [12] 2346 	jr	NZ, 00140$
+   0CC5 D1            [10] 2347 	pop	de
+   0CC6 C1            [10] 2348 	pop	bc
+                           2349 ;src/game.c:680: j--;
+   0CC7 C3r3Er0C      [10] 2350 	jp	00106$
+   0CCA                    2351 00108$:
+                           2352 ;src/game.c:682: getName();
+   0CCA CDrFBr09      [17] 2353 	call	_getName
+                           2354 ;src/game.c:683: wait4UserKeypress();
+   0CCD CDr00r00      [17] 2355 	call	_wait4UserKeypress
+                           2356 ;src/game.c:684: scoreHallOfFame[j] = score;
+   0CD0 DD 5E FC      [19] 2357 	ld	e,-4 (ix)
+   0CD3 DD 56 FD      [19] 2358 	ld	d,-3 (ix)
+   0CD6 21 0E 00      [10] 2359 	ld	hl, #0x000E
+   0CD9 39            [11] 2360 	add	hl, sp
+   0CDA 01 04 00      [10] 2361 	ld	bc, #0x0004
+   0CDD ED B0         [21] 2362 	ldir
+                           2363 ;src/game.c:685: strcpy(nameHallOfFame[j], newNameHighScore);
+   0CDF DD 5E FA      [19] 2364 	ld	e,-6 (ix)
+   0CE2 DD 56 FB      [19] 2365 	ld	d,-5 (ix)
+   0CE5 21r00r00      [10] 2366 	ld	hl,#_newNameHighScore
+   0CE8 AF            [ 4] 2367 	xor	a, a
+   0CE9                    2368 00141$:
+   0CE9 BE            [ 7] 2369 	cp	a, (hl)
+   0CEA ED A0         [16] 2370 	ldi
+   0CEC 20 FB         [12] 2371 	jr	NZ, 00141$
+   0CEE                    2372 00111$:
+   0CEE DD F9         [10] 2373 	ld	sp, ix
+   0CF0 DD E1         [14] 2374 	pop	ix
+   0CF2 C9            [10] 2375 	ret
+                           2376 ;src/game.c:689: void drawScoreBoard() {
+                           2377 ;	---------------------------------
+                           2378 ; Function drawScoreBoard
+                           2379 ; ---------------------------------
+   0CF3                    2380 _drawScoreBoard::
+   0CF3 DD E5         [15] 2381 	push	ix
+   0CF5 DD 21 00 00   [14] 2382 	ld	ix,#0
+   0CF9 DD 39         [15] 2383 	add	ix,sp
+   0CFB F5            [11] 2384 	push	af
+   0CFC F5            [11] 2385 	push	af
+                           2386 ;src/game.c:693: cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(5, 5), 0x4000);
+   0CFD 21 05 05      [10] 2387 	ld	hl,#0x0505
+   0D00 E5            [11] 2388 	push	hl
+   0D01 CDr00r00      [17] 2389 	call	_cpct_px2byteM0
+   0D04 45            [ 4] 2390 	ld	b,l
+   0D05 21 00 40      [10] 2391 	ld	hl,#0x4000
+   0D08 E5            [11] 2392 	push	hl
+   0D09 C5            [11] 2393 	push	bc
+   0D0A 33            [ 6] 2394 	inc	sp
+   0D0B 26 C0         [ 7] 2395 	ld	h, #0xC0
+   0D0D E5            [11] 2396 	push	hl
+   0D0E CDr00r00      [17] 2397 	call	_cpct_memset
+                           2398 ;src/game.c:695: drawText("THREES SCOREBOARD", 13, 2, 1);
+   0D11 21 02 01      [10] 2399 	ld	hl,#0x0102
+   0D14 E5            [11] 2400 	push	hl
+   0D15 3E 0D         [ 7] 2401 	ld	a,#0x0D
+   0D17 F5            [11] 2402 	push	af
+   0D18 33            [ 6] 2403 	inc	sp
+   0D19 21r10r0E      [10] 2404 	ld	hl,#___str_14
+   0D1C E5            [11] 2405 	push	hl
+   0D1D CDr00r00      [17] 2406 	call	_drawText
+   0D20 F1            [10] 2407 	pop	af
+   0D21 F1            [10] 2408 	pop	af
+   0D22 33            [ 6] 2409 	inc	sp
+                           2410 ;src/game.c:697: for (i = 0; i < 8; i++) {
+   0D23 DD 36 FC 00   [19] 2411 	ld	-4 (ix),#0x00
+   0D27 DD 36 FF 00   [19] 2412 	ld	-1 (ix),#0x00
+   0D2B 01 00 00      [10] 2413 	ld	bc,#0x0000
+   0D2E DD 36 FD 00   [19] 2414 	ld	-3 (ix),#0x00
+   0D32                    2415 00106$:
+                           2416 ;src/game.c:698: drawNumber(i + 1, 2, 5, 30 + (i * 15));
+   0D32 DD 7E FF      [19] 2417 	ld	a,-1 (ix)
+   0D35 C6 1E         [ 7] 2418 	add	a, #0x1E
+   0D37 DD 77 FE      [19] 2419 	ld	-2 (ix),a
+   0D3A DD 5E FC      [19] 2420 	ld	e,-4 (ix)
+   0D3D 16 00         [ 7] 2421 	ld	d,#0x00
+   0D3F D5            [11] 2422 	push	de
+   0D40 FD E1         [14] 2423 	pop	iy
+   0D42 FD 23         [10] 2424 	inc	iy
+   0D44 C5            [11] 2425 	push	bc
+   0D45 D5            [11] 2426 	push	de
+   0D46 DD 7E FE      [19] 2427 	ld	a,-2 (ix)
+   0D49 F5            [11] 2428 	push	af
+   0D4A 33            [ 6] 2429 	inc	sp
+   0D4B 21 02 05      [10] 2430 	ld	hl,#0x0502
+   0D4E E5            [11] 2431 	push	hl
+   0D4F FD E5         [15] 2432 	push	iy
+   0D51 CDr00r00      [17] 2433 	call	_drawNumber
+   0D54 F1            [10] 2434 	pop	af
+   0D55 F1            [10] 2435 	pop	af
+   0D56 33            [ 6] 2436 	inc	sp
+   0D57 D1            [10] 2437 	pop	de
+   0D58 C1            [10] 2438 	pop	bc
+                           2439 ;src/game.c:699: drawText(nameHallOfFame[i], 14, 30 + (i * 15), 0);
+   0D59 FD 21r47r00   [14] 2440 	ld	iy,#_nameHallOfFame
+   0D5D FD 09         [15] 2441 	add	iy, bc
+   0D5F C5            [11] 2442 	push	bc
+   0D60 D5            [11] 2443 	push	de
+   0D61 AF            [ 4] 2444 	xor	a, a
+   0D62 F5            [11] 2445 	push	af
+   0D63 33            [ 6] 2446 	inc	sp
+   0D64 DD 56 FE      [19] 2447 	ld	d, -2 (ix)
+   0D67 1E 0E         [ 7] 2448 	ld	e,#0x0E
+   0D69 D5            [11] 2449 	push	de
+   0D6A FD E5         [15] 2450 	push	iy
+   0D6C CDr00r00      [17] 2451 	call	_drawText
+   0D6F F1            [10] 2452 	pop	af
+   0D70 F1            [10] 2453 	pop	af
+   0D71 33            [ 6] 2454 	inc	sp
+   0D72 D1            [10] 2455 	pop	de
+   0D73 C1            [10] 2456 	pop	bc
+                           2457 ;src/game.c:700: drawNumber(scoreHallOfFame[i], 1, 69, 30 + (i * 15));
+   0D74 DD 7E FD      [19] 2458 	ld	a,-3 (ix)
+   0D77 C6 1E         [ 7] 2459 	add	a, #0x1E
+   0D79 DD 77 FE      [19] 2460 	ld	-2 (ix),a
+   0D7C EB            [ 4] 2461 	ex	de,hl
+   0D7D 29            [11] 2462 	add	hl, hl
+   0D7E 29            [11] 2463 	add	hl, hl
+   0D7F 11r27r00      [10] 2464 	ld	de,#_scoreHallOfFame
+   0D82 19            [11] 2465 	add	hl,de
+   0D83 5E            [ 7] 2466 	ld	e,(hl)
+   0D84 23            [ 6] 2467 	inc	hl
+   0D85 56            [ 7] 2468 	ld	d,(hl)
+   0D86 23            [ 6] 2469 	inc	hl
+   0D87 23            [ 6] 2470 	inc	hl
+   0D88 7E            [ 7] 2471 	ld	a,(hl)
+   0D89 2B            [ 6] 2472 	dec	hl
+   0D8A 6E            [ 7] 2473 	ld	l,(hl)
+   0D8B C5            [11] 2474 	push	bc
+   0D8C DD 7E FE      [19] 2475 	ld	a,-2 (ix)
+   0D8F F5            [11] 2476 	push	af
+   0D90 33            [ 6] 2477 	inc	sp
+   0D91 21 01 45      [10] 2478 	ld	hl,#0x4501
+   0D94 E5            [11] 2479 	push	hl
+   0D95 D5            [11] 2480 	push	de
+   0D96 CDr00r00      [17] 2481 	call	_drawNumber
+   0D99 F1            [10] 2482 	pop	af
+   0D9A F1            [10] 2483 	pop	af
+   0D9B 33            [ 6] 2484 	inc	sp
+   0D9C C1            [10] 2485 	pop	bc
+                           2486 ;src/game.c:697: for (i = 0; i < 8; i++) {
+   0D9D DD 7E FF      [19] 2487 	ld	a,-1 (ix)
+   0DA0 C6 0F         [ 7] 2488 	add	a, #0x0F
+   0DA2 DD 77 FF      [19] 2489 	ld	-1 (ix),a
+   0DA5 21 0F 00      [10] 2490 	ld	hl,#0x000F
+   0DA8 09            [11] 2491 	add	hl,bc
+   0DA9 4D            [ 4] 2492 	ld	c,l
+   0DAA 44            [ 4] 2493 	ld	b,h
+   0DAB DD 7E FD      [19] 2494 	ld	a,-3 (ix)
+   0DAE C6 0F         [ 7] 2495 	add	a, #0x0F
+   0DB0 DD 77 FD      [19] 2496 	ld	-3 (ix),a
+   0DB3 DD 34 FC      [23] 2497 	inc	-4 (ix)
+   0DB6 DD 7E FC      [19] 2498 	ld	a,-4 (ix)
+   0DB9 D6 08         [ 7] 2499 	sub	a, #0x08
+   0DBB DAr32r0D      [10] 2500 	jp	C,00106$
+                           2501 ;src/game.c:703: drawText("JOHN LOBO", 25, 170, 1);
+   0DBE 21 AA 01      [10] 2502 	ld	hl,#0x01AA
+   0DC1 E5            [11] 2503 	push	hl
+   0DC2 3E 19         [ 7] 2504 	ld	a,#0x19
+   0DC4 F5            [11] 2505 	push	af
+   0DC5 33            [ 6] 2506 	inc	sp
+   0DC6 21r22r0E      [10] 2507 	ld	hl,#___str_15
+   0DC9 E5            [11] 2508 	push	hl
+   0DCA CDr00r00      [17] 2509 	call	_drawText
+   0DCD F1            [10] 2510 	pop	af
+                           2511 ;src/game.c:704: drawText("@ GLASNOST CORP 2015", 11, 185, 1);
+   0DCE 33            [ 6] 2512 	inc	sp
+   0DCF 21 B9 01      [10] 2513 	ld	hl,#0x01B9
+   0DD2 E3            [19] 2514 	ex	(sp),hl
+   0DD3 3E 0B         [ 7] 2515 	ld	a,#0x0B
+   0DD5 F5            [11] 2516 	push	af
+   0DD6 33            [ 6] 2517 	inc	sp
+   0DD7 21r2Cr0E      [10] 2518 	ld	hl,#___str_16
+   0DDA E5            [11] 2519 	push	hl
+   0DDB CDr00r00      [17] 2520 	call	_drawText
+   0DDE F1            [10] 2521 	pop	af
+   0DDF F1            [10] 2522 	pop	af
+   0DE0 33            [ 6] 2523 	inc	sp
+                           2524 ;src/game.c:708: do {
+   0DE1 01 40 9C      [10] 2525 	ld	bc,#0x9C40
+   0DE4 11 00 00      [10] 2526 	ld	de,#0x0000
+   0DE7                    2527 00103$:
+                           2528 ;src/game.c:709: c--;                       // One more cycle
+   0DE7 79            [ 4] 2529 	ld	a,c
+   0DE8 C6 FF         [ 7] 2530 	add	a,#0xFF
+   0DEA 4F            [ 4] 2531 	ld	c,a
+   0DEB 78            [ 4] 2532 	ld	a,b
+   0DEC CE FF         [ 7] 2533 	adc	a,#0xFF
+   0DEE 47            [ 4] 2534 	ld	b,a
+   0DEF 7B            [ 4] 2535 	ld	a,e
+   0DF0 CE FF         [ 7] 2536 	adc	a,#0xFF
+   0DF2 5F            [ 4] 2537 	ld	e,a
+   0DF3 7A            [ 4] 2538 	ld	a,d
+   0DF4 CE FF         [ 7] 2539 	adc	a,#0xFF
+   0DF6 57            [ 4] 2540 	ld	d,a
+                           2541 ;src/game.c:710: cpct_scanKeyboard_f();     // Scan the scan the keyboard
+   0DF7 C5            [11] 2542 	push	bc
+   0DF8 D5            [11] 2543 	push	de
+   0DF9 CDr00r00      [17] 2544 	call	_cpct_scanKeyboard_f
+   0DFC CDr00r00      [17] 2545 	call	_cpct_isAnyKeyPressed_f
+   0DFF D1            [10] 2546 	pop	de
+   0E00 C1            [10] 2547 	pop	bc
+   0E01 7D            [ 4] 2548 	ld	a,l
+   0E02 B7            [ 4] 2549 	or	a, a
+   0E03 20 06         [12] 2550 	jr	NZ,00108$
+   0E05 7A            [ 4] 2551 	ld	a,d
+   0E06 B3            [ 4] 2552 	or	a, e
+   0E07 B0            [ 4] 2553 	or	a, b
+   0E08 B1            [ 4] 2554 	or	a,c
+   0E09 20 DC         [12] 2555 	jr	NZ,00103$
+   0E0B                    2556 00108$:
+   0E0B DD F9         [10] 2557 	ld	sp, ix
+   0E0D DD E1         [14] 2558 	pop	ix
+   0E0F C9            [10] 2559 	ret
+   0E10                    2560 ___str_14:
+   0E10 54 48 52 45 45 53  2561 	.ascii "THREES SCOREBOARD"
+        20 53 43 4F 52 45
+        42 4F 41 52 44
+   0E21 00                 2562 	.db 0x00
+   0E22                    2563 ___str_15:
+   0E22 4A 4F 48 4E 20 4C  2564 	.ascii "JOHN LOBO"
+        4F 42 4F
+   0E2B 00                 2565 	.db 0x00
+   0E2C                    2566 ___str_16:
+   0E2C 40 20 47 4C 41 53  2567 	.ascii "@ GLASNOST CORP 2015"
+        4E 4F 53 54 20 43
+        4F 52 50 20 32 30
+        31 35
+   0E40 00                 2568 	.db 0x00
+                           2569 ;src/game.c:723: void game(void) {
+                           2570 ;	---------------------------------
+                           2571 ; Function game
+                           2572 ; ---------------------------------
+   0E41                    2573 _game::
+   0E41 DD E5         [15] 2574 	push	ix
+   0E43 DD 21 00 00   [14] 2575 	ld	ix,#0
+   0E47 DD 39         [15] 2576 	add	ix,sp
+   0E49 3B            [ 6] 2577 	dec	sp
+                           2578 ;src/game.c:727: initGame();
+   0E4A CDr7Cr05      [17] 2579 	call	_initGame
+                           2580 ;src/game.c:730: clearScreen();
+   0E4D CDr00r00      [17] 2581 	call	_clearScreen
+                           2582 ;src/game.c:733: drawFrame(2, 1, 49, 182);
+   0E50 21 31 B6      [10] 2583 	ld	hl,#0xB631
+   0E53 E5            [11] 2584 	push	hl
+   0E54 21 02 01      [10] 2585 	ld	hl,#0x0102
+   0E57 E5            [11] 2586 	push	hl
+   0E58 CDr00r00      [17] 2587 	call	_drawFrame
+   0E5B F1            [10] 2588 	pop	af
+   0E5C F1            [10] 2589 	pop	af
+                           2590 ;src/game.c:734: printCells();
+   0E5D CDr88r08      [17] 2591 	call	_printCells
+                           2592 ;src/game.c:735: drawText("NEXT", 62, 2, 0);
+   0E60 21 02 00      [10] 2593 	ld	hl,#0x0002
+   0E63 E5            [11] 2594 	push	hl
+   0E64 3E 3E         [ 7] 2595 	ld	a,#0x3E
+   0E66 F5            [11] 2596 	push	af
+   0E67 33            [ 6] 2597 	inc	sp
+   0E68 21r9Br0F      [10] 2598 	ld	hl,#___str_17
+   0E6B E5            [11] 2599 	push	hl
+   0E6C CDr00r00      [17] 2600 	call	_drawText
+   0E6F F1            [10] 2601 	pop	af
+   0E70 F1            [10] 2602 	pop	af
+   0E71 33            [ 6] 2603 	inc	sp
+                           2604 ;src/game.c:737: wait4UserKeypress();
+   0E72 CDr00r00      [17] 2605 	call	_wait4UserKeypress
+                           2606 ;src/game.c:739: moved = 0;
+   0E75 DD 36 FF 00   [19] 2607 	ld	-1 (ix),#0x00
+                           2608 ;src/game.c:741: while (1) {
+   0E79                    2609 00128$:
+                           2610 ;src/game.c:742: delay(24);
+   0E79 21 00 00      [10] 2611 	ld	hl,#0x0000
+   0E7C E5            [11] 2612 	push	hl
+   0E7D 21 18 00      [10] 2613 	ld	hl,#0x0018
+   0E80 E5            [11] 2614 	push	hl
+   0E81 CDrD9r00      [17] 2615 	call	_delay
+   0E84 F1            [10] 2616 	pop	af
+   0E85 F1            [10] 2617 	pop	af
+                           2618 ;src/game.c:743: cpct_scanKeyboard_f();
+   0E86 CDr00r00      [17] 2619 	call	_cpct_scanKeyboard_f
+                           2620 ;src/game.c:745: if (cpct_isKeyPressed(keys.right)) {
+   0E89 2Ar06r00      [16] 2621 	ld	hl, (#_keys + 6)
+   0E8C CDr00r00      [17] 2622 	call	_cpct_isKeyPressed
+   0E8F 7D            [ 4] 2623 	ld	a,l
+   0E90 B7            [ 4] 2624 	or	a, a
+   0E91 28 15         [12] 2625 	jr	Z,00121$
+                           2626 ;src/game.c:746: if (rotateCellsRight()) {
+   0E93 CDr58r06      [17] 2627 	call	_rotateCellsRight
+   0E96 7D            [ 4] 2628 	ld	a,l
+   0E97 B7            [ 4] 2629 	or	a, a
+   0E98 28 75         [12] 2630 	jr	Z,00122$
+                           2631 ;src/game.c:747: addRandomCellTurn(RIGHT);
+   0E9A 3E 01         [ 7] 2632 	ld	a,#0x01
+   0E9C F5            [11] 2633 	push	af
+   0E9D 33            [ 6] 2634 	inc	sp
+   0E9E CDrBBr02      [17] 2635 	call	_addRandomCellTurn
+   0EA1 33            [ 6] 2636 	inc	sp
+                           2637 ;src/game.c:748: moved = 1;
+   0EA2 DD 36 FF 01   [19] 2638 	ld	-1 (ix),#0x01
+   0EA6 18 67         [12] 2639 	jr	00122$
+   0EA8                    2640 00121$:
+                           2641 ;src/game.c:750: } else if (cpct_isKeyPressed(keys.left)) {
+   0EA8 2Ar04r00      [16] 2642 	ld	hl, (#_keys + 4)
+   0EAB CDr00r00      [17] 2643 	call	_cpct_isKeyPressed
+   0EAE 7D            [ 4] 2644 	ld	a,l
+   0EAF B7            [ 4] 2645 	or	a, a
+   0EB0 28 14         [12] 2646 	jr	Z,00118$
+                           2647 ;src/game.c:751: if (rotateCellsLeft()) {
+   0EB2 CDr9Dr05      [17] 2648 	call	_rotateCellsLeft
+   0EB5 7D            [ 4] 2649 	ld	a,l
+   0EB6 B7            [ 4] 2650 	or	a, a
+   0EB7 28 56         [12] 2651 	jr	Z,00122$
+                           2652 ;src/game.c:752: addRandomCellTurn(LEFT);
+   0EB9 AF            [ 4] 2653 	xor	a, a
+   0EBA F5            [11] 2654 	push	af
+   0EBB 33            [ 6] 2655 	inc	sp
+   0EBC CDrBBr02      [17] 2656 	call	_addRandomCellTurn
+   0EBF 33            [ 6] 2657 	inc	sp
+                           2658 ;src/game.c:753: moved = 1;
+   0EC0 DD 36 FF 01   [19] 2659 	ld	-1 (ix),#0x01
+   0EC4 18 49         [12] 2660 	jr	00122$
+   0EC6                    2661 00118$:
+                           2662 ;src/game.c:755: } else if (cpct_isKeyPressed(keys.down)) {
+   0EC6 2Ar02r00      [16] 2663 	ld	hl, (#_keys + 2)
+   0EC9 CDr00r00      [17] 2664 	call	_cpct_isKeyPressed
+   0ECC 7D            [ 4] 2665 	ld	a,l
+   0ECD B7            [ 4] 2666 	or	a, a
+   0ECE 28 15         [12] 2667 	jr	Z,00115$
+                           2668 ;src/game.c:756: if (rotateCellsDown()) {
+   0ED0 CDrC6r07      [17] 2669 	call	_rotateCellsDown
+   0ED3 7D            [ 4] 2670 	ld	a,l
+   0ED4 B7            [ 4] 2671 	or	a, a
+   0ED5 28 38         [12] 2672 	jr	Z,00122$
+                           2673 ;src/game.c:757: addRandomCellTurn(DOWN);
+   0ED7 3E 03         [ 7] 2674 	ld	a,#0x03
+   0ED9 F5            [11] 2675 	push	af
+   0EDA 33            [ 6] 2676 	inc	sp
+   0EDB CDrBBr02      [17] 2677 	call	_addRandomCellTurn
+   0EDE 33            [ 6] 2678 	inc	sp
+                           2679 ;src/game.c:758: moved = 1;
+   0EDF DD 36 FF 01   [19] 2680 	ld	-1 (ix),#0x01
+   0EE3 18 2A         [12] 2681 	jr	00122$
+   0EE5                    2682 00115$:
+                           2683 ;src/game.c:760: } else if (cpct_isKeyPressed(keys.up)) {
+   0EE5 2Ar00r00      [16] 2684 	ld	hl, (#_keys + 0)
+   0EE8 CDr00r00      [17] 2685 	call	_cpct_isKeyPressed
+   0EEB 7D            [ 4] 2686 	ld	a,l
+   0EEC B7            [ 4] 2687 	or	a, a
+   0EED 28 15         [12] 2688 	jr	Z,00112$
+                           2689 ;src/game.c:761: if (rotateCellsUp()) {
+   0EEF CDr19r07      [17] 2690 	call	_rotateCellsUp
+   0EF2 7D            [ 4] 2691 	ld	a,l
+   0EF3 B7            [ 4] 2692 	or	a, a
+   0EF4 28 19         [12] 2693 	jr	Z,00122$
+                           2694 ;src/game.c:762: addRandomCellTurn(UP);
+   0EF6 3E 02         [ 7] 2695 	ld	a,#0x02
+   0EF8 F5            [11] 2696 	push	af
+   0EF9 33            [ 6] 2697 	inc	sp
+   0EFA CDrBBr02      [17] 2698 	call	_addRandomCellTurn
+   0EFD 33            [ 6] 2699 	inc	sp
+                           2700 ;src/game.c:763: moved = 1;
+   0EFE DD 36 FF 01   [19] 2701 	ld	-1 (ix),#0x01
+   0F02 18 0B         [12] 2702 	jr	00122$
+   0F04                    2703 00112$:
+                           2704 ;src/game.c:765: } else if (cpct_isKeyPressed(keys.abort))
+   0F04 2Ar0Cr00      [16] 2705 	ld	hl, (#_keys + 12)
+   0F07 CDr00r00      [17] 2706 	call	_cpct_isKeyPressed
+   0F0A 7D            [ 4] 2707 	ld	a,l
+   0F0B B7            [ 4] 2708 	or	a, a
+   0F0C C2r97r0F      [10] 2709 	jp	NZ,00130$
+                           2710 ;src/game.c:766: break;
+   0F0F                    2711 00122$:
+                           2712 ;src/game.c:768: if (moved) {
+   0F0F DD 7E FF      [19] 2713 	ld	a,-1 (ix)
+   0F12 B7            [ 4] 2714 	or	a, a
+   0F13 CAr79r0E      [10] 2715 	jp	Z,00128$
+                           2716 ;src/game.c:769: printCells();
+   0F16 CDr88r08      [17] 2717 	call	_printCells
+                           2718 ;src/game.c:770: moved = 0;
+   0F19 DD 36 FF 00   [19] 2719 	ld	-1 (ix),#0x00
+                           2720 ;src/game.c:771: if (anyMovesLeft() == 0) {
+   0F1D CDr34r02      [17] 2721 	call	_anyMovesLeft
+   0F20 7D            [ 4] 2722 	ld	a,l
+   0F21 B7            [ 4] 2723 	or	a, a
+   0F22 C2r79r0E      [10] 2724 	jp	NZ,00128$
+                           2725 ;src/game.c:772: drawScore();
+   0F25 CDr3Dr09      [17] 2726 	call	_drawScore
+                           2727 ;src/game.c:773: wait4UserKeypress();
+   0F28 CDr00r00      [17] 2728 	call	_wait4UserKeypress
+                           2729 ;src/game.c:774: drawFrame(14, 60, 68, 142);
+   0F2B 21 44 8E      [10] 2730 	ld	hl,#0x8E44
+   0F2E E5            [11] 2731 	push	hl
+   0F2F 21 0E 3C      [10] 2732 	ld	hl,#0x3C0E
+   0F32 E5            [11] 2733 	push	hl
+   0F33 CDr00r00      [17] 2734 	call	_drawFrame
+   0F36 F1            [10] 2735 	pop	af
+                           2736 ;src/game.c:775: drawFallingText("NO MORE MOVES", 20, 90, 96);
+   0F37 21 5A 60      [10] 2737 	ld	hl, #0x605A
+   0F3A E3            [19] 2738 	ex	(sp),hl
+   0F3B 3E 14         [ 7] 2739 	ld	a,#0x14
+   0F3D F5            [11] 2740 	push	af
+   0F3E 33            [ 6] 2741 	inc	sp
+   0F3F 21rA0r0F      [10] 2742 	ld	hl,#___str_18
+   0F42 E5            [11] 2743 	push	hl
+   0F43 CDr00r00      [17] 2744 	call	_drawFallingText
+   0F46 F1            [10] 2745 	pop	af
+                           2746 ;src/game.c:776: drawText("GAME OVER", 22, 70, 1);
+   0F47 33            [ 6] 2747 	inc	sp
+   0F48 21 46 01      [10] 2748 	ld	hl,#0x0146
+   0F4B E3            [19] 2749 	ex	(sp),hl
+   0F4C 3E 16         [ 7] 2750 	ld	a,#0x16
+   0F4E F5            [11] 2751 	push	af
+   0F4F 33            [ 6] 2752 	inc	sp
+   0F50 21rAEr0F      [10] 2753 	ld	hl,#___str_19
+   0F53 E5            [11] 2754 	push	hl
+   0F54 CDr00r00      [17] 2755 	call	_drawText
+   0F57 F1            [10] 2756 	pop	af
+   0F58 F1            [10] 2757 	pop	af
+   0F59 33            [ 6] 2758 	inc	sp
+                           2759 ;src/game.c:777: sprintf(aux_txt, "SCORE  %d", score);
+   0F5A 2Ar25r00      [16] 2760 	ld	hl,(_score + 2)
+   0F5D E5            [11] 2761 	push	hl
+   0F5E 2Ar23r00      [16] 2762 	ld	hl,(_score)
+   0F61 E5            [11] 2763 	push	hl
+   0F62 21rB8r0F      [10] 2764 	ld	hl,#___str_20
+   0F65 E5            [11] 2765 	push	hl
+   0F66 2ArC1r00      [16] 2766 	ld	hl,(_aux_txt)
+   0F69 E5            [11] 2767 	push	hl
+   0F6A CDr00r00      [17] 2768 	call	_sprintf
+   0F6D 21 08 00      [10] 2769 	ld	hl,#8
+   0F70 39            [11] 2770 	add	hl,sp
+   0F71 F9            [ 6] 2771 	ld	sp,hl
+                           2772 ;src/game.c:778: drawText(aux_txt, 22, 120, 1);
+   0F72 21 78 01      [10] 2773 	ld	hl,#0x0178
+   0F75 E5            [11] 2774 	push	hl
+   0F76 3E 16         [ 7] 2775 	ld	a,#0x16
+   0F78 F5            [11] 2776 	push	af
+   0F79 33            [ 6] 2777 	inc	sp
+   0F7A 2ArC1r00      [16] 2778 	ld	hl,(_aux_txt)
+   0F7D E5            [11] 2779 	push	hl
+   0F7E CDr00r00      [17] 2780 	call	_drawText
+   0F81 F1            [10] 2781 	pop	af
+   0F82 F1            [10] 2782 	pop	af
+   0F83 33            [ 6] 2783 	inc	sp
+                           2784 ;src/game.c:779: wait4UserKeypress();
+   0F84 CDr00r00      [17] 2785 	call	_wait4UserKeypress
+                           2786 ;src/game.c:780: setHighScore(score);
+   0F87 2Ar25r00      [16] 2787 	ld	hl,(_score + 2)
+   0F8A E5            [11] 2788 	push	hl
+   0F8B 2Ar23r00      [16] 2789 	ld	hl,(_score)
+   0F8E E5            [11] 2790 	push	hl
+   0F8F CDrEDr0B      [17] 2791 	call	_setHighScore
+   0F92 F1            [10] 2792 	pop	af
+   0F93 F1            [10] 2793 	pop	af
+                           2794 ;src/game.c:781: drawScoreBoard();
+   0F94 CDrF3r0C      [17] 2795 	call	_drawScoreBoard
+                           2796 ;src/game.c:782: break;
+   0F97                    2797 00130$:
+   0F97 33            [ 6] 2798 	inc	sp
+   0F98 DD E1         [14] 2799 	pop	ix
+   0F9A C9            [10] 2800 	ret
+   0F9B                    2801 ___str_17:
+   0F9B 4E 45 58 54        2802 	.ascii "NEXT"
+   0F9F 00                 2803 	.db 0x00
+   0FA0                    2804 ___str_18:
+   0FA0 4E 4F 20 4D 4F 52  2805 	.ascii "NO MORE MOVES"
+        45 20 4D 4F 56 45
+        53
+   0FAD 00                 2806 	.db 0x00
+   0FAE                    2807 ___str_19:
+   0FAE 47 41 4D 45 20 4F  2808 	.ascii "GAME OVER"
+        56 45 52
+   0FB7 00                 2809 	.db 0x00
+   0FB8                    2810 ___str_20:
+   0FB8 53 43 4F 52 45 20  2811 	.ascii "SCORE  %d"
+        20 25 64
+   0FC1 00                 2812 	.db 0x00
+                           2813 ;src/game.c:789: void checkKeyboardMenu() {
+                           2814 ;	---------------------------------
+                           2815 ; Function checkKeyboardMenu
+                           2816 ; ---------------------------------
+   0FC2                    2817 _checkKeyboardMenu::
+                           2818 ;src/game.c:793: cpct_scanKeyboard_f();
+   0FC2 CDr00r00      [17] 2819 	call	_cpct_scanKeyboard_f
+                           2820 ;src/game.c:795: if (selectedOption == 1) {
+   0FC5 3ArC0r00      [13] 2821 	ld	a,(#_selectedOption + 0)
+   0FC8 3D            [ 4] 2822 	dec	a
+   0FC9 20 66         [12] 2823 	jr	NZ,00102$
+                           2824 ;src/game.c:796: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 27, 71);
+   0FCB 21 1B 47      [10] 2825 	ld	hl,#0x471B
+   0FCE E5            [11] 2826 	push	hl
+   0FCF 21 00 C0      [10] 2827 	ld	hl,#0xC000
+   0FD2 E5            [11] 2828 	push	hl
+   0FD3 CDr00r00      [17] 2829 	call	_cpct_getScreenPtr
+   0FD6 4D            [ 4] 2830 	ld	c,l
+   0FD7 44            [ 4] 2831 	ld	b,h
+                           2832 ;src/game.c:797: cpct_drawSprite(g_tile_marker_3, pvideo, 2, 9);
+   0FD8 21 02 09      [10] 2833 	ld	hl,#0x0902
+   0FDB E5            [11] 2834 	push	hl
+   0FDC C5            [11] 2835 	push	bc
+   0FDD 21r00r00      [10] 2836 	ld	hl,#_g_tile_marker_3
+   0FE0 E5            [11] 2837 	push	hl
+   0FE1 CDr00r00      [17] 2838 	call	_cpct_drawSprite
+                           2839 ;src/game.c:798: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 54, 71);
+   0FE4 21 36 47      [10] 2840 	ld	hl,#0x4736
+   0FE7 E5            [11] 2841 	push	hl
+   0FE8 21 00 C0      [10] 2842 	ld	hl,#0xC000
+   0FEB E5            [11] 2843 	push	hl
+   0FEC CDr00r00      [17] 2844 	call	_cpct_getScreenPtr
+   0FEF 4D            [ 4] 2845 	ld	c,l
+   0FF0 44            [ 4] 2846 	ld	b,h
+                           2847 ;src/game.c:799: cpct_drawSprite(g_tile_marker_3, pvideo, 2, 9);
+   0FF1 21 02 09      [10] 2848 	ld	hl,#0x0902
+   0FF4 E5            [11] 2849 	push	hl
+   0FF5 C5            [11] 2850 	push	bc
+   0FF6 21r00r00      [10] 2851 	ld	hl,#_g_tile_marker_3
+   0FF9 E5            [11] 2852 	push	hl
+   0FFA CDr00r00      [17] 2853 	call	_cpct_drawSprite
+                           2854 ;src/game.c:800: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 27, 51);
+   0FFD 21 1B 33      [10] 2855 	ld	hl,#0x331B
+   1000 E5            [11] 2856 	push	hl
+   1001 21 00 C0      [10] 2857 	ld	hl,#0xC000
+   1004 E5            [11] 2858 	push	hl
+   1005 CDr00r00      [17] 2859 	call	_cpct_getScreenPtr
+   1008 4D            [ 4] 2860 	ld	c,l
+   1009 44            [ 4] 2861 	ld	b,h
+                           2862 ;src/game.c:801: cpct_drawSprite(g_tile_marker_0, pvideo, 2, 9);
+   100A 21 02 09      [10] 2863 	ld	hl,#0x0902
+   100D E5            [11] 2864 	push	hl
+   100E C5            [11] 2865 	push	bc
+   100F 21r00r00      [10] 2866 	ld	hl,#_g_tile_marker_0
+   1012 E5            [11] 2867 	push	hl
+   1013 CDr00r00      [17] 2868 	call	_cpct_drawSprite
+                           2869 ;src/game.c:802: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 54, 51);
+   1016 21 36 33      [10] 2870 	ld	hl,#0x3336
+   1019 E5            [11] 2871 	push	hl
+   101A 21 00 C0      [10] 2872 	ld	hl,#0xC000
+   101D E5            [11] 2873 	push	hl
+   101E CDr00r00      [17] 2874 	call	_cpct_getScreenPtr
+   1021 4D            [ 4] 2875 	ld	c,l
+   1022 44            [ 4] 2876 	ld	b,h
+                           2877 ;src/game.c:803: cpct_drawSprite(g_tile_marker_0, pvideo, 2, 9);
+   1023 21 02 09      [10] 2878 	ld	hl,#0x0902
+   1026 E5            [11] 2879 	push	hl
+   1027 C5            [11] 2880 	push	bc
+   1028 21r00r00      [10] 2881 	ld	hl,#_g_tile_marker_0
+   102B E5            [11] 2882 	push	hl
+   102C CDr00r00      [17] 2883 	call	_cpct_drawSprite
+   102F 18 64         [12] 2884 	jr	00103$
+   1031                    2885 00102$:
+                           2886 ;src/game.c:805: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 27, 51);
+   1031 21 1B 33      [10] 2887 	ld	hl,#0x331B
+   1034 E5            [11] 2888 	push	hl
+   1035 21 00 C0      [10] 2889 	ld	hl,#0xC000
+   1038 E5            [11] 2890 	push	hl
+   1039 CDr00r00      [17] 2891 	call	_cpct_getScreenPtr
+   103C 4D            [ 4] 2892 	ld	c,l
+   103D 44            [ 4] 2893 	ld	b,h
+                           2894 ;src/game.c:806: cpct_drawSprite(g_tile_marker_3, pvideo, 2, 9);
+   103E 21 02 09      [10] 2895 	ld	hl,#0x0902
+   1041 E5            [11] 2896 	push	hl
+   1042 C5            [11] 2897 	push	bc
+   1043 21r00r00      [10] 2898 	ld	hl,#_g_tile_marker_3
+   1046 E5            [11] 2899 	push	hl
+   1047 CDr00r00      [17] 2900 	call	_cpct_drawSprite
+                           2901 ;src/game.c:807: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 54, 51);
+   104A 21 36 33      [10] 2902 	ld	hl,#0x3336
+   104D E5            [11] 2903 	push	hl
+   104E 21 00 C0      [10] 2904 	ld	hl,#0xC000
+   1051 E5            [11] 2905 	push	hl
+   1052 CDr00r00      [17] 2906 	call	_cpct_getScreenPtr
+   1055 4D            [ 4] 2907 	ld	c,l
+   1056 44            [ 4] 2908 	ld	b,h
+                           2909 ;src/game.c:808: cpct_drawSprite(g_tile_marker_3, pvideo, 2, 9);
+   1057 21 02 09      [10] 2910 	ld	hl,#0x0902
+   105A E5            [11] 2911 	push	hl
+   105B C5            [11] 2912 	push	bc
+   105C 21r00r00      [10] 2913 	ld	hl,#_g_tile_marker_3
+   105F E5            [11] 2914 	push	hl
+   1060 CDr00r00      [17] 2915 	call	_cpct_drawSprite
+                           2916 ;src/game.c:809: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 27, 71);
+   1063 21 1B 47      [10] 2917 	ld	hl,#0x471B
+   1066 E5            [11] 2918 	push	hl
+   1067 21 00 C0      [10] 2919 	ld	hl,#0xC000
+   106A E5            [11] 2920 	push	hl
+   106B CDr00r00      [17] 2921 	call	_cpct_getScreenPtr
+   106E 4D            [ 4] 2922 	ld	c,l
+   106F 44            [ 4] 2923 	ld	b,h
+                           2924 ;src/game.c:810: cpct_drawSprite(g_tile_marker_0, pvideo, 2, 9);
+   1070 21 02 09      [10] 2925 	ld	hl,#0x0902
+   1073 E5            [11] 2926 	push	hl
+   1074 C5            [11] 2927 	push	bc
+   1075 21r00r00      [10] 2928 	ld	hl,#_g_tile_marker_0
+   1078 E5            [11] 2929 	push	hl
+   1079 CDr00r00      [17] 2930 	call	_cpct_drawSprite
+                           2931 ;src/game.c:811: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 54, 71);
+   107C 21 36 47      [10] 2932 	ld	hl,#0x4736
+   107F E5            [11] 2933 	push	hl
+   1080 21 00 C0      [10] 2934 	ld	hl,#0xC000
+   1083 E5            [11] 2935 	push	hl
+   1084 CDr00r00      [17] 2936 	call	_cpct_getScreenPtr
+   1087 4D            [ 4] 2937 	ld	c,l
+   1088 44            [ 4] 2938 	ld	b,h
+                           2939 ;src/game.c:812: cpct_drawSprite(g_tile_marker_0, pvideo, 2, 9);
+   1089 21 02 09      [10] 2940 	ld	hl,#0x0902
+   108C E5            [11] 2941 	push	hl
+   108D C5            [11] 2942 	push	bc
+   108E 21r00r00      [10] 2943 	ld	hl,#_g_tile_marker_0
+   1091 E5            [11] 2944 	push	hl
+   1092 CDr00r00      [17] 2945 	call	_cpct_drawSprite
+   1095                    2946 00103$:
+                           2947 ;src/game.c:816: if (cpct_isKeyPressed(Key_1)) {
+   1095 21 08 01      [10] 2948 	ld	hl,#0x0108
+   1098 CDr00r00      [17] 2949 	call	_cpct_isKeyPressed
+   109B 7D            [ 4] 2950 	ld	a,l
+   109C B7            [ 4] 2951 	or	a, a
+   109D CAr23r11      [10] 2952 	jp	Z,00110$
+                           2953 ;src/game.c:818: selectedOption = 1;
+   10A0 21rC0r00      [10] 2954 	ld	hl,#_selectedOption + 0
+   10A3 36 01         [10] 2955 	ld	(hl), #0x01
+                           2956 ;src/game.c:820: waitKeyUp(Key_1);
+   10A5 21 08 01      [10] 2957 	ld	hl,#0x0108
+   10A8 E5            [11] 2958 	push	hl
+   10A9 CDr00r00      [17] 2959 	call	_waitKeyUp
+                           2960 ;src/game.c:822: keys.up    = redefineKey("UP");
+   10AC 21rA5r11      [10] 2961 	ld	hl, #___str_21
+   10AF E3            [19] 2962 	ex	(sp),hl
+   10B0 CDr00r00      [17] 2963 	call	_redefineKey
+   10B3 F1            [10] 2964 	pop	af
+   10B4 4D            [ 4] 2965 	ld	c,l
+   10B5 44            [ 4] 2966 	ld	b,h
+   10B6 ED 43r00r00   [20] 2967 	ld	(_keys), bc
+                           2968 ;src/game.c:823: keys.down  = redefineKey("DOWN");
+   10BA 21rA8r11      [10] 2969 	ld	hl,#___str_22
+   10BD E5            [11] 2970 	push	hl
+   10BE CDr00r00      [17] 2971 	call	_redefineKey
+   10C1 F1            [10] 2972 	pop	af
+   10C2 4D            [ 4] 2973 	ld	c,l
+   10C3 44            [ 4] 2974 	ld	b,h
+   10C4 ED 43r02r00   [20] 2975 	ld	((_keys + 0x0002)), bc
+                           2976 ;src/game.c:824: keys.left  = redefineKey("LEFT");
+   10C8 21rADr11      [10] 2977 	ld	hl,#___str_23
+   10CB E5            [11] 2978 	push	hl
+   10CC CDr00r00      [17] 2979 	call	_redefineKey
+   10CF F1            [10] 2980 	pop	af
+   10D0 4D            [ 4] 2981 	ld	c,l
+   10D1 44            [ 4] 2982 	ld	b,h
+   10D2 ED 43r04r00   [20] 2983 	ld	((_keys + 0x0004)), bc
+                           2984 ;src/game.c:825: keys.right = redefineKey("RIGHT");
+   10D6 21rB2r11      [10] 2985 	ld	hl,#___str_24
+   10D9 E5            [11] 2986 	push	hl
+   10DA CDr00r00      [17] 2987 	call	_redefineKey
+   10DD F1            [10] 2988 	pop	af
+   10DE 4D            [ 4] 2989 	ld	c,l
+   10DF 44            [ 4] 2990 	ld	b,h
+   10E0 ED 43r06r00   [20] 2991 	ld	((_keys + 0x0006)), bc
+                           2992 ;src/game.c:826: keys.pause = redefineKey("PAUSE");
+   10E4 21rB8r11      [10] 2993 	ld	hl,#___str_25
+   10E7 E5            [11] 2994 	push	hl
+   10E8 CDr00r00      [17] 2995 	call	_redefineKey
+   10EB F1            [10] 2996 	pop	af
+   10EC 4D            [ 4] 2997 	ld	c,l
+   10ED 44            [ 4] 2998 	ld	b,h
+   10EE ED 43r0Ar00   [20] 2999 	ld	((_keys + 0x000a)), bc
+                           3000 ;src/game.c:827: keys.abort = redefineKey("ABORT");
+   10F2 21rBEr11      [10] 3001 	ld	hl,#___str_26
+   10F5 E5            [11] 3002 	push	hl
+   10F6 CDr00r00      [17] 3003 	call	_redefineKey
+   10F9 F1            [10] 3004 	pop	af
+   10FA 4D            [ 4] 3005 	ld	c,l
+   10FB 44            [ 4] 3006 	ld	b,h
+   10FC ED 43r0Cr00   [20] 3007 	ld	((_keys + 0x000c)), bc
+                           3008 ;src/game.c:829: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 39 - 10 * FONT_W, 144);
+   1100 21 09 90      [10] 3009 	ld	hl,#0x9009
+   1103 E5            [11] 3010 	push	hl
+   1104 21 00 C0      [10] 3011 	ld	hl,#0xC000
+   1107 E5            [11] 3012 	push	hl
+   1108 CDr00r00      [17] 3013 	call	_cpct_getScreenPtr
+                           3014 ;src/game.c:830: cpct_drawSolidBox(pvideo, cpct_px2byteM0(5, 5), 15 * FONT_W, FONT_H);
+   110B E5            [11] 3015 	push	hl
+   110C 21 05 05      [10] 3016 	ld	hl,#0x0505
+   110F E5            [11] 3017 	push	hl
+   1110 CDr00r00      [17] 3018 	call	_cpct_px2byteM0
+   1113 55            [ 4] 3019 	ld	d,l
+   1114 C1            [10] 3020 	pop	bc
+   1115 21 2D 0B      [10] 3021 	ld	hl,#0x0B2D
+   1118 E5            [11] 3022 	push	hl
+   1119 D5            [11] 3023 	push	de
+   111A 33            [ 6] 3024 	inc	sp
+   111B C5            [11] 3025 	push	bc
+   111C CDr00r00      [17] 3026 	call	_cpct_drawSolidBox
+   111F F1            [10] 3027 	pop	af
+   1120 F1            [10] 3028 	pop	af
+   1121 33            [ 6] 3029 	inc	sp
+   1122 C9            [10] 3030 	ret
+   1123                    3031 00110$:
+                           3032 ;src/game.c:834: else if (cpct_isKeyPressed(Key_2)) {
+   1123 21 08 02      [10] 3033 	ld	hl,#0x0208
+   1126 CDr00r00      [17] 3034 	call	_cpct_isKeyPressed
+   1129 7D            [ 4] 3035 	ld	a,l
+   112A B7            [ 4] 3036 	or	a, a
+   112B 28 60         [12] 3037 	jr	Z,00107$
+                           3038 ;src/game.c:836: selectedOption = 2;
+   112D 21rC0r00      [10] 3039 	ld	hl,#_selectedOption + 0
+   1130 36 02         [10] 3040 	ld	(hl), #0x02
+                           3041 ;src/game.c:838: keys.up    = Joy0_Up;
+   1132 21 09 01      [10] 3042 	ld	hl,#0x0109
+   1135 22r00r00      [16] 3043 	ld	(_keys), hl
+                           3044 ;src/game.c:839: keys.down  = Joy0_Down;
+   1138 26 02         [ 7] 3045 	ld	h, #0x02
+   113A 22r02r00      [16] 3046 	ld	((_keys + 0x0002)), hl
+                           3047 ;src/game.c:840: keys.left  = Joy0_Left;
+   113D 26 04         [ 7] 3048 	ld	h, #0x04
+   113F 22r04r00      [16] 3049 	ld	((_keys + 0x0004)), hl
+                           3050 ;src/game.c:841: keys.right = Joy0_Right;
+   1142 26 08         [ 7] 3051 	ld	h, #0x08
+   1144 22r06r00      [16] 3052 	ld	((_keys + 0x0006)), hl
+                           3053 ;src/game.c:843: waitKeyUp(Key_2);
+   1147 21 08 02      [10] 3054 	ld	hl,#0x0208
+   114A E5            [11] 3055 	push	hl
+   114B CDr00r00      [17] 3056 	call	_waitKeyUp
+                           3057 ;src/game.c:845: keys.pause = redefineKey("PAUSE");
+   114E 21rB8r11      [10] 3058 	ld	hl, #___str_25
+   1151 E3            [19] 3059 	ex	(sp),hl
+   1152 CDr00r00      [17] 3060 	call	_redefineKey
+   1155 F1            [10] 3061 	pop	af
+   1156 4D            [ 4] 3062 	ld	c,l
+   1157 44            [ 4] 3063 	ld	b,h
+   1158 ED 43r0Ar00   [20] 3064 	ld	((_keys + 0x000a)), bc
+                           3065 ;src/game.c:846: keys.abort = redefineKey("ABORT");
+   115C 21rBEr11      [10] 3066 	ld	hl,#___str_26
+   115F E5            [11] 3067 	push	hl
+   1160 CDr00r00      [17] 3068 	call	_redefineKey
+   1163 F1            [10] 3069 	pop	af
+   1164 4D            [ 4] 3070 	ld	c,l
+   1165 44            [ 4] 3071 	ld	b,h
+   1166 ED 43r0Cr00   [20] 3072 	ld	((_keys + 0x000c)), bc
+                           3073 ;src/game.c:848: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 39 - 10 * FONT_W, 144);
+   116A 21 09 90      [10] 3074 	ld	hl,#0x9009
+   116D E5            [11] 3075 	push	hl
+   116E 21 00 C0      [10] 3076 	ld	hl,#0xC000
+   1171 E5            [11] 3077 	push	hl
+   1172 CDr00r00      [17] 3078 	call	_cpct_getScreenPtr
+                           3079 ;src/game.c:849: cpct_drawSolidBox(pvideo, cpct_px2byteM0(5, 5), 15 * FONT_W, FONT_H);
+   1175 E5            [11] 3080 	push	hl
+   1176 21 05 05      [10] 3081 	ld	hl,#0x0505
+   1179 E5            [11] 3082 	push	hl
+   117A CDr00r00      [17] 3083 	call	_cpct_px2byteM0
+   117D 55            [ 4] 3084 	ld	d,l
+   117E C1            [10] 3085 	pop	bc
+   117F 21 2D 0B      [10] 3086 	ld	hl,#0x0B2D
+   1182 E5            [11] 3087 	push	hl
+   1183 D5            [11] 3088 	push	de
+   1184 33            [ 6] 3089 	inc	sp
+   1185 C5            [11] 3090 	push	bc
+   1186 CDr00r00      [17] 3091 	call	_cpct_drawSolidBox
+   1189 F1            [10] 3092 	pop	af
+   118A F1            [10] 3093 	pop	af
+   118B 33            [ 6] 3094 	inc	sp
+   118C C9            [10] 3095 	ret
+   118D                    3096 00107$:
+                           3097 ;src/game.c:854: else if (cpct_isKeyPressed(Key_4)) {
+   118D 21 07 01      [10] 3098 	ld	hl,#0x0107
+   1190 CDr00r00      [17] 3099 	call	_cpct_isKeyPressed
+   1193 7D            [ 4] 3100 	ld	a,l
+   1194 B7            [ 4] 3101 	or	a, a
+   1195 C8            [11] 3102 	ret	Z
+                           3103 ;src/game.c:856: waitKeyUp(Key_1);
+   1196 21 08 01      [10] 3104 	ld	hl,#0x0108
+   1199 E5            [11] 3105 	push	hl
+   119A CDr00r00      [17] 3106 	call	_waitKeyUp
+   119D F1            [10] 3107 	pop	af
+                           3108 ;src/game.c:857: game();
+   119E CDr41r0E      [17] 3109 	call	_game
+                           3110 ;src/game.c:858: drawMenu();
+   11A1 CDr00r00      [17] 3111 	call	_drawMenu
+   11A4 C9            [10] 3112 	ret
+   11A5                    3113 ___str_21:
+   11A5 55 50              3114 	.ascii "UP"
+   11A7 00                 3115 	.db 0x00
+   11A8                    3116 ___str_22:
+   11A8 44 4F 57 4E        3117 	.ascii "DOWN"
+   11AC 00                 3118 	.db 0x00
+   11AD                    3119 ___str_23:
+   11AD 4C 45 46 54        3120 	.ascii "LEFT"
+   11B1 00                 3121 	.db 0x00
+   11B2                    3122 ___str_24:
+   11B2 52 49 47 48 54     3123 	.ascii "RIGHT"
+   11B7 00                 3124 	.db 0x00
+   11B8                    3125 ___str_25:
+   11B8 50 41 55 53 45     3126 	.ascii "PAUSE"
+   11BD 00                 3127 	.db 0x00
+   11BE                    3128 ___str_26:
+   11BE 41 42 4F 52 54     3129 	.ascii "ABORT"
+   11C3 00                 3130 	.db 0x00
+                           3131 ;src/game.c:866: void threes() {
+                           3132 ;	---------------------------------
+                           3133 ; Function threes
+                           3134 ; ---------------------------------
+   11C4                    3135 _threes::
+                           3136 ;src/game.c:869: while (1) {
+   11C4                    3137 00105$:
+                           3138 ;src/game.c:871: drawMenu();
+   11C4 CDr00r00      [17] 3139 	call	_drawMenu
+                           3140 ;src/game.c:875: while (lapso < SWITCH_SCREENS) {
+   11C7 01 00 00      [10] 3141 	ld	bc,#0x0000
+   11CA 11 00 00      [10] 3142 	ld	de,#0x0000
+   11CD                    3143 00101$:
+   11CD 79            [ 4] 3144 	ld	a,c
+   11CE D6 58         [ 7] 3145 	sub	a, #0x58
+   11D0 78            [ 4] 3146 	ld	a,b
+   11D1 DE 1B         [ 7] 3147 	sbc	a, #0x1B
+   11D3 7B            [ 4] 3148 	ld	a,e
+   11D4 DE 00         [ 7] 3149 	sbc	a, #0x00
+   11D6 7A            [ 4] 3150 	ld	a,d
+   11D7 DE 00         [ 7] 3151 	sbc	a, #0x00
+   11D9 30 13         [12] 3152 	jr	NC,00103$
+                           3153 ;src/game.c:877: checkKeyboardMenu();
+   11DB C5            [11] 3154 	push	bc
+   11DC D5            [11] 3155 	push	de
+   11DD CDrC2r0F      [17] 3156 	call	_checkKeyboardMenu
+   11E0 D1            [10] 3157 	pop	de
+   11E1 C1            [10] 3158 	pop	bc
+                           3159 ;src/game.c:879: lapso++;
+   11E2 0C            [ 4] 3160 	inc	c
+   11E3 20 E8         [12] 3161 	jr	NZ,00101$
+   11E5 04            [ 4] 3162 	inc	b
+   11E6 20 E5         [12] 3163 	jr	NZ,00101$
+   11E8 1C            [ 4] 3164 	inc	e
+   11E9 20 E2         [12] 3165 	jr	NZ,00101$
+   11EB 14            [ 4] 3166 	inc	d
+   11EC 18 DF         [12] 3167 	jr	00101$
+   11EE                    3168 00103$:
+                           3169 ;src/game.c:883: drawScoreBoard();
+   11EE CDrF3r0C      [17] 3170 	call	_drawScoreBoard
+   11F1 18 D1         [12] 3171 	jr	00105$
+                           3172 	.area _CODE
+                           3173 	.area _INITIALIZER
+   0000                    3174 __xinit__newNameHighScore:
+   0000 20                 3175 	.db #0x20	; 32
+   0001 20                 3176 	.db #0x20	; 32
+   0002 20                 3177 	.db #0x20	; 32
+   0003 20                 3178 	.db #0x20	; 32
+   0004 20                 3179 	.db #0x20	; 32
+   0005 20                 3180 	.db #0x20	; 32
+   0006 20                 3181 	.db #0x20	; 32
+   0007 20                 3182 	.db #0x20	; 32
+   0008 20                 3183 	.db #0x20	; 32
+   0009 20                 3184 	.db #0x20	; 32
+   000A 00                 3185 	.db #0x00	; 0
+   000B 00                 3186 	.db 0x00
+   000C 00                 3187 	.db 0x00
+   000D 00                 3188 	.db 0x00
+   000E 00                 3189 	.db 0x00
+                           3190 	.area _CABS (ABS)
