@@ -51,12 +51,12 @@
 ; code
 ;--------------------------------------------------------
 	.area _CODE
-;src/text/text.c:22: u8 strLength(u8 str[]){
+;src/text/text.c:22: u8 strLength(u8 str[]) {
 ;	---------------------------------
 ; Function strLength
 ; ---------------------------------
 _strLength::
-;src/text/text.c:26: while(str[result]!='\0'){
+;src/text/text.c:26: while (str[result] != '\0') {
 	ld	c,#0x00
 00101$:
 	ld	hl, #2
@@ -108,7 +108,7 @@ _strCopy::
 	inc	sp
 	pop	ix
 	ret
-;src/text/text.c:44: void drawNumber(u16 aNumber, u8 length, u8 xPos, u8 yPos){
+;src/text/text.c:44: void drawNumber(u16 aNumber, u8 length, u8 xPos, u8 yPos) {
 ;	---------------------------------
 ; Function drawNumber
 ; ---------------------------------
@@ -152,7 +152,7 @@ _drawNumber::
 ;src/text/text.c:56: number = str[x];
 	ld	a,(bc)
 	ld	e,a
-;src/text/text.c:58: while(number != '\0'){
+;src/text/text.c:58: while (number != '\0') {
 	ld	-8 (ix),#0x00
 00101$:
 	ld	a,e
@@ -221,7 +221,7 @@ _drawNumber::
 	ld	sp, ix
 	pop	ix
 	ret
-;src/text/text.c:69: void drawText(u8 text[], u8 xPos, u8 yPos, u8 centered){
+;src/text/text.c:69: void drawText(u8 text[], u8 xPos, u8 yPos, u8 centered) {
 ;	---------------------------------
 ; Function drawText
 ; ---------------------------------
@@ -232,7 +232,7 @@ _drawText::
 	push	af
 	push	af
 	dec	sp
-;src/text/text.c:75: if (centered){
+;src/text/text.c:75: if (centered) {
 	ld	a,8 (ix)
 	or	a, a
 	jr	Z,00102$
@@ -242,7 +242,7 @@ _drawText::
 	push	hl
 	call	_strLength
 	pop	af
-;src/text/text.c:77: xPos = 39 - (x/2)*FONT_W;
+;src/text/text.c:77: xPos = 39 - (x / 2) * FONT_W;
 	srl	l
 	ld	c,l
 	add	hl, hl
@@ -255,12 +255,12 @@ _drawText::
 	ld	c,4 (ix)
 	ld	b,5 (ix)
 	ld	a,(bc)
-	ld	-4 (ix),a
-;src/text/text.c:83: while(character != '\0'){
-	ld	-5 (ix),#0x00
+	ld	-5 (ix),a
+;src/text/text.c:83: while (character != '\0') {
+	ld	-4 (ix),#0x00
 	ld	-1 (ix),#0x00
 00109$:
-	ld	a,-4 (ix)
+	ld	a,-5 (ix)
 	or	a, a
 	jp	Z,00112$
 ;src/text/text.c:85: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, (x * FONT_W) + xPos, yPos);
@@ -280,14 +280,14 @@ _drawText::
 ;src/text/text.c:90: cpct_drawSprite(G_numbers_big[character - 48], pvideo, FONT_W, FONT_H);
 	ld	-3 (ix),l
 	ld	-2 (ix),h
-	ld	e,-4 (ix)
+	ld	e,-5 (ix)
 	ld	d,#0x00
-;src/text/text.c:88: if(character >= 48 && character <= 57){
-	ld	a,-4 (ix)
+;src/text/text.c:88: if (character >= 48 && character <= 57) {
+	ld	a,-5 (ix)
 	sub	a, #0x30
 	jr	C,00106$
 	ld	a,#0x39
-	sub	a, -4 (ix)
+	sub	a, -5 (ix)
 	jr	C,00106$
 ;src/text/text.c:90: cpct_drawSprite(G_numbers_big[character - 48], pvideo, FONT_W, FONT_H);
 	ld	a,e
@@ -318,11 +318,11 @@ _drawText::
 	pop	bc
 	jr	00107$
 00106$:
-;src/text/text.c:93: else if(character != 32){ //32 = SPACE
-	ld	a,-4 (ix)
+;src/text/text.c:93: else if (character != 32) { //32 = SPACE
+	ld	a,-5 (ix)
 	sub	a, #0x20
 	jr	Z,00107$
-;src/text/text.c:96: cpct_drawSprite(g_font_big[character - 64], pvideo, FONT_W, FONT_H);
+;src/text/text.c:95: cpct_drawSprite(g_font_big[character - 64], pvideo, FONT_W, FONT_H);
 	ld	a,e
 	add	a,#0xC0
 	ld	e,a
@@ -350,22 +350,22 @@ _drawText::
 	call	_cpct_drawSprite
 	pop	bc
 00107$:
-;src/text/text.c:99: character = text[++x];
+;src/text/text.c:98: character = text[++x];
 	inc	-1 (ix)
 	inc	-1 (ix)
 	inc	-1 (ix)
-	inc	-5 (ix)
-	ld	l,-5 (ix)
+	inc	-4 (ix)
+	ld	l,-4 (ix)
 	ld	h,#0x00
 	add	hl,bc
 	ld	a,(hl)
-	ld	-4 (ix),a
+	ld	-5 (ix),a
 	jp	00109$
 00112$:
 	ld	sp, ix
 	pop	ix
 	ret
-;src/text/text.c:105: void moveCharacter(FChar *character){
+;src/text/text.c:102: void moveCharacter(FChar *character) {
 ;	---------------------------------
 ; Function moveCharacter
 ; ---------------------------------
@@ -376,12 +376,12 @@ _moveCharacter::
 	ld	hl,#-13
 	add	hl,sp
 	ld	sp,hl
-;src/text/text.c:107: if(character->phase != FALLING_TEXT_MAX_BOUNCES){
+;src/text/text.c:104: if (character->phase != FALLING_TEXT_MAX_BOUNCES) {
 	ld	c,4 (ix)
 	ld	b,5 (ix)
 	ld	a,(bc)
 	ld	d,a
-;src/text/text.c:112: if(character->yPos != character->startyPos){
+;src/text/text.c:109: if (character->yPos != character->startyPos) {
 	ld	hl,#0x0002
 	add	hl,bc
 	ld	-2 (ix),l
@@ -389,21 +389,21 @@ _moveCharacter::
 	ld	l,-2 (ix)
 	ld	h,-1 (ix)
 	ld	e,(hl)
-;src/text/text.c:114: clearWindow(character->xPos, character->yPos + (character->phase %2 != 0 ? - FALLING_TEXT_SPEED:FALLING_TEXT_SPEED), FONT_W, FONT_H);
+;src/text/text.c:111: clearWindow(character->xPos, character->yPos + (character->phase % 2 != 0 ? - FALLING_TEXT_SPEED : FALLING_TEXT_SPEED), FONT_W, FONT_H);
 	ld	hl,#0x0001
 	add	hl,bc
 	ld	-4 (ix),l
 	ld	-3 (ix),h
-;src/text/text.c:146: drawText(character->character, character->xPos, character->yPos,0);
+;src/text/text.c:143: drawText(character->character, character->xPos, character->yPos, 0);
 	ld	hl,#0x0006
 	add	hl,bc
 	ld	-6 (ix),l
 	ld	-5 (ix),h
-;src/text/text.c:107: if(character->phase != FALLING_TEXT_MAX_BOUNCES){
+;src/text/text.c:104: if (character->phase != FALLING_TEXT_MAX_BOUNCES) {
 	ld	a,d
 	sub	a, #0x06
 	jp	Z,00111$
-;src/text/text.c:112: if(character->yPos != character->startyPos){
+;src/text/text.c:109: if (character->yPos != character->startyPos) {
 	ld	hl,#0x0003
 	add	hl,bc
 	ld	-8 (ix),l
@@ -415,7 +415,7 @@ _moveCharacter::
 	ld	a,e
 	sub	a, -9 (ix)
 	jr	Z,00102$
-;src/text/text.c:114: clearWindow(character->xPos, character->yPos + (character->phase %2 != 0 ? - FALLING_TEXT_SPEED:FALLING_TEXT_SPEED), FONT_W, FONT_H);
+;src/text/text.c:111: clearWindow(character->xPos, character->yPos + (character->phase % 2 != 0 ? - FALLING_TEXT_SPEED : FALLING_TEXT_SPEED), FONT_W, FONT_H);
 	bit	0, d
 	jr	Z,00115$
 	ld	l,#0xFD
@@ -442,48 +442,48 @@ _moveCharacter::
 	pop	af
 	pop	bc
 00102$:
-;src/text/text.c:119: if(character->phase %2 != 0){
+;src/text/text.c:116: if (character->phase % 2 != 0) {
 	ld	a,(bc)
 	and	a, #0x01
 	ld	-9 (ix),a
-;src/text/text.c:112: if(character->yPos != character->startyPos){
+;src/text/text.c:109: if (character->yPos != character->startyPos) {
 	ld	l,-2 (ix)
 	ld	h,-1 (ix)
 	ld	e,(hl)
-;src/text/text.c:123: if(character->yPos >= character->destinationyPos){
+;src/text/text.c:120: if (character->yPos >= character->destinationyPos) {
 	ld	hl,#0x0005
 	add	hl,bc
 	ld	-11 (ix),l
 	ld	-10 (ix),h
-;src/text/text.c:127: character->destinationyPos = character->endyPos - ((character->endyPos - character->startyPos) / character->phase);
+;src/text/text.c:124: character->destinationyPos = character->endyPos - ((character->endyPos - character->startyPos) / character->phase);
 	ld	hl,#0x0004
 	add	hl,bc
 	ex	(sp), hl
-;src/text/text.c:119: if(character->phase %2 != 0){
+;src/text/text.c:116: if (character->phase % 2 != 0) {
 	ld	a,-9 (ix)
 	or	a, a
 	jr	Z,00108$
-;src/text/text.c:121: character->yPos += FALLING_TEXT_SPEED;
+;src/text/text.c:118: character->yPos += FALLING_TEXT_SPEED;
 	inc	e
 	inc	e
 	inc	e
 	ld	l,-2 (ix)
 	ld	h,-1 (ix)
 	ld	(hl),e
-;src/text/text.c:123: if(character->yPos >= character->destinationyPos){
+;src/text/text.c:120: if (character->yPos >= character->destinationyPos) {
 	ld	l,-11 (ix)
 	ld	h,-10 (ix)
 	ld	d,(hl)
 	ld	a,e
 	sub	a, d
 	jr	C,00109$
-;src/text/text.c:125: character->phase++;
+;src/text/text.c:122: character->phase++;
 	ld	a,(bc)
 	ld	e,a
 	inc	e
 	ld	a,e
 	ld	(bc),a
-;src/text/text.c:127: character->destinationyPos = character->endyPos - ((character->endyPos - character->startyPos) / character->phase);
+;src/text/text.c:124: character->destinationyPos = character->endyPos - ((character->endyPos - character->startyPos) / character->phase);
 	pop	hl
 	push	hl
 	ld	a,(hl)
@@ -513,24 +513,24 @@ _moveCharacter::
 	ld	(hl),a
 	jr	00109$
 00108$:
-;src/text/text.c:134: character->yPos -= FALLING_TEXT_SPEED;
+;src/text/text.c:131: character->yPos -= FALLING_TEXT_SPEED;
 	ld	a,e
 	add	a,#0xFD
 	ld	e,a
 	ld	l,-2 (ix)
 	ld	h,-1 (ix)
 	ld	(hl),e
-;src/text/text.c:136: if(character->yPos <= character->destinationyPos){
+;src/text/text.c:133: if (character->yPos <= character->destinationyPos) {
 	ld	l,-11 (ix)
 	ld	h,-10 (ix)
 	ld	a, (hl)
 	sub	a, e
 	jr	C,00109$
-;src/text/text.c:138: character->phase++;
+;src/text/text.c:135: character->phase++;
 	ld	a,(bc)
 	inc	a
 	ld	(bc),a
-;src/text/text.c:140: character->destinationyPos = character->endyPos;
+;src/text/text.c:137: character->destinationyPos = character->endyPos;
 	pop	hl
 	push	hl
 	ld	c,(hl)
@@ -538,7 +538,7 @@ _moveCharacter::
 	ld	h,-10 (ix)
 	ld	(hl),c
 00109$:
-;src/text/text.c:146: drawText(character->character, character->xPos, character->yPos,0);
+;src/text/text.c:143: drawText(character->character, character->xPos, character->yPos, 0);
 	ld	l,-2 (ix)
 	ld	h,-1 (ix)
 	ld	b,(hl)
@@ -559,7 +559,7 @@ _moveCharacter::
 	inc	sp
 	jr	00113$
 00111$:
-;src/text/text.c:150: clearWindow(character->xPos, character->yPos - FALLING_TEXT_SPEED, FONT_W, FONT_H);
+;src/text/text.c:147: clearWindow(character->xPos, character->yPos - FALLING_TEXT_SPEED, FONT_W, FONT_H);
 	ld	a,e
 	add	a,#0xFD
 	ld	d,a
@@ -575,7 +575,7 @@ _moveCharacter::
 	call	_clearWindow
 	pop	af
 	pop	af
-;src/text/text.c:151: drawText(character->character, character->xPos, character->yPos,0);
+;src/text/text.c:148: drawText(character->character, character->xPos, character->yPos, 0);
 	ld	l,-2 (ix)
 	ld	h,-1 (ix)
 	ld	d,(hl)
@@ -600,7 +600,7 @@ _moveCharacter::
 	ld	sp, ix
 	pop	ix
 	ret
-;src/text/text.c:156: u8 moveFallingText(FChar *text, u8 lenght){
+;src/text/text.c:153: u8 moveFallingText(FChar *text, u8 lenght) {
 ;	---------------------------------
 ; Function moveFallingText
 ; ---------------------------------
@@ -609,13 +609,13 @@ _moveFallingText::
 	ld	ix,#0
 	add	ix,sp
 	push	af
-;src/text/text.c:160: for(x=0;x<lenght;x++){
+;src/text/text.c:157: for (x = 0; x < lenght; x++) {
 	ld	c,#0x00
 00109$:
 	ld	a,c
 	sub	a, 6 (ix)
 	jr	NC,00107$
-;src/text/text.c:162: if(x == 0 || (x > 0 && text[x-1].phase == 1 && text[x-1].yPos >= text[x].yPos + 15) || text[x-1].phase > 1) moveCharacter(&text[x]);
+;src/text/text.c:159: if (x == 0 || (x > 0 && text[x - 1].phase == 1 && text[x - 1].yPos >= text[x].yPos + 15) || text[x - 1].phase > 1) moveCharacter(&text[x]);
 	ld	l,c
 	ld	h,#0x00
 	ld	e, l
@@ -687,11 +687,11 @@ _moveFallingText::
 	pop	af
 	pop	bc
 00110$:
-;src/text/text.c:160: for(x=0;x<lenght;x++){
+;src/text/text.c:157: for (x = 0; x < lenght; x++) {
 	inc	c
 	jr	00109$
 00107$:
-;src/text/text.c:165: return text[lenght-1].phase == FALLING_TEXT_MAX_BOUNCES;
+;src/text/text.c:162: return text[lenght - 1].phase == FALLING_TEXT_MAX_BOUNCES;
 	ld	l,6 (ix)
 	ld	h,#0x00
 	dec	hl
@@ -715,7 +715,7 @@ _moveFallingText::
 	ld	sp, ix
 	pop	ix
 	ret
-;src/text/text.c:171: void drawFallingText(u8 text[], u8 xPos, u8 yPos, u8 destinationyPos){
+;src/text/text.c:168: void drawFallingText(u8 text[], u8 xPos, u8 yPos, u8 destinationyPos) {
 ;	---------------------------------
 ; Function drawFallingText
 ; ---------------------------------
@@ -726,14 +726,12 @@ _drawFallingText::
 	ld	hl,#-166
 	add	hl,sp
 	ld	sp,hl
-;src/text/text.c:177: for(x=0;x<strLength(text) && x<FALLING_TEXT_MAX_LENGHT;x++){
-	ld	hl,#0x0001
+;src/text/text.c:174: for (x = 0; x < strLength(text) && x < FALLING_TEXT_MAX_LENGHT; x++) {
+	ld	hl,#0x0000
 	add	hl,sp
 	ld	-2 (ix),l
 	ld	-1 (ix),h
-	ld	iy,#0
-	add	iy,sp
-	ld	0 (iy),#0x00
+	ld	-6 (ix),#0x00
 	ld	-3 (ix),#0x00
 00109$:
 	ld	l,4 (ix)
@@ -742,16 +740,14 @@ _drawFallingText::
 	call	_strLength
 	pop	af
 	ld	c,l
-	ld	iy,#0
-	add	iy,sp
-	ld	a,0 (iy)
+	ld	a,-6 (ix)
 	sub	a, c
 	jp	NC,00120$
-	ld	a,0 (iy)
+	ld	a,-6 (ix)
 	sub	a, #0x14
 	jr	NC,00120$
-;src/text/text.c:179: ftext[x].phase = 1;
-	ld	l,0 (iy)
+;src/text/text.c:176: ftext[x].phase = 1;
+	ld	l,-6 (ix)
 	ld	h,#0x00
 	add	hl, hl
 	add	hl, hl
@@ -766,21 +762,21 @@ _drawFallingText::
 	ld	b,a
 	ld	a,#0x01
 	ld	(bc),a
-;src/text/text.c:180: ftext[x].xPos = xPos + (x * FONT_W);
+;src/text/text.c:177: ftext[x].xPos = xPos + (x * FONT_W);
 	ld	e, c
 	ld	d, b
 	inc	de
 	ld	a,6 (ix)
 	add	a, -3 (ix)
 	ld	(de),a
-;src/text/text.c:181: ftext[x].yPos = yPos;
+;src/text/text.c:178: ftext[x].yPos = yPos;
 	ld	e, c
 	ld	d, b
 	inc	de
 	inc	de
 	ld	a,7 (ix)
 	ld	(de),a
-;src/text/text.c:182: ftext[x].startyPos = yPos;
+;src/text/text.c:179: ftext[x].startyPos = yPos;
 	ld	e, c
 	ld	d, b
 	inc	de
@@ -788,25 +784,23 @@ _drawFallingText::
 	inc	de
 	ld	a,7 (ix)
 	ld	(de),a
-;src/text/text.c:183: ftext[x].endyPos = destinationyPos;
+;src/text/text.c:180: ftext[x].endyPos = destinationyPos;
 	ld	hl,#0x0004
 	add	hl,bc
 	ld	a,8 (ix)
 	ld	(hl),a
-;src/text/text.c:184: ftext[x].destinationyPos = destinationyPos;
+;src/text/text.c:181: ftext[x].destinationyPos = destinationyPos;
 	ld	hl,#0x0005
 	add	hl,bc
 	ld	a,8 (ix)
 	ld	(hl),a
-;src/text/text.c:185: ftext[x].character[0] = text[x];
+;src/text/text.c:182: ftext[x].character[0] = text[x];
 	ld	hl,#0x0006
 	add	hl,bc
 	ld	-5 (ix),l
 	ld	-4 (ix),h
 	ld	a,4 (ix)
-	ld	hl,#0
-	add	hl,sp
-	add	a, (hl)
+	add	a, -6 (ix)
 	ld	e,a
 	ld	a,5 (ix)
 	adc	a, #0x00
@@ -815,24 +809,24 @@ _drawFallingText::
 	ld	l,-5 (ix)
 	ld	h,-4 (ix)
 	ld	(hl),a
-;src/text/text.c:186: ftext[x].character[1] = '\0';
+;src/text/text.c:183: ftext[x].character[1] = '\0';
 	ld	hl,#0x0007
 	add	hl,bc
 	ld	(hl),#0x00
-;src/text/text.c:177: for(x=0;x<strLength(text) && x<FALLING_TEXT_MAX_LENGHT;x++){
+;src/text/text.c:174: for (x = 0; x < strLength(text) && x < FALLING_TEXT_MAX_LENGHT; x++) {
 	inc	-3 (ix)
 	inc	-3 (ix)
 	inc	-3 (ix)
-	inc	0 (iy)
+	inc	-6 (ix)
 	jp	00109$
-;src/text/text.c:189: while(1){
+;src/text/text.c:186: while (1) {
 00120$:
 	ld	a,-2 (ix)
 	ld	-5 (ix),a
 	ld	a,-1 (ix)
 	ld	-4 (ix),a
 00105$:
-;src/text/text.c:192: if(moveFallingText(ftext, strLength(text) <= FALLING_TEXT_MAX_LENGHT ? strLength(text) : FALLING_TEXT_MAX_LENGHT)){
+;src/text/text.c:189: if (moveFallingText(ftext, strLength(text) <= FALLING_TEXT_MAX_LENGHT ? strLength(text) : FALLING_TEXT_MAX_LENGHT)) {
 	ld	l,4 (ix)
 	ld	h,5 (ix)
 	push	hl
@@ -861,9 +855,9 @@ _drawFallingText::
 	inc	sp
 	ld	a,l
 	or	a, a
-;src/text/text.c:194: return;
+;src/text/text.c:191: return;
 	jr	NZ,00111$
-;src/text/text.c:198: cpct_waitVSYNC();
+;src/text/text.c:195: cpct_waitVSYNC();
 	call	_cpct_waitVSYNC
 	jr	00105$
 00111$:

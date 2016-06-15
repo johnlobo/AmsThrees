@@ -24,6 +24,7 @@
 #include "sprites/numbers-big.h"
 #include "sprites/tilemap.h"
 #include "sprites/tiles.h"
+#include "sprites/symbols.h"
 #include "utils/itoa.h"
 #include "utils/keyboard.h"
 #include "text/text.h"

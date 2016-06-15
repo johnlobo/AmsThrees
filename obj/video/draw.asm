@@ -82,7 +82,7 @@ _drawMenu::
 	push	hl
 	call	_drawFrame
 	pop	af
-;src/video/draw.c:29: drawText("THREES", 31, 2,1);
+;src/video/draw.c:29: drawText("AMSTHREES", 31, 2,1);
 	ld	hl, #0x0102
 	ex	(sp),hl
 	ld	a,#0x1F
@@ -191,7 +191,7 @@ _drawMenu::
 	push	hl
 	call	_drawText
 	pop	af
-;src/video/draw.c:43: drawText("@ GLASNOST CORP 2015", 11, 185,1);
+;src/video/draw.c:43: drawText("@ GLASNOST CORP 2016", 11, 185,1);
 	inc	sp
 	ld	hl,#0x01B9
 	ex	(sp),hl
@@ -206,7 +206,7 @@ _drawMenu::
 	inc	sp
 	ret
 ___str_0:
-	.ascii "THREES"
+	.ascii "AMSTHREES"
 	.db 0x00
 ___str_1:
 	.ascii "TECLADO"
@@ -224,7 +224,7 @@ ___str_5:
 	.ascii "JOHN LOBO"
 	.db 0x00
 ___str_6:
-	.ascii "@ GLASNOST CORP 2015"
+	.ascii "@ GLASNOST CORP 2016"
 	.db 0x00
 ;src/video/draw.c:47: void clearGameScreen() {
 ;	---------------------------------
@@ -266,7 +266,7 @@ _drawFrame::
 	ld	a,6 (ix)
 	sub	a, 4 (ix)
 	ld	b,a
-	ld	-9 (ix),b
+	ld	-1 (ix),b
 ;src/video/draw.c:64: clearWindow(x1, y1, x2 - x1, y2 - y1);
 	ld	a,7 (ix)
 	sub	a, 5 (ix)
@@ -304,38 +304,38 @@ _drawFrame::
 ;src/video/draw.c:72: for (x = x1 + 2; x < (x2 - 2); x = x + 2) {
 	ld	a,4 (ix)
 	add	a, #0x02
-	ld	-1 (ix), a
-	ld	-2 (ix),a
+	ld	-2 (ix), a
+	ld	-3 (ix),a
 	ld	de,#_g_tile_border_4+0
 00105$:
 	ld	a, 6 (ix)
 	ld	h, #0x00
 	add	a,#0xFE
-	ld	-4 (ix),a
+	ld	-7 (ix),a
 	ld	a,h
 	adc	a,#0xFF
-	ld	-3 (ix),a
-	ld	l,-2 (ix)
+	ld	-6 (ix),a
+	ld	l,-3 (ix)
 	ld	h,#0x00
 ;src/video/draw.c:74: cpct_drawSprite(g_tile_border_4,  pvideo + (x - x1), 2, 4);
 	ld	a,4 (ix)
-	ld	-6 (ix),a
-	ld	-5 (ix),#0x00
+	ld	-5 (ix),a
+	ld	-4 (ix),#0x00
 ;src/video/draw.c:72: for (x = x1 + 2; x < (x2 - 2); x = x + 2) {
 	ld	a,l
-	sub	a, -4 (ix)
+	sub	a, -7 (ix)
 	ld	a,h
-	sbc	a, -3 (ix)
+	sbc	a, -6 (ix)
 	jp	PO, 00142$
 	xor	a, #0x80
 00142$:
 	jp	P,00101$
 ;src/video/draw.c:74: cpct_drawSprite(g_tile_border_4,  pvideo + (x - x1), 2, 4);
 	ld	a,l
-	sub	a, -6 (ix)
+	sub	a, -5 (ix)
 	ld	l,a
 	ld	a,h
-	sbc	a, -5 (ix)
+	sbc	a, -4 (ix)
 	ld	h,a
 	add	hl,bc
 	push	hl
@@ -351,12 +351,12 @@ _drawFrame::
 	pop	de
 	pop	bc
 ;src/video/draw.c:72: for (x = x1 + 2; x < (x2 - 2); x = x + 2) {
-	inc	-2 (ix)
-	inc	-2 (ix)
+	inc	-3 (ix)
+	inc	-3 (ix)
 	jr	00105$
 00101$:
 ;src/video/draw.c:78: cpct_drawSprite(g_tile_border_1,  pvideo + (frame_w - 2), 2,4);
-	ld	e,-9 (ix)
+	ld	e,-1 (ix)
 	ld	d,#0x00
 	dec	de
 	dec	de
@@ -376,7 +376,7 @@ _drawFrame::
 ;src/video/draw.c:82: for (x = y1 + 4; x < (y2 - 4); x = x + 4) {
 	ld	a,5 (ix)
 	add	a, #0x04
-	ld	-2 (ix),a
+	ld	-3 (ix),a
 00108$:
 	ld	c,7 (ix)
 	ld	b,#0x00
@@ -386,7 +386,7 @@ _drawFrame::
 	ld	a,b
 	adc	a,#0xFF
 	ld	b,a
-	ld	a, -2 (ix)
+	ld	a, -3 (ix)
 	ld	h, #0x00
 	sub	a, c
 	ld	a,h
@@ -397,7 +397,7 @@ _drawFrame::
 	jp	P,00102$
 ;src/video/draw.c:84: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, x1, x);
 	push	de
-	ld	h,-2 (ix)
+	ld	h,-3 (ix)
 	ld	l,4 (ix)
 	push	hl
 	ld	hl,#0xC000
@@ -432,10 +432,10 @@ _drawFrame::
 	call	_cpct_drawSprite
 	pop	de
 ;src/video/draw.c:82: for (x = y1 + 4; x < (y2 - 4); x = x + 4) {
-	inc	-2 (ix)
-	inc	-2 (ix)
-	inc	-2 (ix)
-	inc	-2 (ix)
+	inc	-3 (ix)
+	inc	-3 (ix)
+	inc	-3 (ix)
+	inc	-3 (ix)
 	jr	00108$
 00102$:
 ;src/video/draw.c:90: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, x1, y2 - 4);
@@ -455,14 +455,15 @@ _drawFrame::
 	ld	b,h
 	pop	de
 ;src/video/draw.c:93: cpct_drawSprite(g_tile_border_2,  pvideo, 2, 4);
-	ld	-8 (ix),c
-	ld	-7 (ix),b
+	inc	sp
+	inc	sp
+	push	bc
 	push	bc
 	push	de
 	ld	hl,#0x0402
 	push	hl
-	ld	l,-8 (ix)
-	ld	h,-7 (ix)
+	ld	l,-9 (ix)
+	ld	h,-8 (ix)
 	push	hl
 	ld	hl,#_g_tile_border_2
 	push	hl
@@ -470,25 +471,25 @@ _drawFrame::
 	pop	de
 	pop	bc
 ;src/video/draw.c:97: for (x = x1 + 2; x < (x2 - 2); x = x + 2) {
-	ld	a,-1 (ix)
-	ld	-8 (ix),a
+	ld	a,-2 (ix)
+	ld	-9 (ix),a
 00111$:
-	ld	l,-8 (ix)
+	ld	l,-9 (ix)
 	ld	h,#0x00
 	ld	a,l
-	sub	a, -4 (ix)
+	sub	a, -7 (ix)
 	ld	a,h
-	sbc	a, -3 (ix)
+	sbc	a, -6 (ix)
 	jp	PO, 00144$
 	xor	a, #0x80
 00144$:
 	jp	P,00103$
 ;src/video/draw.c:99: cpct_drawSprite(g_tile_border_7,  pvideo + (x - x1), 2, 4);
 	ld	a,l
-	sub	a, -6 (ix)
+	sub	a, -5 (ix)
 	ld	l,a
 	ld	a,h
-	sbc	a, -5 (ix)
+	sbc	a, -4 (ix)
 	ld	h,a
 	add	hl,bc
 	push	hl
@@ -504,8 +505,8 @@ _drawFrame::
 	pop	de
 	pop	bc
 ;src/video/draw.c:97: for (x = x1 + 2; x < (x2 - 2); x = x + 2) {
-	inc	-8 (ix)
-	inc	-8 (ix)
+	inc	-9 (ix)
+	inc	-9 (ix)
 	jr	00111$
 00103$:
 ;src/video/draw.c:103: cpct_drawSprite(g_tile_border_3,  pvideo + (frame_w - 2), 2, 4);

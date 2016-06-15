@@ -666,7 +666,7 @@ _addRandomCellTurn::
 	add	ix,sp
 	push	af
 ;src/game.c:230: u8 i = 0;
-	ld	-1 (ix),#0x00
+	ld	-2 (ix),#0x00
 ;src/game.c:231: u8 j = 0;
 	ld	c,#0x00
 ;src/game.c:234: switch (dir) {
@@ -699,13 +699,13 @@ _addRandomCellTurn::
 ;src/game.c:241: case UP:
 00103$:
 ;src/game.c:242: i = 3;
-	ld	-1 (ix),#0x03
+	ld	-2 (ix),#0x03
 ;src/game.c:243: break;
 	jr	00105$
 ;src/game.c:244: case DOWN:
 00104$:
 ;src/game.c:245: i = 0;
-	ld	-1 (ix),#0x00
+	ld	-2 (ix),#0x00
 ;src/game.c:247: }
 00105$:
 ;src/game.c:248: if ((dir == LEFT) || (dir == RIGHT))
@@ -733,7 +733,7 @@ _addRandomCellTurn::
 	rlca
 	rlca
 	and	a,#0x03
-	ld	-1 (ix),a
+	ld	-2 (ix),a
 	jr	00126$
 00107$:
 ;src/game.c:251: j = cpct_rand() / 64;
@@ -747,9 +747,9 @@ _addRandomCellTurn::
 	ld	c,a
 ;src/game.c:252: while (cells[i][j] != 0) {
 00126$:
-	ld	-2 (ix),b
+	ld	-1 (ix),b
 00114$:
-	ld	l,-1 (ix)
+	ld	l,-2 (ix)
 	ld	h,#0x00
 	add	hl, hl
 	add	hl, hl
@@ -768,7 +768,7 @@ _addRandomCellTurn::
 	ld	a,4 (ix)
 	or	a, a
 	jr	Z,00110$
-	ld	a,-2 (ix)
+	ld	a,-1 (ix)
 	or	a, a
 	jr	Z,00111$
 00110$:
@@ -780,7 +780,7 @@ _addRandomCellTurn::
 	rlca
 	rlca
 	and	a,#0x03
-	ld	-1 (ix),a
+	ld	-2 (ix),a
 	jr	00114$
 00111$:
 ;src/game.c:256: j = cpct_rand() / 64;
@@ -801,7 +801,7 @@ _addRandomCellTurn::
 	ld	b,a
 	ld	a,(bc)
 	ld	(de),a
-;src/game.c:261: if (currentTile<11)
+;src/game.c:261: if (currentTile < 11)
 	ld	a,(#_currentTile + 0)
 	sub	a, #0x0B
 	jr	NC,00118$
@@ -926,7 +926,7 @@ _initCells::
 ; Function initialization
 ; ---------------------------------
 _initialization::
-;src/game.c:319: drawText("THREES IS READY", 31, 76, 1);
+;src/game.c:319: drawText("AMSTHREES IS READY", 31, 76, 1);
 	ld	hl,#0x014C
 	push	hl
 	ld	a,#0x1F
@@ -1099,7 +1099,7 @@ _initialization::
 	ld	(hl), #0x01
 	ret
 ___str_0:
-	.ascii "THREES IS READY"
+	.ascii "AMSTHREES IS READY"
 	.db 0x00
 ___str_1:
 	.ascii "PRESS ANY KEY"
@@ -1183,18 +1183,18 @@ _rotateCellsLeft::
 	add	hl, hl
 	ld	a,#<(_cells)
 	add	a, l
-	ld	-2 (ix),a
+	ld	-4 (ix),a
 	ld	a,#>(_cells)
 	adc	a, h
-	ld	-1 (ix),a
-	ld	a,-2 (ix)
-	add	a, e
-	ld	-4 (ix),a
-	ld	a,-1 (ix)
-	adc	a, #0x00
 	ld	-3 (ix),a
-	ld	l,-4 (ix)
-	ld	h,-3 (ix)
+	ld	a,-4 (ix)
+	add	a, e
+	ld	-2 (ix),a
+	ld	a,-3 (ix)
+	adc	a, #0x00
+	ld	-1 (ix),a
+	ld	l,-2 (ix)
+	ld	h,-1 (ix)
 	ld	b,(hl)
 	ld	a,b
 	or	a, a
@@ -1203,8 +1203,8 @@ _rotateCellsLeft::
 	ld	d,e
 	dec	d
 	push	hl
-	ld	l,-2 (ix)
-	ld	h,-1 (ix)
+	ld	l,-4 (ix)
+	ld	h,-3 (ix)
 	push	hl
 	pop	iy
 	pop	hl
@@ -1220,8 +1220,8 @@ _rotateCellsLeft::
 ;src/game.c:404: cells[i][j - 1] = cells[i][j];
 	ld	0 (iy), b
 ;src/game.c:405: cells[i][j] = 0;
-	ld	l,-4 (ix)
-	ld	h,-3 (ix)
+	ld	l,-2 (ix)
+	ld	h,-1 (ix)
 	ld	(hl),#0x00
 ;src/game.c:406: matched = 1;
 	ld	c,#0x01
@@ -1246,8 +1246,8 @@ _rotateCellsLeft::
 ;src/game.c:409: cells[i][j - 1] = 3;
 	ld	0 (iy), #0x03
 ;src/game.c:410: cells[i][j] = 0;
-	ld	l,-4 (ix)
-	ld	h,-3 (ix)
+	ld	l,-2 (ix)
+	ld	h,-1 (ix)
 	ld	(hl),#0x00
 ;src/game.c:411: matched = 1;
 	ld	c,#0x01
@@ -1264,8 +1264,8 @@ _rotateCellsLeft::
 	inc	d
 	ld	0 (iy), d
 ;src/game.c:414: cells[i][j] = 0;
-	ld	l,-4 (ix)
-	ld	h,-3 (ix)
+	ld	l,-2 (ix)
+	ld	h,-1 (ix)
 	ld	(hl),#0x00
 ;src/game.c:415: matched = 1;
 	ld	c,#0x01
@@ -1313,18 +1313,18 @@ _rotateCellsRight::
 	add	hl, hl
 	ld	a,#<(_cells)
 	add	a, l
-	ld	-4 (ix),a
+	ld	-2 (ix),a
 	ld	a,#>(_cells)
 	adc	a, h
-	ld	-3 (ix),a
-	ld	a,-4 (ix)
-	add	a, e
-	ld	-2 (ix),a
-	ld	a,-3 (ix)
-	adc	a, #0x00
 	ld	-1 (ix),a
-	ld	l,-2 (ix)
-	ld	h,-1 (ix)
+	ld	a,-2 (ix)
+	add	a, e
+	ld	-4 (ix),a
+	ld	a,-1 (ix)
+	adc	a, #0x00
+	ld	-3 (ix),a
+	ld	l,-4 (ix)
+	ld	h,-3 (ix)
 	ld	b,(hl)
 	ld	a,b
 	or	a, a
@@ -1333,8 +1333,8 @@ _rotateCellsRight::
 	ld	d,e
 	inc	d
 	push	hl
-	ld	l,-4 (ix)
-	ld	h,-3 (ix)
+	ld	l,-2 (ix)
+	ld	h,-1 (ix)
 	push	hl
 	pop	iy
 	pop	hl
@@ -1349,16 +1349,16 @@ _rotateCellsRight::
 ;src/game.c:443: cells[i][j + 1] = cells[i][j];
 	ld	0 (iy), b
 ;src/game.c:444: cells[i][j] = 0;
-	ld	l,-2 (ix)
-	ld	h,-1 (ix)
+	ld	l,-4 (ix)
+	ld	h,-3 (ix)
 	ld	(hl),#0x00
 ;src/game.c:445: matched = 1;
 	ld	c,#0x01
 00102$:
 ;src/game.c:446: } if (((cells[i][j + 1] == 1) && (cells[i][j] == 2)) ||
 	ld	b, 0 (iy)
-	ld	l,-2 (ix)
-	ld	h,-1 (ix)
+	ld	l,-4 (ix)
+	ld	h,-3 (ix)
 	ld	d,(hl)
 	ld	a,b
 	dec	a
@@ -1378,8 +1378,8 @@ _rotateCellsRight::
 ;src/game.c:448: cells[i][j + 1] = 3;
 	ld	0 (iy), #0x03
 ;src/game.c:449: cells[i][j] = 0;
-	ld	l,-2 (ix)
-	ld	h,-1 (ix)
+	ld	l,-4 (ix)
+	ld	h,-3 (ix)
 	ld	(hl),#0x00
 ;src/game.c:450: matched = 1;
 	ld	c,#0x01
@@ -1396,8 +1396,8 @@ _rotateCellsRight::
 	inc	b
 	ld	0 (iy), b
 ;src/game.c:453: cells[i][j] = 0;
-	ld	l,-2 (ix)
-	ld	h,-1 (ix)
+	ld	l,-4 (ix)
+	ld	h,-3 (ix)
 	ld	(hl),#0x00
 ;src/game.c:454: matched = 1;
 	ld	c,#0x01
@@ -1569,7 +1569,7 @@ _rotateCellsDown::
 ;src/game.c:515: for (j = 0; j < 4; j++) {
 	ld	a,-4 (ix)
 	inc	a
-	ld	-3 (ix),a
+	ld	-1 (ix),a
 	ld	e,#0x00
 00118$:
 ;src/game.c:516: if (cells[i][j] != 0) {
@@ -1585,18 +1585,18 @@ _rotateCellsDown::
 	ld	d,a
 	ld	a,b
 	add	a, e
-	ld	-2 (ix),a
+	ld	-3 (ix),a
 	ld	a,d
 	adc	a, #0x00
-	ld	-1 (ix),a
-	ld	l,-2 (ix)
-	ld	h,-1 (ix)
+	ld	-2 (ix),a
+	ld	l,-3 (ix)
+	ld	h,-2 (ix)
 	ld	b,(hl)
 	ld	a,b
 	or	a, a
 	jr	Z,00119$
 ;src/game.c:518: if (cells[i + 1][j] == 0) {
-	ld	l,-3 (ix)
+	ld	l,-1 (ix)
 	ld	h,#0x00
 	add	hl, hl
 	add	hl, hl
@@ -1616,8 +1616,8 @@ _rotateCellsDown::
 ;src/game.c:519: cells[i + 1][j] = cells[i][j];
 	ld	0 (iy), b
 ;src/game.c:520: cells[i][j] = 0;
-	ld	l,-2 (ix)
-	ld	h,-1 (ix)
+	ld	l,-3 (ix)
+	ld	h,-2 (ix)
 	ld	(hl),#0x00
 ;src/game.c:521: matched = 1;
 	ld	c,#0x01
@@ -1625,8 +1625,8 @@ _rotateCellsDown::
 ;src/game.c:518: if (cells[i + 1][j] == 0) {
 	ld	b, 0 (iy)
 ;src/game.c:516: if (cells[i][j] != 0) {
-	ld	l,-2 (ix)
-	ld	h,-1 (ix)
+	ld	l,-3 (ix)
+	ld	h,-2 (ix)
 	ld	d,(hl)
 ;src/game.c:522: } if (((cells[i + 1][j] == 1) && (cells[i][j] == 2)) ||
 	ld	a,b
@@ -1647,8 +1647,8 @@ _rotateCellsDown::
 ;src/game.c:524: cells[i + 1][j] = 3;
 	ld	0 (iy), #0x03
 ;src/game.c:525: cells[i][j] = 0;
-	ld	l,-2 (ix)
-	ld	h,-1 (ix)
+	ld	l,-3 (ix)
+	ld	h,-2 (ix)
 	ld	(hl),#0x00
 ;src/game.c:526: matched = 1;
 	ld	c,#0x01
@@ -1665,8 +1665,8 @@ _rotateCellsDown::
 	inc	b
 	ld	0 (iy), b
 ;src/game.c:529: cells[i][j] = 0;
-	ld	l,-2 (ix)
-	ld	h,-1 (ix)
+	ld	l,-3 (ix)
+	ld	h,-2 (ix)
 	ld	(hl),#0x00
 ;src/game.c:530: matched = 1;
 	ld	c,#0x01
@@ -1698,10 +1698,10 @@ _printCells::
 	dec	sp
 ;src/game.c:555: for (i = 0; i < 4; i++) {
 	ld	c,#0x00
-	ld	-3 (ix),#0x00
+	ld	-1 (ix),#0x00
 00105$:
 ;src/game.c:557: y = 6 + (i * 44);
-	ld	a,-3 (ix)
+	ld	a,-1 (ix)
 	add	a, #0x06
 	ld	-5 (ix),a
 ;src/game.c:558: for (j = 0; j < 4; j++) {
@@ -1726,8 +1726,8 @@ _printCells::
 	call	_cpct_getScreenPtr
 	pop	bc
 ;src/game.c:562: cpct_drawSprite(tiles[cells[i][j]], pvmem, 10, 40);
-	ld	-2 (ix),l
-	ld	-1 (ix),h
+	ld	-3 (ix),l
+	ld	-2 (ix),h
 	ld	l,c
 	ld	h,#0x00
 	add	hl, hl
@@ -1748,8 +1748,8 @@ _printCells::
 	push	bc
 	ld	hl,#0x280A
 	push	hl
-	ld	l,-2 (ix)
-	ld	h,-1 (ix)
+	ld	l,-3 (ix)
+	ld	h,-2 (ix)
 	push	hl
 	push	de
 	call	_cpct_drawSprite
@@ -1763,9 +1763,9 @@ _printCells::
 	sub	a, #0x04
 	jr	C,00103$
 ;src/game.c:555: for (i = 0; i < 4; i++) {
-	ld	a,-3 (ix)
+	ld	a,-1 (ix)
 	add	a, #0x2C
-	ld	-3 (ix),a
+	ld	-1 (ix),a
 	inc	c
 	ld	a,c
 	sub	a, #0x04
@@ -1812,12 +1812,12 @@ _drawScore::
 	ld	sp,hl
 ;src/game.c:581: for (i = 0; i < 4; i++) {
 	ld	c,#0x00
-	ld	-2 (ix),#0x00
+	ld	-1 (ix),#0x00
 ;src/game.c:582: for (j = 0; j < 4; j++) {
 00116$:
-	ld	a,-2 (ix)
+	ld	a,-1 (ix)
 	add	a, #0x06
-	ld	-1 (ix),a
+	ld	-2 (ix),a
 	ld	-7 (ix),#0x00
 	ld	b,#0x00
 00108$:
@@ -1892,7 +1892,7 @@ _drawScore::
 	pop	iy
 	pop	hl
 	push	bc
-	ld	a,-1 (ix)
+	ld	a,-2 (ix)
 	push	af
 	inc	sp
 	ld	e, #0x04
@@ -1913,9 +1913,9 @@ _drawScore::
 	sub	a, #0x04
 	jp	C,00108$
 ;src/game.c:581: for (i = 0; i < 4; i++) {
-	ld	a,-2 (ix)
+	ld	a,-1 (ix)
 	add	a, #0x2C
-	ld	-2 (ix),a
+	ld	-1 (ix),a
 	inc	c
 	ld	a,c
 	sub	a, #0x04
@@ -1931,27 +1931,123 @@ _getName::
 	push	ix
 	ld	ix,#0
 	add	ix,sp
-	ld	hl,#-10
+	ld	hl,#-6
 	add	hl,sp
 	ld	sp,hl
-;src/game.c:610: drawFrame(10, 60, 72, 140);
-	ld	hl,#0x8C48
+;src/game.c:610: drawFrame(9, 60, 73, 150);
+	ld	hl,#0x9649
 	push	hl
-	ld	hl,#0x3C0A
+	ld	hl,#0x3C09
+	push	hl
+	call	_drawFrame
+	pop	af
+;src/game.c:612: drawText("NEW HIGH SCORE", 20, 70, 1);
+	ld	hl, #0x0146
+	ex	(sp),hl
+	ld	a,#0x14
+	push	af
+	inc	sp
+	ld	hl,#___str_10
+	push	hl
+	call	_drawText
+	pop	af
+;src/game.c:613: drawText("ENTER YOUR NAME", 18, 85, 1);
+	inc	sp
+	ld	hl,#0x0155
+	ex	(sp),hl
+	ld	a,#0x12
+	push	af
+	inc	sp
+	ld	hl,#___str_11
+	push	hl
+	call	_drawText
+	pop	af
+;src/game.c:614: pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 11, 100);
+	inc	sp
+	ld	hl,#0x640B
+	ex	(sp),hl
+	ld	hl,#0xC000
+	push	hl
+	call	_cpct_getScreenPtr
+	ld	c,l
+	ld	b,h
+;src/game.c:615: cpct_drawSprite(g_tile_symbols_1, pvmem, 3, 11);
+	ld	hl,#0x0B03
+	push	hl
+	push	bc
+	ld	hl,#_g_tile_symbols_1
+	push	hl
+	call	_cpct_drawSprite
+;src/game.c:616: drawText(" TO CHANGE LETTER", 19, 100, 0);
+	ld	hl,#0x0064
+	push	hl
+	ld	a,#0x13
+	push	af
+	inc	sp
+	ld	hl,#___str_12
+	push	hl
+	call	_drawText
+	pop	af
+;src/game.c:617: pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 16, 100);
+	inc	sp
+	ld	hl,#0x6410
+	ex	(sp),hl
+	ld	hl,#0xC000
+	push	hl
+	call	_cpct_getScreenPtr
+	ld	c,l
+	ld	b,h
+;src/game.c:618: cpct_drawSprite(g_tile_symbols_2, pvmem, 3, 11);
+	ld	hl,#0x0B03
+	push	hl
+	push	bc
+	ld	hl,#_g_tile_symbols_2
+	push	hl
+	call	_cpct_drawSprite
+;src/game.c:619: pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 16, 100);
+	ld	hl,#0x6410
+	push	hl
+	ld	hl,#0xC000
+	push	hl
+	call	_cpct_getScreenPtr
+	ld	c,l
+	ld	b,h
+;src/game.c:620: cpct_drawSprite(g_font_big[38], pvmem, 3, 11);
+	ld	hl,#0x0B03
+	push	hl
+	push	bc
+	ld	hl,#(_g_font_big + 0x04e6)
+	push	hl
+	call	_cpct_drawSprite
+;src/game.c:621: drawText(" [ TO END", 20, 115, 1);
+	ld	hl,#0x0173
+	push	hl
+	ld	a,#0x14
+	push	af
+	inc	sp
+	ld	hl,#___str_13
+	push	hl
+	call	_drawText
+	pop	af
+;src/game.c:622: drawFrame(12, 130, 70, 160);
+	inc	sp
+	ld	hl,#0xA046
+	ex	(sp),hl
+	ld	hl,#0x820C
 	push	hl
 	call	_drawFrame
 	pop	af
 	pop	af
-;src/game.c:611: strcpy(newNameHighScore, "A");
+;src/game.c:623: strcpy(newNameHighScore, "A");
 	ld	de,#_newNameHighScore
-	ld	hl,#___str_10
+	ld	hl,#___str_14
 	xor	a, a
-00159$:
+00166$:
 	cp	a, (hl)
 	ldi
-	jr	NZ, 00159$
-;src/game.c:612: drawText(newNameHighScore, 0, 120, 1);
-	ld	hl,#0x0178
+	jr	NZ, 00166$
+;src/game.c:624: drawText(newNameHighScore, 0, 140, 1);
+	ld	hl,#0x018C
 	push	hl
 	xor	a, a
 	push	af
@@ -1960,50 +2056,17 @@ _getName::
 	push	hl
 	call	_drawText
 	pop	af
-;src/game.c:613: drawText("NEW HIGH SCORE", 20, 70, 1);
-	inc	sp
-	ld	hl,#0x0146
-	ex	(sp),hl
-	ld	a,#0x14
-	push	af
-	inc	sp
-	ld	hl,#___str_11
-	push	hl
-	call	_drawText
-	pop	af
-;src/game.c:614: drawText("ENTER YOUR NAME", 18, 85, 1);
-	inc	sp
-	ld	hl,#0x0155
-	ex	(sp),hl
-	ld	a,#0x12
-	push	af
-	inc	sp
-	ld	hl,#___str_12
-	push	hl
-	call	_drawText
-	pop	af
-;src/game.c:615: drawText("UP DOWN CHANGE LETTER", 18, 100, 1);
-	inc	sp
-	ld	hl,#0x0164
-	ex	(sp),hl
-	ld	a,#0x12
-	push	af
-	inc	sp
-	ld	hl,#___str_13
-	push	hl
-	call	_drawText
-	pop	af
 	pop	af
 	inc	sp
-;src/game.c:616: pos = 0;
-	ld	-7 (ix),#0x00
-;src/game.c:617: chr = 65;
-	ld	-8 (ix),#0x41
-;src/game.c:618: moved = 0;
-	ld	-6 (ix),#0x00
-;src/game.c:619: while (1) {
-00123$:
-;src/game.c:620: delay(24);
+;src/game.c:625: pos = 0;
+	ld	-5 (ix),#0x00
+;src/game.c:626: chr = 65;
+	ld	-6 (ix),#0x41
+;src/game.c:627: moved = 0;
+	ld	-4 (ix),#0x00
+;src/game.c:628: while (1) {
+00126$:
+;src/game.c:629: delay(24);
 	ld	hl,#0x0000
 	push	hl
 	ld	hl,#0x0018
@@ -2011,165 +2074,172 @@ _getName::
 	call	_delay
 	pop	af
 	pop	af
-;src/game.c:621: cpct_scanKeyboard_f();
+;src/game.c:630: cpct_scanKeyboard_f();
 	call	_cpct_scanKeyboard_f
-;src/game.c:623: if (cpct_isKeyPressed(keys.down)) {
+;src/game.c:632: if (cpct_isKeyPressed(keys.down)) {
 	ld	hl, (#_keys + 2)
 	call	_cpct_isKeyPressed
 	ld	-1 (ix),l
-;src/game.c:631: newNameHighScore[pos] = 65;
+;src/game.c:640: newNameHighScore[pos] = '\0';
 	ld	a,#<(_newNameHighScore)
-	add	a, -7 (ix)
+	add	a, -5 (ix)
 	ld	-3 (ix),a
 	ld	a,#>(_newNameHighScore)
 	adc	a, #0x00
 	ld	-2 (ix),a
-;src/game.c:623: if (cpct_isKeyPressed(keys.down)) {
+;src/game.c:632: if (cpct_isKeyPressed(keys.down)) {
 	ld	a,-1 (ix)
 	or	a, a
-	jr	Z,00113$
-;src/game.c:624: chr++;
-	inc	-8 (ix)
-;src/game.c:625: moved = 1;
-	ld	-6 (ix),#0x01
-	jp	00114$
-00113$:
-;src/game.c:626: } else if (cpct_isKeyPressed(keys.up)) {
+	jr	Z,00116$
+;src/game.c:633: chr++;
+	inc	-6 (ix)
+;src/game.c:634: moved = 1;
+	ld	-4 (ix),#0x01
+	jp	00117$
+00116$:
+;src/game.c:635: } else if (cpct_isKeyPressed(keys.up)) {
 	ld	hl, (#_keys + 0)
 	call	_cpct_isKeyPressed
 	ld	a,l
 	or	a, a
-	jr	Z,00110$
-;src/game.c:627: chr--;
-	dec	-8 (ix)
-;src/game.c:628: moved = 1;
-	ld	-6 (ix),#0x01
-	jp	00114$
-00110$:
-;src/game.c:629: } else if (cpct_isKeyPressed(keys.right)) {
+	jr	Z,00113$
+;src/game.c:636: chr--;
+	dec	-6 (ix)
+;src/game.c:637: moved = 1;
+	ld	-4 (ix),#0x01
+	jp	00117$
+00113$:
+;src/game.c:638: } else if (cpct_isKeyPressed(keys.right)) {
 	ld	hl, (#_keys + 6)
 	call	_cpct_isKeyPressed
 	ld	a,l
 	or	a, a
-	jr	Z,00107$
-;src/game.c:630: pos++;
-	inc	-7 (ix)
-;src/game.c:631: newNameHighScore[pos] = 65;
+	jr	Z,00110$
+;src/game.c:639: if (chr == 91) {
+	ld	a,-6 (ix)
+	sub	a, #0x5B
+	jr	NZ,00102$
+;src/game.c:640: newNameHighScore[pos] = '\0';
+	ld	l,-3 (ix)
+	ld	h,-2 (ix)
+	ld	(hl),#0x00
+;src/game.c:641: break;
+	jp	00128$
+00102$:
+;src/game.c:644: pos++;
+	inc	-5 (ix)
+;src/game.c:640: newNameHighScore[pos] = '\0';
 	ld	a,#<(_newNameHighScore)
-	add	a, -7 (ix)
+	add	a, -5 (ix)
 	ld	-3 (ix),a
 	ld	a,#>(_newNameHighScore)
 	adc	a, #0x00
 	ld	-2 (ix),a
+;src/game.c:645: newNameHighScore[pos] = 65;
 	ld	l,-3 (ix)
 	ld	h,-2 (ix)
 	ld	(hl),#0x41
-;src/game.c:632: newNameHighScore[pos + 1] = '\0';
-	ld	c,-7 (ix)
+;src/game.c:646: newNameHighScore[pos + 1] = '\0';
+	ld	c,-5 (ix)
 	inc	c
 	ld	hl,#_newNameHighScore
 	ld	b,#0x00
 	add	hl, bc
 	ld	(hl),#0x00
-;src/game.c:633: chr = 65;
-	ld	-8 (ix),#0x41
-;src/game.c:634: moved = 1;
-	ld	-6 (ix),#0x01
-	jr	00114$
-00107$:
-;src/game.c:635: }else if (cpct_isKeyPressed(keys.left)) {
+;src/game.c:647: chr = 65;
+	ld	-6 (ix),#0x41
+;src/game.c:648: moved = 1;
+	ld	-4 (ix),#0x01
+	jr	00117$
+00110$:
+;src/game.c:651: } else if (cpct_isKeyPressed(keys.left)) {
 	ld	hl, (#_keys + 4)
 	call	_cpct_isKeyPressed
 	ld	a,l
 	or	a, a
-	jr	Z,00104$
-;src/game.c:636: newNameHighScore[pos] = '\0';
+	jr	Z,00107$
+;src/game.c:652: newNameHighScore[pos] = '\0';
 	ld	l,-3 (ix)
 	ld	h,-2 (ix)
 	ld	(hl),#0x00
-;src/game.c:637: pos--;
-	dec	-7 (ix)
-;src/game.c:631: newNameHighScore[pos] = 65;
+;src/game.c:653: pos--;
+	dec	-5 (ix)
+;src/game.c:640: newNameHighScore[pos] = '\0';
 	ld	a,#<(_newNameHighScore)
-	add	a, -7 (ix)
+	add	a, -5 (ix)
 	ld	-3 (ix),a
 	ld	a,#>(_newNameHighScore)
 	adc	a, #0x00
 	ld	-2 (ix),a
-;src/game.c:638: chr = newNameHighScore[pos];
+;src/game.c:654: chr = newNameHighScore[pos];
 	ld	l,-3 (ix)
 	ld	h,-2 (ix)
 	ld	a,(hl)
-	ld	-8 (ix),a
-;src/game.c:639: moved = 1;
-	ld	-6 (ix),#0x01
-	jr	00114$
-00104$:
-;src/game.c:640: } else if (cpct_isKeyPressed(keys.abort)) {
+	ld	-6 (ix),a
+;src/game.c:655: moved = 1;
+	ld	-4 (ix),#0x01
+	jr	00117$
+00107$:
+;src/game.c:656: } else if (cpct_isKeyPressed(keys.abort)) {
 	ld	hl, (#_keys + 12)
 	call	_cpct_isKeyPressed
 	ld	a,l
 	or	a, a
-	jp	NZ,00125$
-;src/game.c:641: break;
-00114$:
-;src/game.c:643: if (moved) {
-	ld	a,-6 (ix)
+	jr	NZ,00128$
+;src/game.c:657: break;
+00117$:
+;src/game.c:659: if (moved) {
+	ld	a,-4 (ix)
 	or	a, a
-	jp	Z,00123$
-;src/game.c:644: moved = 0;
-	ld	-6 (ix),#0x00
-;src/game.c:645: if (chr > 90)
-	ld	a,#0x5A
-	sub	a, -8 (ix)
-	jr	NC,00118$
-;src/game.c:646: chr = 65;
-	ld	-8 (ix),#0x41
-	jr	00119$
-00118$:
-;src/game.c:647: else if (chr < 65)
-	ld	a,-8 (ix)
+	jp	Z,00126$
+;src/game.c:660: moved = 0;
+	ld	-4 (ix),#0x00
+;src/game.c:661: if (chr > 91)
+	ld	a,#0x5B
+	sub	a, -6 (ix)
+	jr	NC,00121$
+;src/game.c:662: chr = 65;
+	ld	-6 (ix),#0x41
+	jr	00122$
+00121$:
+;src/game.c:663: else if (chr < 65)
+	ld	a,-6 (ix)
 	sub	a, #0x41
-	jr	NC,00119$
-;src/game.c:648: chr = 90;
-	ld	-8 (ix),#0x5A
-00119$:
-;src/game.c:649: newNameHighScore[pos] = chr;
+	jr	NC,00122$
+;src/game.c:664: chr = 91;
+	ld	-6 (ix),#0x5B
+00122$:
+;src/game.c:665: newNameHighScore[pos] = chr;
 	ld	l,-3 (ix)
 	ld	h,-2 (ix)
-	ld	a,-8 (ix)
+	ld	a,-6 (ix)
 	ld	(hl),a
-;src/game.c:650: pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 20, 120);
-	ld	hl,#0x7814
+;src/game.c:666: pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 13, 140);
+	ld	hl,#0x8C0D
 	push	hl
 	ld	hl,#0xC000
 	push	hl
 	call	_cpct_getScreenPtr
-	inc	sp
-	inc	sp
-	push	hl
-;src/game.c:651: cpct_drawSolidBox(pvmem, cpct_px2byteM0(5, 5), 60, 11);
+	ld	-3 (ix),l
+	ld	-2 (ix),h
+;src/game.c:667: cpct_drawSolidBox(pvmem, cpct_px2byteM0(5, 5), 60, 11);
 	ld	hl,#0x0505
 	push	hl
 	call	_cpct_px2byteM0
-	ld	-3 (ix),l
-	ld	a,-10 (ix)
-	ld	-5 (ix),a
-	ld	a,-9 (ix)
-	ld	-4 (ix),a
+	ld	-1 (ix),l
 	ld	hl,#0x0B3C
 	push	hl
-	ld	a,-3 (ix)
+	ld	a,-1 (ix)
 	push	af
 	inc	sp
-	ld	l,-5 (ix)
-	ld	h,-4 (ix)
+	ld	l,-3 (ix)
+	ld	h,-2 (ix)
 	push	hl
 	call	_cpct_drawSolidBox
 	pop	af
-;src/game.c:653: drawText(newNameHighScore, 20, 120, 1);
+;src/game.c:668: drawText(newNameHighScore, 20, 140, 1);
 	inc	sp
-	ld	hl,#0x0178
+	ld	hl,#0x018C
 	ex	(sp),hl
 	ld	a,#0x14
 	push	af
@@ -2180,24 +2250,27 @@ _getName::
 	pop	af
 	pop	af
 	inc	sp
-	jp	00123$
-00125$:
+	jp	00126$
+00128$:
 	ld	sp, ix
 	pop	ix
 	ret
 ___str_10:
-	.ascii "A"
-	.db 0x00
-___str_11:
 	.ascii "NEW HIGH SCORE"
 	.db 0x00
-___str_12:
+___str_11:
 	.ascii "ENTER YOUR NAME"
 	.db 0x00
-___str_13:
-	.ascii "UP DOWN CHANGE LETTER"
+___str_12:
+	.ascii " TO CHANGE LETTER"
 	.db 0x00
-;src/game.c:668: void setHighScore(u32 score) {
+___str_13:
+	.ascii " [ TO END"
+	.db 0x00
+___str_14:
+	.ascii "A"
+	.db 0x00
+;src/game.c:683: void setHighScore(u32 score) {
 ;	---------------------------------
 ; Function setHighScore
 ; ---------------------------------
@@ -2208,9 +2281,9 @@ _setHighScore::
 	ld	hl,#-10
 	add	hl,sp
 	ld	sp,hl
-;src/game.c:671: i = 8;
+;src/game.c:686: i = 8;
 	ld	c,#0x08
-;src/game.c:672: while ((score > scoreHallOfFame[i - 1]) && (i>0)) {
+;src/game.c:687: while ((score > scoreHallOfFame[i - 1]) && (i > 0)) {
 	ld	de,#_scoreHallOfFame+0
 00102$:
 	ld	b,c
@@ -2223,41 +2296,41 @@ _setHighScore::
 	push	de
 	push	bc
 	ex	de,hl
-	ld	hl, #0x000A
+	ld	hl, #0x0004
 	add	hl, sp
 	ex	de, hl
 	ld	bc, #0x0004
 	ldir
 	pop	bc
 	pop	de
-	ld	a,-4 (ix)
+	ld	a,-10 (ix)
 	sub	a, 4 (ix)
-	ld	a,-3 (ix)
+	ld	a,-9 (ix)
 	sbc	a, 5 (ix)
-	ld	a,-2 (ix)
+	ld	a,-8 (ix)
 	sbc	a, 6 (ix)
-	ld	a,-1 (ix)
+	ld	a,-7 (ix)
 	sbc	a, 7 (ix)
 	jr	NC,00104$
 	ld	a,c
 	or	a, a
 	jr	Z,00104$
-;src/game.c:673: i--;
+;src/game.c:688: i--;
 	ld	c,b
 	jr	00102$
 00104$:
-;src/game.c:675: j = 7;
-;src/game.c:676: if (i <= j) {
+;src/game.c:690: j = 7;
+;src/game.c:691: if (i <= j) {
 	ld	a,#0x07
 	ld	b,a
 	sub	a, c
 	jp	C,00111$
-;src/game.c:677: while ((i < j) && (j>0)) {
+;src/game.c:692: while ((i < j) && (j > 0)) {
 00106$:
-;src/game.c:678: scoreHallOfFame[j] = scoreHallOfFame[j - 1];
-	ld	-4 (ix),b
-	ld	-3 (ix),#0x00
-;src/game.c:679: strcpy(nameHallOfFame[j], nameHallOfFame[j - 1]);
+;src/game.c:693: scoreHallOfFame[j] = scoreHallOfFame[j - 1];
+	ld	-10 (ix),b
+	ld	-9 (ix),#0x00
+;src/game.c:694: strcpy(nameHallOfFame[j], nameHallOfFame[j - 1]);
 	push	de
 	ld	e,b
 	ld	d,#0x00
@@ -2272,31 +2345,30 @@ _setHighScore::
 	pop	de
 	ld	-6 (ix),l
 	ld	-5 (ix),h
-;src/game.c:678: scoreHallOfFame[j] = scoreHallOfFame[j - 1];
-	ld	l,-4 (ix)
-	ld	h,-3 (ix)
+;src/game.c:693: scoreHallOfFame[j] = scoreHallOfFame[j - 1];
+	pop	hl
+	push	hl
 	add	hl, hl
 	add	hl, hl
-;src/game.c:679: strcpy(nameHallOfFame[j], nameHallOfFame[j - 1]);
+;src/game.c:694: strcpy(nameHallOfFame[j], nameHallOfFame[j - 1]);
 	ld	a,#<(_nameHallOfFame)
 	add	a, -6 (ix)
 	ld	-6 (ix),a
 	ld	a,#>(_nameHallOfFame)
 	adc	a, -5 (ix)
 	ld	-5 (ix),a
-;src/game.c:678: scoreHallOfFame[j] = scoreHallOfFame[j - 1];
+;src/game.c:693: scoreHallOfFame[j] = scoreHallOfFame[j - 1];
 	add	hl,de
-	ld	-4 (ix),l
-	ld	-3 (ix),h
-;src/game.c:679: strcpy(nameHallOfFame[j], nameHallOfFame[j - 1]);
-;src/game.c:677: while ((i < j) && (j>0)) {
+	ex	(sp), hl
+;src/game.c:694: strcpy(nameHallOfFame[j], nameHallOfFame[j - 1]);
+;src/game.c:692: while ((i < j) && (j > 0)) {
 	ld	a,c
 	sub	a, b
 	jr	NC,00108$
 	ld	a,b
 	or	a, a
 	jr	Z,00108$
-;src/game.c:678: scoreHallOfFame[j] = scoreHallOfFame[j - 1];
+;src/game.c:693: scoreHallOfFame[j] = scoreHallOfFame[j - 1];
 	dec	b
 	ld	l,b
 	ld	h,#0x00
@@ -2306,14 +2378,14 @@ _setHighScore::
 	push	de
 	push	bc
 	ex	de,hl
-	ld	hl, #0x0004
+	ld	hl, #0x000A
 	add	hl, sp
 	ex	de, hl
 	ld	bc, #0x0004
 	ldir
-	ld	e,-4 (ix)
-	ld	d,-3 (ix)
-	ld	hl, #0x0004
+	ld	e,-10 (ix)
+	ld	d,-9 (ix)
+	ld	hl, #0x000A
 	add	hl, sp
 	ld	bc, #0x0004
 	ldir
@@ -2346,21 +2418,21 @@ _setHighScore::
 	jr	NZ, 00140$
 	pop	de
 	pop	bc
-;src/game.c:680: j--;
+;src/game.c:695: j--;
 	jp	00106$
 00108$:
-;src/game.c:682: getName();
+;src/game.c:697: getName();
 	call	_getName
-;src/game.c:683: wait4UserKeypress();
+;src/game.c:698: wait4UserKeypress();
 	call	_wait4UserKeypress
-;src/game.c:684: scoreHallOfFame[j] = score;
-	ld	e,-4 (ix)
-	ld	d,-3 (ix)
+;src/game.c:699: scoreHallOfFame[j] = score;
+	pop	de
+	push	de
 	ld	hl, #0x000E
 	add	hl, sp
 	ld	bc, #0x0004
 	ldir
-;src/game.c:685: strcpy(nameHallOfFame[j], newNameHighScore);
+;src/game.c:700: strcpy(nameHallOfFame[j], newNameHighScore);
 	ld	e,-6 (ix)
 	ld	d,-5 (ix)
 	ld	hl,#_newNameHighScore
@@ -2373,7 +2445,7 @@ _setHighScore::
 	ld	sp, ix
 	pop	ix
 	ret
-;src/game.c:689: void drawScoreBoard() {
+;src/game.c:704: void drawScoreBoard() {
 ;	---------------------------------
 ; Function drawScoreBoard
 ; ---------------------------------
@@ -2383,7 +2455,7 @@ _drawScoreBoard::
 	add	ix,sp
 	push	af
 	push	af
-;src/game.c:693: cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(5, 5), 0x4000);
+;src/game.c:708: cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(5, 5), 0x4000);
 	ld	hl,#0x0505
 	push	hl
 	call	_cpct_px2byteM0
@@ -2395,26 +2467,26 @@ _drawScoreBoard::
 	ld	h, #0xC0
 	push	hl
 	call	_cpct_memset
-;src/game.c:695: drawText("THREES SCOREBOARD", 13, 2, 1);
+;src/game.c:710: drawText("AMSTHREES SCOREBOARD", 13, 2, 1);
 	ld	hl,#0x0102
 	push	hl
 	ld	a,#0x0D
 	push	af
 	inc	sp
-	ld	hl,#___str_14
+	ld	hl,#___str_15
 	push	hl
 	call	_drawText
 	pop	af
 	pop	af
 	inc	sp
-;src/game.c:697: for (i = 0; i < 8; i++) {
+;src/game.c:712: for (i = 0; i < 8; i++) {
 	ld	-4 (ix),#0x00
-	ld	-1 (ix),#0x00
-	ld	bc,#0x0000
 	ld	-3 (ix),#0x00
+	ld	bc,#0x0000
+	ld	-1 (ix),#0x00
 00106$:
-;src/game.c:698: drawNumber(i + 1, 2, 5, 30 + (i * 15));
-	ld	a,-1 (ix)
+;src/game.c:713: drawNumber(i + 1, 2, 5, 30 + (i * 15));
+	ld	a,-3 (ix)
 	add	a, #0x1E
 	ld	-2 (ix),a
 	ld	e,-4 (ix)
@@ -2436,7 +2508,7 @@ _drawScoreBoard::
 	inc	sp
 	pop	de
 	pop	bc
-;src/game.c:699: drawText(nameHallOfFame[i], 14, 30 + (i * 15), 0);
+;src/game.c:714: drawText(nameHallOfFame[i], 14, 30 + (i * 15), 0);
 	ld	iy,#_nameHallOfFame
 	add	iy, bc
 	push	bc
@@ -2454,8 +2526,8 @@ _drawScoreBoard::
 	inc	sp
 	pop	de
 	pop	bc
-;src/game.c:700: drawNumber(scoreHallOfFame[i], 1, 69, 30 + (i * 15));
-	ld	a,-3 (ix)
+;src/game.c:715: drawNumber(scoreHallOfFame[i], 1, 69, 30 + (i * 15));
+	ld	a,-1 (ix)
 	add	a, #0x1E
 	ld	-2 (ix),a
 	ex	de,hl
@@ -2483,49 +2555,49 @@ _drawScoreBoard::
 	pop	af
 	inc	sp
 	pop	bc
-;src/game.c:697: for (i = 0; i < 8; i++) {
-	ld	a,-1 (ix)
+;src/game.c:712: for (i = 0; i < 8; i++) {
+	ld	a,-3 (ix)
 	add	a, #0x0F
-	ld	-1 (ix),a
+	ld	-3 (ix),a
 	ld	hl,#0x000F
 	add	hl,bc
 	ld	c,l
 	ld	b,h
-	ld	a,-3 (ix)
+	ld	a,-1 (ix)
 	add	a, #0x0F
-	ld	-3 (ix),a
+	ld	-1 (ix),a
 	inc	-4 (ix)
 	ld	a,-4 (ix)
 	sub	a, #0x08
 	jp	C,00106$
-;src/game.c:703: drawText("JOHN LOBO", 25, 170, 1);
+;src/game.c:718: drawText("JOHN LOBO", 25, 170, 1);
 	ld	hl,#0x01AA
 	push	hl
 	ld	a,#0x19
-	push	af
-	inc	sp
-	ld	hl,#___str_15
-	push	hl
-	call	_drawText
-	pop	af
-;src/game.c:704: drawText("@ GLASNOST CORP 2015", 11, 185, 1);
-	inc	sp
-	ld	hl,#0x01B9
-	ex	(sp),hl
-	ld	a,#0x0B
 	push	af
 	inc	sp
 	ld	hl,#___str_16
 	push	hl
 	call	_drawText
 	pop	af
+;src/game.c:719: drawText("@ GLASNOST CORP 2016", 11, 185, 1);
+	inc	sp
+	ld	hl,#0x01B9
+	ex	(sp),hl
+	ld	a,#0x0B
+	push	af
+	inc	sp
+	ld	hl,#___str_17
+	push	hl
+	call	_drawText
+	pop	af
 	pop	af
 	inc	sp
-;src/game.c:708: do {
+;src/game.c:723: do {
 	ld	bc,#0x9C40
 	ld	de,#0x0000
 00103$:
-;src/game.c:709: c--;                       // One more cycle
+;src/game.c:724: c--;                       // One more cycle
 	ld	a,c
 	add	a,#0xFF
 	ld	c,a
@@ -2538,7 +2610,7 @@ _drawScoreBoard::
 	ld	a,d
 	adc	a,#0xFF
 	ld	d,a
-;src/game.c:710: cpct_scanKeyboard_f();     // Scan the scan the keyboard
+;src/game.c:725: cpct_scanKeyboard_f();     // Scan the scan the keyboard
 	push	bc
 	push	de
 	call	_cpct_scanKeyboard_f
@@ -2557,16 +2629,16 @@ _drawScoreBoard::
 	ld	sp, ix
 	pop	ix
 	ret
-___str_14:
-	.ascii "THREES SCOREBOARD"
-	.db 0x00
 ___str_15:
-	.ascii "JOHN LOBO"
+	.ascii "AMSTHREES SCOREBOARD"
 	.db 0x00
 ___str_16:
-	.ascii "@ GLASNOST CORP 2015"
+	.ascii "JOHN LOBO"
 	.db 0x00
-;src/game.c:723: void game(void) {
+___str_17:
+	.ascii "@ GLASNOST CORP 2016"
+	.db 0x00
+;src/game.c:738: void game(void) {
 ;	---------------------------------
 ; Function game
 ; ---------------------------------
@@ -2575,11 +2647,11 @@ _game::
 	ld	ix,#0
 	add	ix,sp
 	dec	sp
-;src/game.c:727: initGame();
+;src/game.c:741: initGame();
 	call	_initGame
-;src/game.c:730: clearScreen();
+;src/game.c:744: clearScreen();
 	call	_clearScreen
-;src/game.c:733: drawFrame(2, 1, 49, 182);
+;src/game.c:747: drawFrame(2, 1, 49, 182);
 	ld	hl,#0xB631
 	push	hl
 	ld	hl,#0x0102
@@ -2587,27 +2659,27 @@ _game::
 	call	_drawFrame
 	pop	af
 	pop	af
-;src/game.c:734: printCells();
+;src/game.c:748: printCells();
 	call	_printCells
-;src/game.c:735: drawText("NEXT", 62, 2, 0);
+;src/game.c:749: drawText("NEXT", 62, 2, 0);
 	ld	hl,#0x0002
 	push	hl
 	ld	a,#0x3E
 	push	af
 	inc	sp
-	ld	hl,#___str_17
+	ld	hl,#___str_18
 	push	hl
 	call	_drawText
 	pop	af
 	pop	af
 	inc	sp
-;src/game.c:737: wait4UserKeypress();
+;src/game.c:751: wait4UserKeypress();
 	call	_wait4UserKeypress
-;src/game.c:739: moved = 0;
+;src/game.c:753: moved = 0;
 	ld	-1 (ix),#0x00
-;src/game.c:741: while (1) {
+;src/game.c:755: while (1) {
 00128$:
-;src/game.c:742: delay(24);
+;src/game.c:756: delay(24);
 	ld	hl,#0x0000
 	push	hl
 	ld	hl,#0x0018
@@ -2615,153 +2687,153 @@ _game::
 	call	_delay
 	pop	af
 	pop	af
-;src/game.c:743: cpct_scanKeyboard_f();
+;src/game.c:757: cpct_scanKeyboard_f();
 	call	_cpct_scanKeyboard_f
-;src/game.c:745: if (cpct_isKeyPressed(keys.right)) {
+;src/game.c:759: if (cpct_isKeyPressed(keys.right)) {
 	ld	hl, (#_keys + 6)
 	call	_cpct_isKeyPressed
 	ld	a,l
 	or	a, a
 	jr	Z,00121$
-;src/game.c:746: if (rotateCellsRight()) {
+;src/game.c:760: if (rotateCellsRight()) {
 	call	_rotateCellsRight
 	ld	a,l
 	or	a, a
 	jr	Z,00122$
-;src/game.c:747: addRandomCellTurn(RIGHT);
+;src/game.c:761: addRandomCellTurn(RIGHT);
 	ld	a,#0x01
 	push	af
 	inc	sp
 	call	_addRandomCellTurn
 	inc	sp
-;src/game.c:748: moved = 1;
+;src/game.c:762: moved = 1;
 	ld	-1 (ix),#0x01
 	jr	00122$
 00121$:
-;src/game.c:750: } else if (cpct_isKeyPressed(keys.left)) {
+;src/game.c:764: } else if (cpct_isKeyPressed(keys.left)) {
 	ld	hl, (#_keys + 4)
 	call	_cpct_isKeyPressed
 	ld	a,l
 	or	a, a
 	jr	Z,00118$
-;src/game.c:751: if (rotateCellsLeft()) {
+;src/game.c:765: if (rotateCellsLeft()) {
 	call	_rotateCellsLeft
 	ld	a,l
 	or	a, a
 	jr	Z,00122$
-;src/game.c:752: addRandomCellTurn(LEFT);
+;src/game.c:766: addRandomCellTurn(LEFT);
 	xor	a, a
 	push	af
 	inc	sp
 	call	_addRandomCellTurn
 	inc	sp
-;src/game.c:753: moved = 1;
+;src/game.c:767: moved = 1;
 	ld	-1 (ix),#0x01
 	jr	00122$
 00118$:
-;src/game.c:755: } else if (cpct_isKeyPressed(keys.down)) {
+;src/game.c:769: } else if (cpct_isKeyPressed(keys.down)) {
 	ld	hl, (#_keys + 2)
 	call	_cpct_isKeyPressed
 	ld	a,l
 	or	a, a
 	jr	Z,00115$
-;src/game.c:756: if (rotateCellsDown()) {
+;src/game.c:770: if (rotateCellsDown()) {
 	call	_rotateCellsDown
 	ld	a,l
 	or	a, a
 	jr	Z,00122$
-;src/game.c:757: addRandomCellTurn(DOWN);
+;src/game.c:771: addRandomCellTurn(DOWN);
 	ld	a,#0x03
 	push	af
 	inc	sp
 	call	_addRandomCellTurn
 	inc	sp
-;src/game.c:758: moved = 1;
+;src/game.c:772: moved = 1;
 	ld	-1 (ix),#0x01
 	jr	00122$
 00115$:
-;src/game.c:760: } else if (cpct_isKeyPressed(keys.up)) {
+;src/game.c:774: } else if (cpct_isKeyPressed(keys.up)) {
 	ld	hl, (#_keys + 0)
 	call	_cpct_isKeyPressed
 	ld	a,l
 	or	a, a
 	jr	Z,00112$
-;src/game.c:761: if (rotateCellsUp()) {
+;src/game.c:775: if (rotateCellsUp()) {
 	call	_rotateCellsUp
 	ld	a,l
 	or	a, a
 	jr	Z,00122$
-;src/game.c:762: addRandomCellTurn(UP);
+;src/game.c:776: addRandomCellTurn(UP);
 	ld	a,#0x02
 	push	af
 	inc	sp
 	call	_addRandomCellTurn
 	inc	sp
-;src/game.c:763: moved = 1;
+;src/game.c:777: moved = 1;
 	ld	-1 (ix),#0x01
 	jr	00122$
 00112$:
-;src/game.c:765: } else if (cpct_isKeyPressed(keys.abort))
+;src/game.c:779: } else if (cpct_isKeyPressed(keys.abort))
 	ld	hl, (#_keys + 12)
 	call	_cpct_isKeyPressed
 	ld	a,l
 	or	a, a
 	jp	NZ,00130$
-;src/game.c:766: break;
+;src/game.c:780: break;
 00122$:
-;src/game.c:768: if (moved) {
+;src/game.c:782: if (moved) {
 	ld	a,-1 (ix)
 	or	a, a
 	jp	Z,00128$
-;src/game.c:769: printCells();
+;src/game.c:783: printCells();
 	call	_printCells
-;src/game.c:770: moved = 0;
+;src/game.c:784: moved = 0;
 	ld	-1 (ix),#0x00
-;src/game.c:771: if (anyMovesLeft() == 0) {
+;src/game.c:785: if (anyMovesLeft() == 0) {
 	call	_anyMovesLeft
 	ld	a,l
 	or	a, a
 	jp	NZ,00128$
-;src/game.c:772: drawScore();
+;src/game.c:786: drawScore();
 	call	_drawScore
-;src/game.c:773: wait4UserKeypress();
+;src/game.c:787: wait4UserKeypress();
 	call	_wait4UserKeypress
-;src/game.c:774: drawFrame(14, 60, 68, 142);
+;src/game.c:788: drawFrame(14, 60, 68, 142);
 	ld	hl,#0x8E44
 	push	hl
 	ld	hl,#0x3C0E
 	push	hl
 	call	_drawFrame
 	pop	af
-;src/game.c:775: drawFallingText("NO MORE MOVES", 20, 90, 96);
+;src/game.c:789: drawFallingText("NO MORE MOVES", 20, 90, 96);
 	ld	hl, #0x605A
 	ex	(sp),hl
 	ld	a,#0x14
 	push	af
 	inc	sp
-	ld	hl,#___str_18
+	ld	hl,#___str_19
 	push	hl
 	call	_drawFallingText
 	pop	af
-;src/game.c:776: drawText("GAME OVER", 22, 70, 1);
+;src/game.c:790: drawText("GAME OVER", 22, 70, 1);
 	inc	sp
 	ld	hl,#0x0146
 	ex	(sp),hl
 	ld	a,#0x16
 	push	af
 	inc	sp
-	ld	hl,#___str_19
+	ld	hl,#___str_20
 	push	hl
 	call	_drawText
 	pop	af
 	pop	af
 	inc	sp
-;src/game.c:777: sprintf(aux_txt, "SCORE  %d", score);
+;src/game.c:791: sprintf(aux_txt, "SCORE  %d", score);
 	ld	hl,(_score + 2)
 	push	hl
 	ld	hl,(_score)
 	push	hl
-	ld	hl,#___str_20
+	ld	hl,#___str_21
 	push	hl
 	ld	hl,(_aux_txt)
 	push	hl
@@ -2769,7 +2841,7 @@ _game::
 	ld	hl,#8
 	add	hl,sp
 	ld	sp,hl
-;src/game.c:778: drawText(aux_txt, 22, 120, 1);
+;src/game.c:792: drawText(aux_txt, 22, 120, 1);
 	ld	hl,#0x0178
 	push	hl
 	ld	a,#0x16
@@ -2781,9 +2853,9 @@ _game::
 	pop	af
 	pop	af
 	inc	sp
-;src/game.c:779: wait4UserKeypress();
+;src/game.c:793: wait4UserKeypress();
 	call	_wait4UserKeypress
-;src/game.c:780: setHighScore(score);
+;src/game.c:794: setHighScore(score);
 	ld	hl,(_score + 2)
 	push	hl
 	ld	hl,(_score)
@@ -2791,37 +2863,37 @@ _game::
 	call	_setHighScore
 	pop	af
 	pop	af
-;src/game.c:781: drawScoreBoard();
+;src/game.c:795: drawScoreBoard();
 	call	_drawScoreBoard
-;src/game.c:782: break;
+;src/game.c:796: break;
 00130$:
 	inc	sp
 	pop	ix
 	ret
-___str_17:
+___str_18:
 	.ascii "NEXT"
 	.db 0x00
-___str_18:
+___str_19:
 	.ascii "NO MORE MOVES"
 	.db 0x00
-___str_19:
+___str_20:
 	.ascii "GAME OVER"
 	.db 0x00
-___str_20:
+___str_21:
 	.ascii "SCORE  %d"
 	.db 0x00
-;src/game.c:789: void checkKeyboardMenu() {
+;src/game.c:803: void checkKeyboardMenu() {
 ;	---------------------------------
 ; Function checkKeyboardMenu
 ; ---------------------------------
 _checkKeyboardMenu::
-;src/game.c:793: cpct_scanKeyboard_f();
+;src/game.c:807: cpct_scanKeyboard_f();
 	call	_cpct_scanKeyboard_f
-;src/game.c:795: if (selectedOption == 1) {
+;src/game.c:809: if (selectedOption == 1) {
 	ld	a,(#_selectedOption + 0)
 	dec	a
 	jr	NZ,00102$
-;src/game.c:796: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 27, 71);
+;src/game.c:810: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 27, 71);
 	ld	hl,#0x471B
 	push	hl
 	ld	hl,#0xC000
@@ -2829,14 +2901,14 @@ _checkKeyboardMenu::
 	call	_cpct_getScreenPtr
 	ld	c,l
 	ld	b,h
-;src/game.c:797: cpct_drawSprite(g_tile_marker_3, pvideo, 2, 9);
+;src/game.c:811: cpct_drawSprite(g_tile_marker_3, pvideo, 2, 9);
 	ld	hl,#0x0902
 	push	hl
 	push	bc
 	ld	hl,#_g_tile_marker_3
 	push	hl
 	call	_cpct_drawSprite
-;src/game.c:798: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 54, 71);
+;src/game.c:812: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 54, 71);
 	ld	hl,#0x4736
 	push	hl
 	ld	hl,#0xC000
@@ -2844,14 +2916,14 @@ _checkKeyboardMenu::
 	call	_cpct_getScreenPtr
 	ld	c,l
 	ld	b,h
-;src/game.c:799: cpct_drawSprite(g_tile_marker_3, pvideo, 2, 9);
+;src/game.c:813: cpct_drawSprite(g_tile_marker_3, pvideo, 2, 9);
 	ld	hl,#0x0902
 	push	hl
 	push	bc
 	ld	hl,#_g_tile_marker_3
 	push	hl
 	call	_cpct_drawSprite
-;src/game.c:800: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 27, 51);
+;src/game.c:814: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 27, 51);
 	ld	hl,#0x331B
 	push	hl
 	ld	hl,#0xC000
@@ -2859,14 +2931,14 @@ _checkKeyboardMenu::
 	call	_cpct_getScreenPtr
 	ld	c,l
 	ld	b,h
-;src/game.c:801: cpct_drawSprite(g_tile_marker_0, pvideo, 2, 9);
+;src/game.c:815: cpct_drawSprite(g_tile_marker_0, pvideo, 2, 9);
 	ld	hl,#0x0902
 	push	hl
 	push	bc
 	ld	hl,#_g_tile_marker_0
 	push	hl
 	call	_cpct_drawSprite
-;src/game.c:802: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 54, 51);
+;src/game.c:816: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 54, 51);
 	ld	hl,#0x3336
 	push	hl
 	ld	hl,#0xC000
@@ -2874,7 +2946,7 @@ _checkKeyboardMenu::
 	call	_cpct_getScreenPtr
 	ld	c,l
 	ld	b,h
-;src/game.c:803: cpct_drawSprite(g_tile_marker_0, pvideo, 2, 9);
+;src/game.c:817: cpct_drawSprite(g_tile_marker_0, pvideo, 2, 9);
 	ld	hl,#0x0902
 	push	hl
 	push	bc
@@ -2883,7 +2955,7 @@ _checkKeyboardMenu::
 	call	_cpct_drawSprite
 	jr	00103$
 00102$:
-;src/game.c:805: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 27, 51);
+;src/game.c:819: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 27, 51);
 	ld	hl,#0x331B
 	push	hl
 	ld	hl,#0xC000
@@ -2891,14 +2963,14 @@ _checkKeyboardMenu::
 	call	_cpct_getScreenPtr
 	ld	c,l
 	ld	b,h
-;src/game.c:806: cpct_drawSprite(g_tile_marker_3, pvideo, 2, 9);
+;src/game.c:820: cpct_drawSprite(g_tile_marker_3, pvideo, 2, 9);
 	ld	hl,#0x0902
 	push	hl
 	push	bc
 	ld	hl,#_g_tile_marker_3
 	push	hl
 	call	_cpct_drawSprite
-;src/game.c:807: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 54, 51);
+;src/game.c:821: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 54, 51);
 	ld	hl,#0x3336
 	push	hl
 	ld	hl,#0xC000
@@ -2906,14 +2978,14 @@ _checkKeyboardMenu::
 	call	_cpct_getScreenPtr
 	ld	c,l
 	ld	b,h
-;src/game.c:808: cpct_drawSprite(g_tile_marker_3, pvideo, 2, 9);
+;src/game.c:822: cpct_drawSprite(g_tile_marker_3, pvideo, 2, 9);
 	ld	hl,#0x0902
 	push	hl
 	push	bc
 	ld	hl,#_g_tile_marker_3
 	push	hl
 	call	_cpct_drawSprite
-;src/game.c:809: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 27, 71);
+;src/game.c:823: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 27, 71);
 	ld	hl,#0x471B
 	push	hl
 	ld	hl,#0xC000
@@ -2921,14 +2993,14 @@ _checkKeyboardMenu::
 	call	_cpct_getScreenPtr
 	ld	c,l
 	ld	b,h
-;src/game.c:810: cpct_drawSprite(g_tile_marker_0, pvideo, 2, 9);
+;src/game.c:824: cpct_drawSprite(g_tile_marker_0, pvideo, 2, 9);
 	ld	hl,#0x0902
 	push	hl
 	push	bc
 	ld	hl,#_g_tile_marker_0
 	push	hl
 	call	_cpct_drawSprite
-;src/game.c:811: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 54, 71);
+;src/game.c:825: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 54, 71);
 	ld	hl,#0x4736
 	push	hl
 	ld	hl,#0xC000
@@ -2936,7 +3008,7 @@ _checkKeyboardMenu::
 	call	_cpct_getScreenPtr
 	ld	c,l
 	ld	b,h
-;src/game.c:812: cpct_drawSprite(g_tile_marker_0, pvideo, 2, 9);
+;src/game.c:826: cpct_drawSprite(g_tile_marker_0, pvideo, 2, 9);
 	ld	hl,#0x0902
 	push	hl
 	push	bc
@@ -2944,74 +3016,74 @@ _checkKeyboardMenu::
 	push	hl
 	call	_cpct_drawSprite
 00103$:
-;src/game.c:816: if (cpct_isKeyPressed(Key_1)) {
+;src/game.c:830: if (cpct_isKeyPressed(Key_1)) {
 	ld	hl,#0x0108
 	call	_cpct_isKeyPressed
 	ld	a,l
 	or	a, a
 	jp	Z,00110$
-;src/game.c:818: selectedOption = 1;
+;src/game.c:832: selectedOption = 1;
 	ld	hl,#_selectedOption + 0
 	ld	(hl), #0x01
-;src/game.c:820: waitKeyUp(Key_1);
+;src/game.c:834: waitKeyUp(Key_1);
 	ld	hl,#0x0108
 	push	hl
 	call	_waitKeyUp
-;src/game.c:822: keys.up    = redefineKey("UP");
-	ld	hl, #___str_21
+;src/game.c:836: keys.up    = redefineKey("UP");
+	ld	hl, #___str_22
 	ex	(sp),hl
 	call	_redefineKey
 	pop	af
 	ld	c,l
 	ld	b,h
 	ld	(_keys), bc
-;src/game.c:823: keys.down  = redefineKey("DOWN");
-	ld	hl,#___str_22
-	push	hl
-	call	_redefineKey
-	pop	af
-	ld	c,l
-	ld	b,h
-	ld	((_keys + 0x0002)), bc
-;src/game.c:824: keys.left  = redefineKey("LEFT");
+;src/game.c:837: keys.down  = redefineKey("DOWN");
 	ld	hl,#___str_23
 	push	hl
 	call	_redefineKey
 	pop	af
 	ld	c,l
 	ld	b,h
-	ld	((_keys + 0x0004)), bc
-;src/game.c:825: keys.right = redefineKey("RIGHT");
+	ld	((_keys + 0x0002)), bc
+;src/game.c:838: keys.left  = redefineKey("LEFT");
 	ld	hl,#___str_24
 	push	hl
 	call	_redefineKey
 	pop	af
 	ld	c,l
 	ld	b,h
-	ld	((_keys + 0x0006)), bc
-;src/game.c:826: keys.pause = redefineKey("PAUSE");
+	ld	((_keys + 0x0004)), bc
+;src/game.c:839: keys.right = redefineKey("RIGHT");
 	ld	hl,#___str_25
 	push	hl
 	call	_redefineKey
 	pop	af
 	ld	c,l
 	ld	b,h
-	ld	((_keys + 0x000a)), bc
-;src/game.c:827: keys.abort = redefineKey("ABORT");
+	ld	((_keys + 0x0006)), bc
+;src/game.c:840: keys.pause = redefineKey("PAUSE");
 	ld	hl,#___str_26
 	push	hl
 	call	_redefineKey
 	pop	af
 	ld	c,l
 	ld	b,h
+	ld	((_keys + 0x000a)), bc
+;src/game.c:841: keys.abort = redefineKey("ABORT");
+	ld	hl,#___str_27
+	push	hl
+	call	_redefineKey
+	pop	af
+	ld	c,l
+	ld	b,h
 	ld	((_keys + 0x000c)), bc
-;src/game.c:829: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 39 - 10 * FONT_W, 144);
+;src/game.c:843: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 39 - 10 * FONT_W, 144);
 	ld	hl,#0x9009
 	push	hl
 	ld	hl,#0xC000
 	push	hl
 	call	_cpct_getScreenPtr
-;src/game.c:830: cpct_drawSolidBox(pvideo, cpct_px2byteM0(5, 5), 15 * FONT_W, FONT_H);
+;src/game.c:844: cpct_drawSolidBox(pvideo, cpct_px2byteM0(5, 5), 15 * FONT_W, FONT_H);
 	push	hl
 	ld	hl,#0x0505
 	push	hl
@@ -3029,54 +3101,54 @@ _checkKeyboardMenu::
 	inc	sp
 	ret
 00110$:
-;src/game.c:834: else if (cpct_isKeyPressed(Key_2)) {
+;src/game.c:848: else if (cpct_isKeyPressed(Key_2)) {
 	ld	hl,#0x0208
 	call	_cpct_isKeyPressed
 	ld	a,l
 	or	a, a
 	jr	Z,00107$
-;src/game.c:836: selectedOption = 2;
+;src/game.c:850: selectedOption = 2;
 	ld	hl,#_selectedOption + 0
 	ld	(hl), #0x02
-;src/game.c:838: keys.up    = Joy0_Up;
+;src/game.c:852: keys.up    = Joy0_Up;
 	ld	hl,#0x0109
 	ld	(_keys), hl
-;src/game.c:839: keys.down  = Joy0_Down;
+;src/game.c:853: keys.down  = Joy0_Down;
 	ld	h, #0x02
 	ld	((_keys + 0x0002)), hl
-;src/game.c:840: keys.left  = Joy0_Left;
+;src/game.c:854: keys.left  = Joy0_Left;
 	ld	h, #0x04
 	ld	((_keys + 0x0004)), hl
-;src/game.c:841: keys.right = Joy0_Right;
+;src/game.c:855: keys.right = Joy0_Right;
 	ld	h, #0x08
 	ld	((_keys + 0x0006)), hl
-;src/game.c:843: waitKeyUp(Key_2);
+;src/game.c:857: waitKeyUp(Key_2);
 	ld	hl,#0x0208
 	push	hl
 	call	_waitKeyUp
-;src/game.c:845: keys.pause = redefineKey("PAUSE");
-	ld	hl, #___str_25
+;src/game.c:859: keys.pause = redefineKey("PAUSE");
+	ld	hl, #___str_26
 	ex	(sp),hl
 	call	_redefineKey
 	pop	af
 	ld	c,l
 	ld	b,h
 	ld	((_keys + 0x000a)), bc
-;src/game.c:846: keys.abort = redefineKey("ABORT");
-	ld	hl,#___str_26
+;src/game.c:860: keys.abort = redefineKey("ABORT");
+	ld	hl,#___str_27
 	push	hl
 	call	_redefineKey
 	pop	af
 	ld	c,l
 	ld	b,h
 	ld	((_keys + 0x000c)), bc
-;src/game.c:848: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 39 - 10 * FONT_W, 144);
+;src/game.c:862: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 39 - 10 * FONT_W, 144);
 	ld	hl,#0x9009
 	push	hl
 	ld	hl,#0xC000
 	push	hl
 	call	_cpct_getScreenPtr
-;src/game.c:849: cpct_drawSolidBox(pvideo, cpct_px2byteM0(5, 5), 15 * FONT_W, FONT_H);
+;src/game.c:863: cpct_drawSolidBox(pvideo, cpct_px2byteM0(5, 5), 15 * FONT_W, FONT_H);
 	push	hl
 	ld	hl,#0x0505
 	push	hl
@@ -3094,50 +3166,50 @@ _checkKeyboardMenu::
 	inc	sp
 	ret
 00107$:
-;src/game.c:854: else if (cpct_isKeyPressed(Key_4)) {
+;src/game.c:868: else if (cpct_isKeyPressed(Key_4)) {
 	ld	hl,#0x0107
 	call	_cpct_isKeyPressed
 	ld	a,l
 	or	a, a
 	ret	Z
-;src/game.c:856: waitKeyUp(Key_1);
+;src/game.c:870: waitKeyUp(Key_1);
 	ld	hl,#0x0108
 	push	hl
 	call	_waitKeyUp
 	pop	af
-;src/game.c:857: game();
+;src/game.c:871: game();
 	call	_game
-;src/game.c:858: drawMenu();
+;src/game.c:872: drawMenu();
 	call	_drawMenu
 	ret
-___str_21:
+___str_22:
 	.ascii "UP"
 	.db 0x00
-___str_22:
+___str_23:
 	.ascii "DOWN"
 	.db 0x00
-___str_23:
+___str_24:
 	.ascii "LEFT"
 	.db 0x00
-___str_24:
+___str_25:
 	.ascii "RIGHT"
 	.db 0x00
-___str_25:
+___str_26:
 	.ascii "PAUSE"
 	.db 0x00
-___str_26:
+___str_27:
 	.ascii "ABORT"
 	.db 0x00
-;src/game.c:866: void threes() {
+;src/game.c:880: void threes() {
 ;	---------------------------------
 ; Function threes
 ; ---------------------------------
 _threes::
-;src/game.c:869: while (1) {
+;src/game.c:883: while (1) {
 00105$:
-;src/game.c:871: drawMenu();
+;src/game.c:885: drawMenu();
 	call	_drawMenu
-;src/game.c:875: while (lapso < SWITCH_SCREENS) {
+;src/game.c:889: while (lapso < SWITCH_SCREENS) {
 	ld	bc,#0x0000
 	ld	de,#0x0000
 00101$:
@@ -3150,13 +3222,13 @@ _threes::
 	ld	a,d
 	sbc	a, #0x00
 	jr	NC,00103$
-;src/game.c:877: checkKeyboardMenu();
+;src/game.c:891: checkKeyboardMenu();
 	push	bc
 	push	de
 	call	_checkKeyboardMenu
 	pop	de
 	pop	bc
-;src/game.c:879: lapso++;
+;src/game.c:893: lapso++;
 	inc	c
 	jr	NZ,00101$
 	inc	b
@@ -3166,7 +3238,7 @@ _threes::
 	inc	d
 	jr	00101$
 00103$:
-;src/game.c:883: drawScoreBoard();
+;src/game.c:897: drawScoreBoard();
 	call	_drawScoreBoard
 	jr	00105$
 	.area _CODE

@@ -8,32 +8,33 @@ Symbol Table
     .__.CPU.                                                    =  0000 L
     .__.H$L.                                                    =  0000 L
   0 ___str_0                                                       0521 R
-  0 ___str_1                                                       0531 R
-  0 ___str_10                                                      0BB6 R
-  0 ___str_11                                                      0BB8 R
-  0 ___str_12                                                      0BC7 R
-  0 ___str_13                                                      0BD7 R
-  0 ___str_14                                                      0E10 R
-  0 ___str_15                                                      0E22 R
-  0 ___str_16                                                      0E2C R
-  0 ___str_17                                                      0F9B R
-  0 ___str_18                                                      0FA0 R
-  0 ___str_19                                                      0FAE R
-  0 ___str_2                                                       053F R
-  0 ___str_20                                                      0FB8 R
-  0 ___str_21                                                      11A5 R
-  0 ___str_22                                                      11A8 R
-  0 ___str_23                                                      11AD R
-  0 ___str_24                                                      11B2 R
-  0 ___str_25                                                      11B8 R
-  0 ___str_26                                                      11BE R
-  0 ___str_3                                                       0546 R
-  0 ___str_4                                                       054C R
-  0 ___str_5                                                       0552 R
-  0 ___str_6                                                       0558 R
-  0 ___str_7                                                       055F R
-  0 ___str_8                                                       0566 R
-  0 ___str_9                                                       0573 R
+  0 ___str_1                                                       0534 R
+  0 ___str_10                                                      0C29 R
+  0 ___str_11                                                      0C38 R
+  0 ___str_12                                                      0C48 R
+  0 ___str_13                                                      0C5A R
+  0 ___str_14                                                      0C64 R
+  0 ___str_15                                                      0E7C R
+  0 ___str_16                                                      0E91 R
+  0 ___str_17                                                      0E9B R
+  0 ___str_18                                                      100A R
+  0 ___str_19                                                      100F R
+  0 ___str_2                                                       0542 R
+  0 ___str_20                                                      101D R
+  0 ___str_21                                                      1027 R
+  0 ___str_22                                                      1214 R
+  0 ___str_23                                                      1217 R
+  0 ___str_24                                                      121C R
+  0 ___str_25                                                      1221 R
+  0 ___str_26                                                      1227 R
+  0 ___str_27                                                      122D R
+  0 ___str_3                                                       0549 R
+  0 ___str_4                                                       054F R
+  0 ___str_5                                                       0555 R
+  0 ___str_6                                                       055B R
+  0 ___str_7                                                       0562 R
+  0 ___str_8                                                       0569 R
+  0 ___str_9                                                       0576 R
     __divuchar                                                     **** GX
   7 __xinit__newNameHighScore                                      0000 R
   0 _addRandomCell                                                 0387 GR
@@ -43,7 +44,7 @@ Symbol Table
   0 _anyOfThisInAdjacents                                          0209 GR
   1 _aux_txt                                                       00C1 GR
   1 _cells                                                         000E GR
-  0 _checkKeyboardMenu                                             0FC2 GR
+  0 _checkKeyboardMenu                                             1031 GR
     _clearScreen                                                   **** GX
   0 _countZeroes                                                   00FC GR
     _cpct_drawSolidBox                                             **** GX
@@ -57,48 +58,51 @@ Symbol Table
     _cpct_restoreState_mxor_u8                                     **** GX
     _cpct_scanKeyboard_f                                           **** GX
     _cpct_setSeed_mxor                                             **** GX
-  1 _currentTile                                                   00CF GR
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 2.
 Hexadecimal [16-Bits]
 
 Symbol Table
 
+  1 _currentTile                                                   00CF GR
   0 _delay                                                         00D9 GR
     _drawFallingText                                               **** GX
     _drawFrame                                                     **** GX
     _drawMenu                                                      **** GX
     _drawNumber                                                    **** GX
-  0 _drawScore                                                     093D GR
-  0 _drawScoreBoard                                                0CF3 GR
+  0 _drawScore                                                     0940 GR
+  0 _drawScoreBoard                                                0D5F GR
     _drawText                                                      **** GX
+    _g_font_big                                                    **** GX
     _g_tile_marker_0                                               **** GX
     _g_tile_marker_3                                               **** GX
-  0 _game                                                          0E41 GR
+    _g_tile_symbols_1                                              **** GX
+    _g_tile_symbols_2                                              **** GX
+  0 _game                                                          0EB0 GR
   0 _getAdjacents                                                  013E GR
-  0 _getName                                                       09FB GR
+  0 _getName                                                       09FE GR
   0 _initAdjacents                                                 0127 GR
   0 _initCells                                                     03D9 GR
-  0 _initGame                                                      057C GR
+  0 _initGame                                                      057F GR
   0 _initialization                                                03F9 GR
   1 _keys                                                          0000 GR
   1 _maxTiles                                                      00D0 GR
   1 _nameHallOfFame                                                0047 GR
   2 _newNameHighScore                                              0000 GR
   1 _nextTile                                                      00BF GR
-  0 _printCells                                                    0888 GR
+  0 _printCells                                                    088B GR
     _redefineKey                                                   **** GX
   0 _renewTileBag                                                  0000 GR
-  0 _rotateCellsDown                                               07C6 GR
-  0 _rotateCellsLeft                                               059D GR
-  0 _rotateCellsRight                                              0658 GR
-  0 _rotateCellsUp                                                 0719 GR
+  0 _rotateCellsDown                                               07C9 GR
+  0 _rotateCellsLeft                                               05A0 GR
+  0 _rotateCellsRight                                              065B GR
+  0 _rotateCellsUp                                                 071C GR
   1 _score                                                         0023 GR
   1 _scoreHallOfFame                                               0027 GR
   0 _scores                                                        007F GR
   1 _selectedOption                                                00C0 GR
-  0 _setHighScore                                                  0BED GR
+  0 _setHighScore                                                  0C66 GR
     _sprintf                                                       **** GX
-  0 _threes                                                        11C4 GR
+  0 _threes                                                        1233 GR
   1 _tileBag                                                       00C3 GR
     _tile_tiles_00                                                 **** GX
     _tile_tiles_01                                                 **** GX
@@ -114,23 +118,24 @@ Symbol Table
     _tile_tiles_11                                                 **** GX
     _tile_tiles_12                                                 **** GX
     _tile_tiles_13                                                 **** GX
-    _tile_tiles_14                                                 **** GX
-  0 _tiles                                                         00BB GR
-  0 _values                                                        0061 GR
-    _wait4UserKeypress                                             **** GX
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 3.
 Hexadecimal [16-Bits]
 
 Symbol Table
 
+    _tile_tiles_14                                                 **** GX
+  0 _tiles                                                         00BB GR
+  0 _values                                                        0061 GR
+    _wait4UserKeypress                                             **** GX
     _waitKeyUp                                                     **** GX
+
 
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 4.
 Hexadecimal [16-Bits]
 
 Area Table
 
-   0 _CODE                                      size 11F3   flags    0
+   0 _CODE                                      size 1262   flags    0
    1 _DATA                                      size   D1   flags    0
    2 _INITIALIZED                               size    F   flags    0
    3 _DABS                                      size    0   flags    8

@@ -48,8 +48,8 @@
 
 # Name of the project (without spaces, as it will be used as filename)
 #   and Z80 memory location where code will start in the generated binary
-PROJNAME   := threes
-Z80CODELOC := 0x5000
+PROJNAME   := AmsThrees
+Z80CODELOC := 0x4000
 
 ##
 ## Folders 

@@ -26,7 +26,7 @@ void drawMenu() {
 
     drawFrame(15, 38, 63, 134);
 
-    drawText("THREES", 31, 2,1);
+    drawText("AMSTHREES", 31, 2,1);
 
     drawText("TECLADO", 30, 50,0);
     drawText("JOYSTICK", 30, 70,0);
@@ -40,7 +40,7 @@ void drawMenu() {
 
 
     drawText("JOHN LOBO", 25, 170,1);
-    drawText("@ GLASNOST CORP 2015", 11, 185,1);
+    drawText("@ GLASNOST CORP 2016", 11, 185,1);
 
 }
 

@@ -4,6 +4,6 @@
 
 #include <types.h>
 
-extern const u8 g_font_big[38][3*11];
+extern const u8 g_font_big[39][3*11];
 
 #endif

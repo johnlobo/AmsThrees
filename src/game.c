@@ -258,7 +258,7 @@ void addRandomCellTurn(u8 dir) {
     //cells[i][j] = nextTile;
     //nextTile = (cpct_rand() / 85) + 1;
     cells[i][j] = tileBag[currentTile];
-    if (currentTile<11)
+    if (currentTile < 11)
         currentTile++;
     else
         renewTileBag();
@@ -316,7 +316,7 @@ void initCells() {
 void initialization() {
     u32 seed;    // Value to initialize the random seed
 
-    drawText("THREES IS READY", 31, 76, 1);
+    drawText("AMSTHREES IS READY", 31, 76, 1);
     drawText("PRESS ANY KEY", 20, 90, 1);
 
     seed = wait4UserKeypress();
@@ -607,12 +607,21 @@ void getName() {
     u8* pvmem;
     u8 moved, pos, chr;
 
-    drawFrame(10, 60, 72, 140);
-    strcpy(newNameHighScore, "A");
-    drawText(newNameHighScore, 0, 120, 1);
+    drawFrame(9, 60, 73, 150);
+    
     drawText("NEW HIGH SCORE", 20, 70, 1);
     drawText("ENTER YOUR NAME", 18, 85, 1);
-    drawText("UP DOWN CHANGE LETTER", 18, 100, 1);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 11, 100);
+    cpct_drawSprite(g_tile_symbols_1, pvmem, 3, 11);
+    drawText(" TO CHANGE LETTER", 19, 100, 0);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 16, 100);
+    cpct_drawSprite(g_tile_symbols_2, pvmem, 3, 11);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 16, 100);
+    cpct_drawSprite(g_font_big[38], pvmem, 3, 11);
+    drawText(" [ TO END", 20, 115, 1);
+    drawFrame(12, 130, 70, 160);
+    strcpy(newNameHighScore, "A");
+    drawText(newNameHighScore, 0, 140, 1);
     pos = 0;
     chr = 65;
     moved = 0;
@@ -627,12 +636,19 @@ void getName() {
             chr--;
             moved = 1;
         } else if (cpct_isKeyPressed(keys.right)) {
-            pos++;
-            newNameHighScore[pos] = 65;
-            newNameHighScore[pos + 1] = '\0';
-            chr = 65;
-            moved = 1;
-        }else if (cpct_isKeyPressed(keys.left)) {
+            if (chr == 91) {
+                newNameHighScore[pos] = '\0';
+                break;
+            }
+            else {
+                pos++;
+                newNameHighScore[pos] = 65;
+                newNameHighScore[pos + 1] = '\0';
+                chr = 65;
+                moved = 1;
+            }
+
+        } else if (cpct_isKeyPressed(keys.left)) {
             newNameHighScore[pos] = '\0';
             pos--;
             chr = newNameHighScore[pos];
@@ -642,15 +658,14 @@ void getName() {
         }
         if (moved) {
             moved = 0;
-            if (chr > 90)
+            if (chr > 91)
                 chr = 65;
             else if (chr < 65)
-                chr = 90;
+                chr = 91;
             newNameHighScore[pos] = chr;
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 20, 120);
+            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 13, 140);
             cpct_drawSolidBox(pvmem, cpct_px2byteM0(5, 5), 60, 11);
-            //sprintf(aux_txt, "c", chr);
-            drawText(newNameHighScore, 20, 120, 1);
+            drawText(newNameHighScore, 20, 140, 1);
 
         }
     }
@@ -669,12 +684,12 @@ void setHighScore(u32 score) {
     u8 i, j;
 
     i = 8;
-    while ((score > scoreHallOfFame[i - 1]) && (i>0)) {
+    while ((score > scoreHallOfFame[i - 1]) && (i > 0)) {
         i--;
     }
     j = 7;
     if (i <= j) {
-        while ((i < j) && (j>0)) {
+        while ((i < j) && (j > 0)) {
             scoreHallOfFame[j] = scoreHallOfFame[j - 1];
             strcpy(nameHallOfFame[j], nameHallOfFame[j - 1]);
             j--;
@@ -692,7 +707,7 @@ void drawScoreBoard() {
 
     cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(5, 5), 0x4000);
 
-    drawText("THREES SCOREBOARD", 13, 2, 1);
+    drawText("AMSTHREES SCOREBOARD", 13, 2, 1);
 
     for (i = 0; i < 8; i++) {
         drawNumber(i + 1, 2, 5, 30 + (i * 15));
@@ -701,7 +716,7 @@ void drawScoreBoard() {
     }
 
     drawText("JOHN LOBO", 25, 170, 1);
-    drawText("@ GLASNOST CORP 2015", 11, 185, 1);
+    drawText("@ GLASNOST CORP 2016", 11, 185, 1);
 
     c = 40000;     // Number of loops passed if not keypressed
     // Wait 'till the user presses a key, counting loop iterations
@@ -721,7 +736,6 @@ void drawScoreBoard() {
 //    void
 //
 void game(void) {
-    //u8* pvmem;  // Pointer to video memory
     u8 moved;
 
     initGame();
