@@ -9,25 +9,25 @@ Symbol Table
     .__.H$L.                                                    =  0000 L
   0 ___str_0                                                       0521 R
   0 ___str_1                                                       0534 R
-  0 ___str_10                                                      0C29 R
-  0 ___str_11                                                      0C38 R
-  0 ___str_12                                                      0C48 R
-  0 ___str_13                                                      0C5A R
-  0 ___str_14                                                      0C64 R
-  0 ___str_15                                                      0E7C R
-  0 ___str_16                                                      0E91 R
-  0 ___str_17                                                      0E9B R
-  0 ___str_18                                                      100A R
-  0 ___str_19                                                      100F R
+  0 ___str_10                                                      0C97 R
+  0 ___str_11                                                      0CA6 R
+  0 ___str_12                                                      0CB6 R
+  0 ___str_13                                                      0CC8 R
+  0 ___str_14                                                      0CD2 R
+  0 ___str_15                                                      0EEE R
+  0 ___str_16                                                      0F03 R
+  0 ___str_17                                                      0F0D R
+  0 ___str_18                                                      107C R
+  0 ___str_19                                                      1081 R
   0 ___str_2                                                       0542 R
-  0 ___str_20                                                      101D R
-  0 ___str_21                                                      1027 R
-  0 ___str_22                                                      1214 R
-  0 ___str_23                                                      1217 R
-  0 ___str_24                                                      121C R
-  0 ___str_25                                                      1221 R
-  0 ___str_26                                                      1227 R
-  0 ___str_27                                                      122D R
+  0 ___str_20                                                      108F R
+  0 ___str_21                                                      1099 R
+  0 ___str_22                                                      1286 R
+  0 ___str_23                                                      1289 R
+  0 ___str_24                                                      128E R
+  0 ___str_25                                                      1293 R
+  0 ___str_26                                                      1299 R
+  0 ___str_27                                                      129F R
   0 ___str_3                                                       0549 R
   0 ___str_4                                                       054F R
   0 ___str_5                                                       0555 R
@@ -44,7 +44,7 @@ Symbol Table
   0 _anyOfThisInAdjacents                                          0209 GR
   1 _aux_txt                                                       00C1 GR
   1 _cells                                                         000E GR
-  0 _checkKeyboardMenu                                             1031 GR
+  0 _checkKeyboardMenu                                             10A3 GR
     _clearScreen                                                   **** GX
   0 _countZeroes                                                   00FC GR
     _cpct_drawSolidBox                                             **** GX
@@ -69,17 +69,17 @@ Symbol Table
     _drawFrame                                                     **** GX
     _drawMenu                                                      **** GX
     _drawNumber                                                    **** GX
-  0 _drawScore                                                     0940 GR
-  0 _drawScoreBoard                                                0D5F GR
+  0 _drawScore                                                     09AE GR
+  0 _drawScoreBoard                                                0DD1 GR
     _drawText                                                      **** GX
     _g_font_big                                                    **** GX
     _g_tile_marker_0                                               **** GX
     _g_tile_marker_3                                               **** GX
     _g_tile_symbols_1                                              **** GX
     _g_tile_symbols_2                                              **** GX
-  0 _game                                                          0EB0 GR
+  0 _game                                                          0F22 GR
   0 _getAdjacents                                                  013E GR
-  0 _getName                                                       09FE GR
+  0 _getName                                                       0A6C GR
   0 _initAdjacents                                                 0127 GR
   0 _initCells                                                     03D9 GR
   0 _initGame                                                      057F GR
@@ -89,20 +89,20 @@ Symbol Table
   1 _nameHallOfFame                                                0047 GR
   2 _newNameHighScore                                              0000 GR
   1 _nextTile                                                      00BF GR
-  0 _printCells                                                    088B GR
+  0 _printCells                                                    08F9 GR
     _redefineKey                                                   **** GX
   0 _renewTileBag                                                  0000 GR
-  0 _rotateCellsDown                                               07C9 GR
-  0 _rotateCellsLeft                                               05A0 GR
-  0 _rotateCellsRight                                              065B GR
-  0 _rotateCellsUp                                                 071C GR
+  0 _rotateCellsDown                                               0837 GR
+  0 _rotateCellsLeft                                               060E GR
+  0 _rotateCellsRight                                              06C9 GR
+  0 _rotateCellsUp                                                 078A GR
   1 _score                                                         0023 GR
   1 _scoreHallOfFame                                               0027 GR
   0 _scores                                                        007F GR
   1 _selectedOption                                                00C0 GR
-  0 _setHighScore                                                  0C66 GR
+  0 _setHighScore                                                  0CD4 GR
     _sprintf                                                       **** GX
-  0 _threes                                                        1233 GR
+  0 _threes                                                        12A5 GR
   1 _tileBag                                                       00C3 GR
     _tile_tiles_00                                                 **** GX
     _tile_tiles_01                                                 **** GX
@@ -135,7 +135,7 @@ Hexadecimal [16-Bits]
 
 Area Table
 
-   0 _CODE                                      size 1262   flags    0
+   0 _CODE                                      size 12D4   flags    0
    1 _DATA                                      size   D1   flags    0
    2 _INITIALIZED                               size    F   flags    0
    3 _DABS                                      size    0   flags    8

@@ -283,6 +283,7 @@ void addRandomCell() {
     }
     //cells[i][j] = nextTile;
     //nextTile = (cpct_rand() / 85) + 1;
+    //cells[i][j] = (cpct_rand() / 85) + 1;
     cells[i][j] = (cpct_rand() / 85) + 1;
 }
 
@@ -367,18 +368,30 @@ void initialization() {
 //    void
 //
 void initGame() {
-    u8 i;
+    u8 i,j,k;
 
     initCells();
 
+    renewTileBag();
+
     for (i = 0; i < 9; i++) {
-        addRandomCell();
+        j = cpct_rand() / 64;
+        k = cpct_rand() / 64;
+        while (cells[j][k] != 0) {
+            j = cpct_rand() / 64;
+            k = cpct_rand() / 64;
+        }
+        //cells[i][j] = nextTile;
+        //nextTile = (cpct_rand() / 85) + 1;
+        //cells[i][j] = (cpct_rand() / 85) + 1;
+        cells[j][k] = tileBag[currentTile];
+        currentTile++;
     }
 
     score = 0;
 
     //nextTile = (cpct_rand() / 85) + 1;
-    renewTileBag();
+
 
 
 }
@@ -608,7 +621,7 @@ void getName() {
     u8 moved, pos, chr;
 
     drawFrame(9, 60, 73, 150);
-    
+
     drawText("NEW HIGH SCORE", 20, 70, 1);
     drawText("ENTER YOUR NAME", 18, 85, 1);
     pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 11, 100);

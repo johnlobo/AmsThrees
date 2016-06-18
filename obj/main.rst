@@ -47,13 +47,13 @@
                              47 ;	---------------------------------
                              48 ; Function main
                              49 ; ---------------------------------
-   5262                      50 _main::
+   52D4                      50 _main::
                              51 ;src/main.c:24: setUpVideo();
-   5262 CD 85 80      [17]   52 	call	_setUpVideo
+   52D4 CD F7 80      [17]   52 	call	_setUpVideo
                              53 ;src/main.c:26: initialization();
-   5265 CD F9 43      [17]   54 	call	_initialization
+   52D7 CD F9 43      [17]   54 	call	_initialization
                              55 ;src/main.c:28: threes();
-   5268 C3 33 52      [10]   56 	jp  _threes
+   52DA C3 A5 52      [10]   56 	jp  _threes
                              57 	.area _CODE
                              58 	.area _INITIALIZER
                              59 	.area _CABS (ABS)
