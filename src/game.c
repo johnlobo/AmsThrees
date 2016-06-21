@@ -377,6 +377,7 @@ void initGame() {
     u8 i,j,k;
 
     initCells(0);
+    initCells(1);
 
     renewTileBag();
 
@@ -420,19 +421,23 @@ u8 rotateCellsLeft() {
             if (cells[i][j] != 0) {
                 // empty cell on the left
                 if (cells[i][j - 1] == 0) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i][j - 1] = cells[i][j];
                     cells[i][j] = 0;
                     matched = 1;
                 } else if (((cells[i][j - 1] == 1) && (cells[i][j] == 2)) ||
                            ((cells[i][j - 1] == 2) && (cells[i][j] == 1))) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i][j - 1] = 3;
                     cells[i][j] = 0;
                     matched = 1;
                 } else if ((cells[i][j - 1] == cells[i][j]) && (cells[i][j] > 2)) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i][j - 1]++;
                     cells[i][j] = 0;
                     matched = 1;
                 }
+                    
             }
         }
     }
@@ -459,15 +464,18 @@ u8 rotateCellsRight() {
             if (cells[i][j] != 0) {
                 // empty cell on the left
                 if (cells[i][j + 1] == 0) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i][j + 1] = cells[i][j];
                     cells[i][j] = 0;
                     matched = 1;
                 } if (((cells[i][j + 1] == 1) && (cells[i][j] == 2)) ||
                         ((cells[i][j + 1] == 2) && (cells[i][j] == 1))) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i][j + 1] = 3;
                     cells[i][j] = 0;
                     matched = 1;
                 } else if ((cells[i][j + 1] == cells[i][j]) && (cells[i][j] > 2)) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i][j + 1]++;
                     cells[i][j] = 0;
                     matched = 1;
@@ -496,15 +504,18 @@ u8 rotateCellsUp() {
             if (cells[i][j] != 0) {
                 // empty cell on the left
                 if (cells[i - 1][j] == 0) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i - 1][j] = cells[i][j];
                     cells[i][j] = 0;
                     matched = 1;
                 } else if (((cells[i - 1][j] == 1) && (cells[i][j] == 2)) ||
                            ((cells[i - 1][j] == 2) && (cells[i][j] == 1))) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i - 1][j] = 3;
                     cells[i][j] = 0;
                     matched = 1;
                 } else if ((cells[i - 1][j] == cells[i][j]) && (cells[i][j] > 2)) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i - 1][j]++;
                     cells[i][j] = 0;
                     matched = 1;
@@ -535,15 +546,18 @@ u8 rotateCellsDown() {
             if (cells[i][j] != 0) {
                 // empty cell on the left
                 if (cells[i + 1][j] == 0) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i + 1][j] = cells[i][j];
                     cells[i][j] = 0;
                     matched = 1;
                 } if (((cells[i + 1][j] == 1) && (cells[i][j] == 2)) ||
                         ((cells[i + 1][j] == 2) && (cells[i][j] == 1))) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i + 1][j] = 3;
                     cells[i][j] = 0;
                     matched = 1;
                 } else if ((cells[i + 1][j] == cells[i][j]) && (cells[i][j] > 2)) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i + 1][j]++;
                     cells[i][j] = 0;
                     matched = 1;
@@ -782,7 +796,8 @@ void game(void) {
     while (1) {
         delay(24);
         cpct_scanKeyboard_f();
-        rotatedCells = 0;
+        
+            rotatedCells = 0;
 
         if (cpct_isKeyPressed(keys.right)) {
             if (rotateCellsRight()) {
@@ -813,6 +828,8 @@ void game(void) {
 
         if (moved) {
             animateCells();
+            //Empty the rotated cells buffer after ending the animation
+            initCells(1);
             //printCells();
             moved = 0;
             if (anyMovesLeft() == 0) {
