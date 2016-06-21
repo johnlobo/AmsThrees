@@ -118,10 +118,10 @@ _drawNumber::
 	add	ix,sp
 	ld	hl,#-8
 	add	hl,sp
+	ld	sp,hl
 ;src/text/text.c:52: itoa(aNumber, str, 10);
-	ld	sp, hl
-	inc	hl
-	inc	hl
+	ld	hl,#0x0001
+	add	hl,sp
 	ld	c,l
 	ld	b,h
 	ld	e, c
@@ -148,19 +148,19 @@ _drawNumber::
 	pop	bc
 	ld	a,6 (ix)
 	sub	a, l
-	ld	-7 (ix),a
+	ld	-8 (ix),a
 ;src/text/text.c:56: number = str[x];
 	ld	a,(bc)
 	ld	e,a
 ;src/text/text.c:58: while (number != '\0') {
-	ld	-8 (ix),#0x00
+	ld	-1 (ix),#0x00
 00101$:
 	ld	a,e
 	or	a, a
 	jr	Z,00104$
 ;src/text/text.c:60: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, (zeros + x) * FONT_W + xPos, yPos);
-	ld	a,-7 (ix)
-	add	a, -8 (ix)
+	ld	a,-8 (ix)
+	add	a, -1 (ix)
 	ld	l,a
 	push	de
 	ld	e,l
@@ -211,8 +211,8 @@ _drawNumber::
 	call	_cpct_drawSprite
 	pop	bc
 ;src/text/text.c:63: number = str[++x];
-	inc	-8 (ix)
-	ld	l,-8 (ix)
+	inc	-1 (ix)
+	ld	l,-1 (ix)
 	ld	h,#0x00
 	add	hl,bc
 	ld	e,(hl)
@@ -255,12 +255,12 @@ _drawText::
 	ld	c,4 (ix)
 	ld	b,5 (ix)
 	ld	a,(bc)
-	ld	-5 (ix),a
+	ld	-4 (ix),a
 ;src/text/text.c:83: while (character != '\0') {
-	ld	-4 (ix),#0x00
+	ld	-5 (ix),#0x00
 	ld	-1 (ix),#0x00
 00109$:
-	ld	a,-5 (ix)
+	ld	a,-4 (ix)
 	or	a, a
 	jp	Z,00112$
 ;src/text/text.c:85: pvideo = cpct_getScreenPtr(CPCT_VMEM_START, (x * FONT_W) + xPos, yPos);
@@ -280,14 +280,14 @@ _drawText::
 ;src/text/text.c:90: cpct_drawSprite(G_numbers_big[character - 48], pvideo, FONT_W, FONT_H);
 	ld	-3 (ix),l
 	ld	-2 (ix),h
-	ld	e,-5 (ix)
+	ld	e,-4 (ix)
 	ld	d,#0x00
 ;src/text/text.c:88: if (character >= 48 && character <= 57) {
-	ld	a,-5 (ix)
+	ld	a,-4 (ix)
 	sub	a, #0x30
 	jr	C,00106$
 	ld	a,#0x39
-	sub	a, -5 (ix)
+	sub	a, -4 (ix)
 	jr	C,00106$
 ;src/text/text.c:90: cpct_drawSprite(G_numbers_big[character - 48], pvideo, FONT_W, FONT_H);
 	ld	a,e
@@ -319,7 +319,7 @@ _drawText::
 	jr	00107$
 00106$:
 ;src/text/text.c:93: else if (character != 32) { //32 = SPACE
-	ld	a,-5 (ix)
+	ld	a,-4 (ix)
 	sub	a, #0x20
 	jr	Z,00107$
 ;src/text/text.c:95: cpct_drawSprite(g_font_big[character - 64], pvideo, FONT_W, FONT_H);
@@ -354,12 +354,12 @@ _drawText::
 	inc	-1 (ix)
 	inc	-1 (ix)
 	inc	-1 (ix)
-	inc	-4 (ix)
-	ld	l,-4 (ix)
+	inc	-5 (ix)
+	ld	l,-5 (ix)
 	ld	h,#0x00
 	add	hl,bc
 	ld	a,(hl)
-	ld	-5 (ix),a
+	ld	-4 (ix),a
 	jp	00109$
 00112$:
 	ld	sp, ix
@@ -727,11 +727,13 @@ _drawFallingText::
 	add	hl,sp
 	ld	sp,hl
 ;src/text/text.c:174: for (x = 0; x < strLength(text) && x < FALLING_TEXT_MAX_LENGHT; x++) {
-	ld	hl,#0x0000
+	ld	hl,#0x0001
 	add	hl,sp
 	ld	-2 (ix),l
 	ld	-1 (ix),h
-	ld	-6 (ix),#0x00
+	ld	iy,#0
+	add	iy,sp
+	ld	0 (iy),#0x00
 	ld	-3 (ix),#0x00
 00109$:
 	ld	l,4 (ix)
@@ -740,14 +742,16 @@ _drawFallingText::
 	call	_strLength
 	pop	af
 	ld	c,l
-	ld	a,-6 (ix)
+	ld	iy,#0
+	add	iy,sp
+	ld	a,0 (iy)
 	sub	a, c
 	jp	NC,00120$
-	ld	a,-6 (ix)
+	ld	a,0 (iy)
 	sub	a, #0x14
 	jr	NC,00120$
 ;src/text/text.c:176: ftext[x].phase = 1;
-	ld	l,-6 (ix)
+	ld	l,0 (iy)
 	ld	h,#0x00
 	add	hl, hl
 	add	hl, hl
@@ -800,7 +804,9 @@ _drawFallingText::
 	ld	-5 (ix),l
 	ld	-4 (ix),h
 	ld	a,4 (ix)
-	add	a, -6 (ix)
+	ld	hl,#0
+	add	hl,sp
+	add	a, (hl)
 	ld	e,a
 	ld	a,5 (ix)
 	adc	a, #0x00
@@ -817,7 +823,7 @@ _drawFallingText::
 	inc	-3 (ix)
 	inc	-3 (ix)
 	inc	-3 (ix)
-	inc	-6 (ix)
+	inc	0 (iy)
 	jp	00109$
 ;src/text/text.c:186: while (1) {
 00120$:

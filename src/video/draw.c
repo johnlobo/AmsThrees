@@ -19,30 +19,7 @@
 #include "draw.h"
 #include "../utils/keyboard.h"
 
-void drawMenu() {
 
-    //cpct_memset_f64(CPCT_VMEM_START, cpct_px2byteM0(5, 5), 0x4000);
-    cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(5, 5), 0x4000);
-
-    drawFrame(15, 38, 63, 134);
-
-    drawText("AMSTHREES", 31, 2,1);
-
-    drawText("TECLADO", 30, 50,0);
-    drawText("JOYSTICK", 30, 70,0);
-    drawText("MUSICA", 30, 90,0);
-    drawText("JUGAR", 30, 110,0);
-
-    drawNumber(1, 1, 23, 50);
-    drawNumber(2, 1, 23, 70);
-    drawNumber(3, 1, 23, 90);
-    drawNumber(4, 1, 23, 110);
-
-
-    drawText("JOHN LOBO", 25, 170,1);
-    drawText("@ GLASNOST CORP 2016", 11, 185,1);
-
-}
 
 void clearGameScreen() {
 

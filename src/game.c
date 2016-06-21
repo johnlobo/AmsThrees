@@ -42,6 +42,22 @@ u8* aux_txt;
 u8 tileBag[12];
 u8 currentTile;
 u8 maxTiles;
+u8 playing = 0;
+
+//////////////////////////////////////////////////////////////////
+// myInterruptHandler
+//
+//
+//
+// Returns:
+//
+//
+void myInterruptHandler() {
+    if (playing) {
+        // Call music player 50 times per second, synchronized with VSYNC to have great precision
+        cpct_akp_musicPlay();
+    }
+}
 
 //////////////////////////////////////////////////////////////////
 // renewTileBag
@@ -317,6 +333,10 @@ void initCells() {
 void initialization() {
     u32 seed;    // Value to initialize the random seed
 
+    //cpct_akp_musicInit(G_Smoke);
+    cpct_akp_musicInit(G_Menu);
+    //cpct_akp_musicPlay();
+
     drawText("AMSTHREES IS READY", 31, 76, 1);
     drawText("PRESS ANY KEY", 20, 90, 1);
 
@@ -357,7 +377,12 @@ void initialization() {
 
     selectedOption = 1;
 
+
+
+    // Music off
+    playing = 0;
 }
+
 
 //////////////////////////////////////////////////////////////////
 // initGame
@@ -368,7 +393,7 @@ void initialization() {
 //    void
 //
 void initGame() {
-    u8 i,j,k;
+    u8 i, j, k;
 
     initCells();
 
@@ -642,13 +667,13 @@ void getName() {
         delay(24);
         cpct_scanKeyboard_f();
 
-        if (cpct_isKeyPressed(keys.down)) {
+        if (cpct_isKeyPressed(keys.right)) {
             chr++;
             moved = 1;
-        } else if (cpct_isKeyPressed(keys.up)) {
+        } else if (cpct_isKeyPressed(keys.left)) {
             chr--;
             moved = 1;
-        } else if (cpct_isKeyPressed(keys.right)) {
+        } else if (cpct_isKeyPressed(keys.down)) {
             if (chr == 91) {
                 newNameHighScore[pos] = '\0';
                 break;
@@ -661,7 +686,7 @@ void getName() {
                 moved = 1;
             }
 
-        } else if (cpct_isKeyPressed(keys.left)) {
+        } else if (cpct_isKeyPressed(keys.up)) {
             newNameHighScore[pos] = '\0';
             pos--;
             chr = newNameHighScore[pos];
@@ -717,6 +742,8 @@ void setHighScore(u32 score) {
 void drawScoreBoard() {
     u8 i;
     u32 c = 0;
+
+    cpct_waitVSYNC();
 
     cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(5, 5), 0x4000);
 
@@ -813,6 +840,37 @@ void game(void) {
     }
 }
 
+void drawMenu() {
+
+    cpct_waitVSYNC();
+
+    //cpct_memset_f64(CPCT_VMEM_START, cpct_px2byteM0(5, 5), 0x4000);
+    cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(5, 5), 0x4000);
+
+    drawFrame(15, 38, 63, 134);
+
+    drawText("AMSTHREES", 31, 2, 1);
+
+    drawText("TECLADO", 30, 50, 0);
+    drawText("JOYSTICK", 30, 70, 0);
+    drawText("MUSICA", 30, 90, 0);
+    if (playing)
+        drawText("OFF", 51, 90, 0);
+    else
+        drawText("ON", 51, 90, 0);
+    drawText("JUGAR", 30, 110, 0);
+
+    drawNumber(1, 1, 23, 50);
+    drawNumber(2, 1, 23, 70);
+    drawNumber(3, 1, 23, 90);
+    drawNumber(4, 1, 23, 110);
+
+
+    drawText("JOHN LOBO", 25, 170, 1);
+    drawText("@ GLASNOST CORP 2016", 11, 185, 1);
+
+}
+
 void checkKeyboardMenu() {
 
     u8 *pvideo;
@@ -876,30 +934,46 @@ void checkKeyboardMenu() {
         cpct_drawSolidBox(pvideo, cpct_px2byteM0(5, 5), 15 * FONT_W, FONT_H);
 
     }
+    else if ( cpct_isKeyPressed(Key_3)) {
+        if (!playing){
+            playing = 1;
+            cpct_setInterruptHandler(myInterruptHandler);
+        } else {
+            playing = 0;
+            cpct_disableFirmware();
+            cpct_akp_stop ();
+        }
+
+        drawMenu();
+    }
 
 
     else if (cpct_isKeyPressed(Key_4)) {
 
         waitKeyUp(Key_1);
+        cpct_disableFirmware();
         game();
+        cpct_setInterruptHandler( myInterruptHandler );
         drawMenu();
-
     }
 }
-
-
-
 
 void threes() {
     u32 lapso;
 
+    cpct_setInterruptHandler( myInterruptHandler );
     while (1) {
+
 
         drawMenu();
 
         lapso = 0;
 
         while (lapso < SWITCH_SCREENS) {
+            // Synchronize with Vertical VSYNC signal, which happens 50 times per second (frequency = 1/50)
+            cpct_waitVSYNC();
+
+
 
             checkKeyboardMenu();
 
@@ -910,4 +984,5 @@ void threes() {
         drawScoreBoard();
 
     }
+    cpct_disableFirmware();
 }

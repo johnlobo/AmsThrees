@@ -37,8 +37,6 @@
 //extern u16 distance;
 
 
-void drawMenu();
-void drawScoreBoard();
 void drawFrame(u8 x1, u8 y1, u8 x2, u8 y2);
 void drawStar(u8 color1, u8 color2, u8 xPos, u8 yPos);
 void drawStars(Coords *stars);

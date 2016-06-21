@@ -8,29 +8,18 @@ Symbol Table
     .__.CPU.                                                    =  0000 L
     .__.H$L.                                                    =  0000 L
     _G_bluestar                                                    **** GX
-  0 ___str_0                                                       00DD R
-  0 ___str_1                                                       00E7 R
-  0 ___str_2                                                       00EF R
-  0 ___str_3                                                       00F8 R
-  0 ___str_4                                                       00FF R
-  0 ___str_5                                                       0105 R
-  0 ___str_6                                                       010F R
     __moduchar                                                     **** GX
-  0 _clearGameScreen                                               0124 GR
+  0 _clearGameScreen                                               0000 GR
     _clearWindow                                                   **** GX
     _cpct_drawSolidBox                                             **** GX
     _cpct_drawSprite                                               **** GX
     _cpct_getRandom_mxor_u8                                        **** GX
     _cpct_getScreenPtr                                             **** GX
-    _cpct_memset                                                   **** GX
     _cpct_px2byteM0                                                **** GX
-  0 _drawFrame                                                     0140 GR
-  0 _drawMenu                                                      0000 GR
-    _drawNumber                                                    **** GX
-  0 _drawStar                                                      02FF GR
-  0 _drawStars                                                     0336 GR
-  1 _drawStars_starsCycles_1_120                                   0000 R
-    _drawText                                                      **** GX
+  0 _drawFrame                                                     001C GR
+  0 _drawStar                                                      01DB GR
+  0 _drawStars                                                     0212 GR
+  1 _drawStars_starsCycles_1_119                                   0000 R
     _g_tile_border_0                                               **** GX
     _g_tile_border_1                                               **** GX
     _g_tile_border_2                                               **** GX
@@ -40,12 +29,13 @@ Symbol Table
     _g_tile_border_6                                               **** GX
     _g_tile_border_7                                               **** GX
 
+
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 2.
 Hexadecimal [16-Bits]
 
 Area Table
 
-   0 _CODE                                      size  40F   flags    0
+   0 _CODE                                      size  2EB   flags    0
    1 _DATA                                      size    1   flags    0
    2 _INITIALIZED                               size    0   flags    0
    3 _DABS                                      size    0   flags    8

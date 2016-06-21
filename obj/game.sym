@@ -7,46 +7,66 @@ Symbol Table
     .__.ABS.                                                    =  0000 G
     .__.CPU.                                                    =  0000 L
     .__.H$L.                                                    =  0000 L
-  0 ___str_0                                                       0521 R
-  0 ___str_1                                                       0534 R
-  0 ___str_10                                                      0C97 R
-  0 ___str_11                                                      0CA6 R
-  0 ___str_12                                                      0CB6 R
-  0 ___str_13                                                      0CC8 R
-  0 ___str_14                                                      0CD2 R
-  0 ___str_15                                                      0EEE R
-  0 ___str_16                                                      0F03 R
-  0 ___str_17                                                      0F0D R
-  0 ___str_18                                                      107C R
-  0 ___str_19                                                      1081 R
-  0 ___str_2                                                       0542 R
-  0 ___str_20                                                      108F R
-  0 ___str_21                                                      1099 R
-  0 ___str_22                                                      1286 R
-  0 ___str_23                                                      1289 R
-  0 ___str_24                                                      128E R
-  0 ___str_25                                                      1293 R
-  0 ___str_26                                                      1299 R
-  0 ___str_27                                                      129F R
-  0 ___str_3                                                       0549 R
-  0 ___str_4                                                       054F R
-  0 ___str_5                                                       0555 R
-  0 ___str_6                                                       055B R
-  0 ___str_7                                                       0562 R
-  0 ___str_8                                                       0569 R
-  0 ___str_9                                                       0576 R
+    _G_Menu                                                        **** GX
+  0 ___str_0                                                       0535 R
+  0 ___str_1                                                       0548 R
+  0 ___str_10                                                      0CAB R
+  0 ___str_11                                                      0CBA R
+  0 ___str_12                                                      0CCA R
+  0 ___str_13                                                      0CDC R
+  0 ___str_14                                                      0CE6 R
+  0 ___str_15                                                      0F01 R
+  0 ___str_16                                                      0F16 R
+  0 ___str_17                                                      0F20 R
+  0 ___str_18                                                      108F R
+  0 ___str_19                                                      1094 R
+  0 ___str_2                                                       0556 R
+  0 ___str_20                                                      10A2 R
+  0 ___str_21                                                      10AC R
+  0 ___str_22                                                      11C3 R
+  0 ___str_23                                                      11CD R
+  0 ___str_24                                                      11D5 R
+  0 ___str_25                                                      11DE R
+  0 ___str_26                                                      11E5 R
+  0 ___str_27                                                      11E9 R
+  0 ___str_28                                                      11EC R
+  0 ___str_29                                                      11F2 R
+  0 ___str_3                                                       055D R
+  0 ___str_30                                                      11FC R
+  0 ___str_31                                                      1429 R
+  0 ___str_32                                                      142C R
+  0 ___str_33                                                      1431 R
+  0 ___str_34                                                      1436 R
+  0 ___str_35                                                      143C R
+  0 ___str_36                                                      1442 R
+  0 ___str_4                                                       0563 R
+  0 ___str_5                                                       0569 R
+  0 ___str_6                                                       056F R
+  0 ___str_7                                                       0576 R
+  0 ___str_8                                                       057D R
+  0 ___str_9                                                       058A R
     __divuchar                                                     **** GX
   7 __xinit__newNameHighScore                                      0000 R
-  0 _addRandomCell                                                 0387 GR
-  0 _addRandomCellTurn                                             02BB GR
+  7 __xinit__playing                                               000F R
+  0 _addRandomCell                                                 038F GR
+  0 _addRandomCellTurn                                             02C3 GR
   1 _adjacents                                                     001E GR
-  0 _anyMovesLeft                                                  0234 GR
-  0 _anyOfThisInAdjacents                                          0209 GR
+  0 _anyMovesLeft                                                  023C GR
+  0 _anyOfThisInAdjacents                                          0211 GR
   1 _aux_txt                                                       00C1 GR
   1 _cells                                                         000E GR
-  0 _checkKeyboardMenu                                             10A3 GR
+  0 _checkKeyboardMenu                                             1211 GR
     _clearScreen                                                   **** GX
-  0 _countZeroes                                                   00FC GR
+  0 _countZeroes                                                   0104 GR
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 2.
+Hexadecimal [16-Bits]
+
+Symbol Table
+
+    _cpct_akp_musicInit                                            **** GX
+    _cpct_akp_musicPlay                                            **** GX
+    _cpct_akp_stop                                                 **** GX
+    _cpct_disableFirmware                                          **** GX
     _cpct_drawSolidBox                                             **** GX
     _cpct_drawSprite                                               **** GX
     _cpct_getRandom_mxor_u8                                        **** GX
@@ -57,52 +77,56 @@ Symbol Table
     _cpct_px2byteM0                                                **** GX
     _cpct_restoreState_mxor_u8                                     **** GX
     _cpct_scanKeyboard_f                                           **** GX
+    _cpct_setInterruptHandler                                      **** GX
     _cpct_setSeed_mxor                                             **** GX
-ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 2.
-Hexadecimal [16-Bits]
-
-Symbol Table
-
+    _cpct_waitVSYNC                                                **** GX
   1 _currentTile                                                   00CF GR
-  0 _delay                                                         00D9 GR
+  0 _delay                                                         00E1 GR
     _drawFallingText                                               **** GX
     _drawFrame                                                     **** GX
-    _drawMenu                                                      **** GX
+  0 _drawMenu                                                      10B6 GR
     _drawNumber                                                    **** GX
-  0 _drawScore                                                     09AE GR
-  0 _drawScoreBoard                                                0DD1 GR
+  0 _drawScore                                                     09C2 GR
+  0 _drawScoreBoard                                                0DE1 GR
     _drawText                                                      **** GX
     _g_font_big                                                    **** GX
     _g_tile_marker_0                                               **** GX
     _g_tile_marker_3                                               **** GX
     _g_tile_symbols_1                                              **** GX
     _g_tile_symbols_2                                              **** GX
-  0 _game                                                          0F22 GR
-  0 _getAdjacents                                                  013E GR
-  0 _getName                                                       0A6C GR
-  0 _initAdjacents                                                 0127 GR
-  0 _initCells                                                     03D9 GR
-  0 _initGame                                                      057F GR
-  0 _initialization                                                03F9 GR
+  0 _game                                                          0F35 GR
+  0 _getAdjacents                                                  0146 GR
+  0 _getName                                                       0A80 GR
+  0 _initAdjacents                                                 012F GR
+  0 _initCells                                                     03E1 GR
+  0 _initGame                                                      0593 GR
+  0 _initialization                                                0401 GR
   1 _keys                                                          0000 GR
   1 _maxTiles                                                      00D0 GR
+  0 _myInterruptHandler                                            0000 GR
   1 _nameHallOfFame                                                0047 GR
   2 _newNameHighScore                                              0000 GR
   1 _nextTile                                                      00BF GR
-  0 _printCells                                                    08F9 GR
+  2 _playing                                                       000F GR
+  0 _printCells                                                    090D GR
     _redefineKey                                                   **** GX
-  0 _renewTileBag                                                  0000 GR
-  0 _rotateCellsDown                                               0837 GR
-  0 _rotateCellsLeft                                               060E GR
-  0 _rotateCellsRight                                              06C9 GR
-  0 _rotateCellsUp                                                 078A GR
+  0 _renewTileBag                                                  0080 GR
+  0 _rotateCellsDown                                               084B GR
+  0 _rotateCellsLeft                                               0622 GR
+  0 _rotateCellsRight                                              06DD GR
+  0 _rotateCellsUp                                                 079E GR
   1 _score                                                         0023 GR
   1 _scoreHallOfFame                                               0027 GR
-  0 _scores                                                        007F GR
+  0 _scores                                                        0026 GR
+ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 3.
+Hexadecimal [16-Bits]
+
+Symbol Table
+
   1 _selectedOption                                                00C0 GR
-  0 _setHighScore                                                  0CD4 GR
+  0 _setHighScore                                                  0CE8 GR
     _sprintf                                                       **** GX
-  0 _threes                                                        12A5 GR
+  0 _threes                                                        1448 GR
   1 _tileBag                                                       00C3 GR
     _tile_tiles_00                                                 **** GX
     _tile_tiles_01                                                 **** GX
@@ -118,14 +142,9 @@ Symbol Table
     _tile_tiles_11                                                 **** GX
     _tile_tiles_12                                                 **** GX
     _tile_tiles_13                                                 **** GX
-ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Zilog Z80 / Hitachi HD64180), page 3.
-Hexadecimal [16-Bits]
-
-Symbol Table
-
     _tile_tiles_14                                                 **** GX
-  0 _tiles                                                         00BB GR
-  0 _values                                                        0061 GR
+  0 _tiles                                                         0062 GR
+  0 _values                                                        0008 GR
     _wait4UserKeypress                                             **** GX
     _waitKeyUp                                                     **** GX
 
@@ -135,13 +154,13 @@ Hexadecimal [16-Bits]
 
 Area Table
 
-   0 _CODE                                      size 12D4   flags    0
+   0 _CODE                                      size 1480   flags    0
    1 _DATA                                      size   D1   flags    0
-   2 _INITIALIZED                               size    F   flags    0
+   2 _INITIALIZED                               size   10   flags    0
    3 _DABS                                      size    0   flags    8
    4 _HOME                                      size    0   flags    0
    5 _GSINIT                                    size    0   flags    0
    6 _GSFINAL                                   size    0   flags    0
-   7 _INITIALIZER                               size    F   flags    0
+   7 _INITIALIZER                               size   10   flags    0
    8 _CABS                                      size    0   flags    8
 
