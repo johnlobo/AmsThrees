@@ -42,6 +42,9 @@ u8* aux_txt;
 u8 tileBag[12];
 u8 currentTile;
 u8 maxTiles;
+u8 rotatedCells;
+u8 animateCells[4][4];
+u8 animateDirection;
 
 //////////////////////////////////////////////////////////////////
 // renewTileBag
@@ -288,19 +291,22 @@ void addRandomCell() {
 }
 
 //////////////////////////////////////////////////////////////////
-// trace
+// initCells
 //
 //
 //
 // Returns:
 //    void
 //
-void initCells() {
+void initCells(u8 animated) {
     u8 i, j;
 
     for (i = 0; i < 4; i++) {
         for (j = 0; j < 4; j++) {
-            cells[i][j] = 0;
+            if (animated)
+                animateCells[i][j] = 0;
+            else
+                cells[i][j] = 0;
         }
     }
 }
@@ -370,7 +376,7 @@ void initialization() {
 void initGame() {
     u8 i,j,k;
 
-    initCells();
+    initCells(0);
 
     renewTileBag();
 
@@ -714,6 +720,14 @@ void setHighScore(u32 score) {
     }
 }
 
+//////////////////////////////////////////////////////////////////
+// drawScoreBoard
+//
+//
+// Returns:
+//    void
+//
+
 void drawScoreBoard() {
     u8 i;
     u32 c = 0;
@@ -768,32 +782,38 @@ void game(void) {
     while (1) {
         delay(24);
         cpct_scanKeyboard_f();
+        rotatedCells = 0;
 
         if (cpct_isKeyPressed(keys.right)) {
             if (rotateCellsRight()) {
                 addRandomCellTurn(RIGHT);
                 moved = 1;
+                animateDirection = 2;
             }
         } else if (cpct_isKeyPressed(keys.left)) {
             if (rotateCellsLeft()) {
                 addRandomCellTurn(LEFT);
                 moved = 1;
+                animateDirection = 4;
             }
         } else if (cpct_isKeyPressed(keys.down)) {
             if (rotateCellsDown()) {
                 addRandomCellTurn(DOWN);
                 moved = 1;
+                animateDirection = 3;
             }
         } else if (cpct_isKeyPressed(keys.up)) {
             if (rotateCellsUp()) {
                 addRandomCellTurn(UP);
                 moved = 1;
+                animateDirection = 1;
             }
         } else if (cpct_isKeyPressed(keys.abort))
             break;
 
         if (moved) {
-            printCells();
+            animateCells();
+            //printCells();
             moved = 0;
             if (anyMovesLeft() == 0) {
                 drawScore();
@@ -813,6 +833,14 @@ void game(void) {
     }
 }
 
+//////////////////////////////////////////////////////////////////
+// checkKeyboardMenu
+//    Checks the keyboard for the menu options
+//
+//
+// Returns:
+//    void
+//
 void checkKeyboardMenu() {
 
     u8 *pvideo;
@@ -889,7 +917,14 @@ void checkKeyboardMenu() {
 
 
 
-
+//////////////////////////////////////////////////////////////////
+// Threes
+//    
+//
+//
+// Returns:
+//    void
+//
 void threes() {
     u32 lapso;
 
