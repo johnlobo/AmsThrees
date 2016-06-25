@@ -38,11 +38,14 @@ u8  nameHallOfFame[8][15];
 u8 newNameHighScore[15] = {32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 0};
 u8 nextTile;
 u8 selectedOption;
-u8* aux_txt;
+u8 aux_txt[26];
 u8 tileBag[12];
 u8 currentTile;
 u8 maxTiles;
 u8 playing = 0;
+u8 rotatedCells;
+u8 animateCells[4][4];
+u8 animateDirection;
 
 //////////////////////////////////////////////////////////////////
 // myInterruptHandler
@@ -304,19 +307,22 @@ void addRandomCell() {
 }
 
 //////////////////////////////////////////////////////////////////
-// trace
+// initCells
 //
 //
 //
 // Returns:
 //    void
 //
-void initCells() {
+void initCells(u8 animated) {
     u8 i, j;
 
     for (i = 0; i < 4; i++) {
         for (j = 0; j < 4; j++) {
-            cells[i][j] = 0;
+            if (animated)
+                animateCells[i][j] = 0;
+            else
+                cells[i][j] = 0;
         }
     }
 }
@@ -395,7 +401,8 @@ void initialization() {
 void initGame() {
     u8 i, j, k;
 
-    initCells();
+    initCells(0);
+    initCells(1);
 
     renewTileBag();
 
@@ -439,19 +446,23 @@ u8 rotateCellsLeft() {
             if (cells[i][j] != 0) {
                 // empty cell on the left
                 if (cells[i][j - 1] == 0) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i][j - 1] = cells[i][j];
                     cells[i][j] = 0;
                     matched = 1;
                 } else if (((cells[i][j - 1] == 1) && (cells[i][j] == 2)) ||
                            ((cells[i][j - 1] == 2) && (cells[i][j] == 1))) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i][j - 1] = 3;
                     cells[i][j] = 0;
                     matched = 1;
                 } else if ((cells[i][j - 1] == cells[i][j]) && (cells[i][j] > 2)) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i][j - 1]++;
                     cells[i][j] = 0;
                     matched = 1;
                 }
+                    
             }
         }
     }
@@ -478,15 +489,18 @@ u8 rotateCellsRight() {
             if (cells[i][j] != 0) {
                 // empty cell on the left
                 if (cells[i][j + 1] == 0) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i][j + 1] = cells[i][j];
                     cells[i][j] = 0;
                     matched = 1;
                 } if (((cells[i][j + 1] == 1) && (cells[i][j] == 2)) ||
                         ((cells[i][j + 1] == 2) && (cells[i][j] == 1))) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i][j + 1] = 3;
                     cells[i][j] = 0;
                     matched = 1;
                 } else if ((cells[i][j + 1] == cells[i][j]) && (cells[i][j] > 2)) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i][j + 1]++;
                     cells[i][j] = 0;
                     matched = 1;
@@ -515,15 +529,18 @@ u8 rotateCellsUp() {
             if (cells[i][j] != 0) {
                 // empty cell on the left
                 if (cells[i - 1][j] == 0) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i - 1][j] = cells[i][j];
                     cells[i][j] = 0;
                     matched = 1;
                 } else if (((cells[i - 1][j] == 1) && (cells[i][j] == 2)) ||
                            ((cells[i - 1][j] == 2) && (cells[i][j] == 1))) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i - 1][j] = 3;
                     cells[i][j] = 0;
                     matched = 1;
                 } else if ((cells[i - 1][j] == cells[i][j]) && (cells[i][j] > 2)) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i - 1][j]++;
                     cells[i][j] = 0;
                     matched = 1;
@@ -554,15 +571,18 @@ u8 rotateCellsDown() {
             if (cells[i][j] != 0) {
                 // empty cell on the left
                 if (cells[i + 1][j] == 0) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i + 1][j] = cells[i][j];
                     cells[i][j] = 0;
                     matched = 1;
                 } if (((cells[i + 1][j] == 1) && (cells[i][j] == 2)) ||
                         ((cells[i + 1][j] == 2) && (cells[i][j] == 1))) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i + 1][j] = 3;
                     cells[i][j] = 0;
                     matched = 1;
                 } else if ((cells[i + 1][j] == cells[i][j]) && (cells[i][j] > 2)) {
+                    animateCells[i][j] = cells[i][j];
                     cells[i + 1][j]++;
                     cells[i][j] = 0;
                     matched = 1;
@@ -739,6 +759,14 @@ void setHighScore(u32 score) {
     }
 }
 
+//////////////////////////////////////////////////////////////////
+// drawScoreBoard
+//
+//
+// Returns:
+//    void
+//
+
 void drawScoreBoard() {
     u8 i;
     u32 c = 0;
@@ -795,32 +823,41 @@ void game(void) {
     while (1) {
         delay(24);
         cpct_scanKeyboard_f();
+        
+            rotatedCells = 0;
 
         if (cpct_isKeyPressed(keys.right)) {
             if (rotateCellsRight()) {
                 addRandomCellTurn(RIGHT);
                 moved = 1;
+                animateDirection = 2;
             }
         } else if (cpct_isKeyPressed(keys.left)) {
             if (rotateCellsLeft()) {
                 addRandomCellTurn(LEFT);
                 moved = 1;
+                animateDirection = 4;
             }
         } else if (cpct_isKeyPressed(keys.down)) {
             if (rotateCellsDown()) {
                 addRandomCellTurn(DOWN);
                 moved = 1;
+                animateDirection = 3;
             }
         } else if (cpct_isKeyPressed(keys.up)) {
             if (rotateCellsUp()) {
                 addRandomCellTurn(UP);
                 moved = 1;
+                animateDirection = 1;
             }
         } else if (cpct_isKeyPressed(keys.abort))
             break;
 
         if (moved) {
-            printCells();
+            animateCells();
+            //Empty the rotated cells buffer after ending the animation
+            initCells(1);
+            //printCells();
             moved = 0;
             if (anyMovesLeft() == 0) {
                 drawScore();
@@ -840,6 +877,14 @@ void game(void) {
     }
 }
 
+//////////////////////////////////////////////////////////////////
+// drawMenu
+//    
+//
+//
+// Returns:
+//    void
+//
 void drawMenu() {
 
     cpct_waitVSYNC();
@@ -871,6 +916,14 @@ void drawMenu() {
 
 }
 
+//////////////////////////////////////////////////////////////////
+// checkKeyboardMenu
+//    Checks the keyboard for the menu options
+//
+//
+// Returns:
+//    void
+//
 void checkKeyboardMenu() {
 
     u8 *pvideo;
@@ -958,6 +1011,15 @@ void checkKeyboardMenu() {
     }
 }
 
+
+//////////////////////////////////////////////////////////////////
+// Threes
+//    
+//
+//
+// Returns:
+//    void
+//
 void threes() {
     u32 lapso;
 
