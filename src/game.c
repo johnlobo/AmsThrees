@@ -24,17 +24,15 @@ Keys keys;
 
 // Global Variables
 u8 cells[4][4];
-const u16 values[15] = {0, 1, 2, 3, 6, 12, 24, 48, 96, 192, 384, 768, 1536, 3072, 6144};
-const u32 scores[15] = {0, 0, 0, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683, 59049, 177147, 531441
-                       };
+const u16 values[15] = { 0, 1, 2, 3, 6, 12, 24, 48, 96, 192, 384, 768, 1536, 3072, 6144};
+const u32 scores[15] = { 0, 0, 0, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683, 59049, 177147, 531441};
 TAdjacents adjacents;
-u8* const tiles[15] = {tile_tiles_00, tile_tiles_01, tile_tiles_02, tile_tiles_03, tile_tiles_04,
+u8* const tiles[15] = {tile_tiles_00,tile_tiles_00, tile_tiles_01, tile_tiles_02, tile_tiles_03, tile_tiles_04,
                        tile_tiles_05, tile_tiles_06, tile_tiles_07, tile_tiles_08, tile_tiles_09,
-                       tile_tiles_10, tile_tiles_11, tile_tiles_12, tile_tiles_13, tile_tiles_14,
-                      };
+                       tile_tiles_10, tile_tiles_11, tile_tiles_12, tile_tiles_13};
 u32 score;
 u32 scoreHallOfFame[8];
-u8  nameHallOfFame[8][15];
+u8 nameHallOfFame[8][15];
 u8 newNameHighScore[15] = {32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 0};
 u8 nextTile;
 u8 selectedOption;
@@ -46,6 +44,38 @@ u8 playing = 0;
 u8 rotatedCells;
 u8 animateCells[4][4];
 u8 animateDirection;
+
+//////////////////////////////////////////////////////////////////
+// myInterruptHandler
+//
+//
+//
+// Returns:
+//
+//
+void animation() {/*
+    u8 i, j, k, acum, x, y;
+    u8 buffer[16][3 * 11];
+    u8* pvmem;
+
+    if (rotatedCells > 0) {
+        for (k = 0; k < 4; k++) {
+            acum = 0;
+            for (i = 0; i < 4; i++) {
+                y = 6 + (i * 44);
+                for (j = 0; j < 4; j++)
+                    x = 4 + (j * 11);
+                if (animateCells[i][j] != 0) {
+                    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, x, y);
+                    cpct_memcpy(&buffer[acum],)
+                    acum++;
+                }
+            }
+        }
+    }
+
+*/}
+
 
 //////////////////////////////////////////////////////////////////
 // myInterruptHandler
@@ -383,7 +413,9 @@ void initialization() {
 
     selectedOption = 1;
 
-
+    // VERY IMPORTANT: Before using EasyTileMap functions (etm), the internal
+    // pointer to the tileset must be set.
+    cpct_etm_setTileset2x4(tmx);
 
     // Music off
     playing = 0;
@@ -462,7 +494,7 @@ u8 rotateCellsLeft() {
                     cells[i][j] = 0;
                     matched = 1;
                 }
-                    
+
             }
         }
     }
@@ -616,12 +648,14 @@ void printCells() {
         for (j = 0; j < 4; j++) {
             //  x = 3 + (j * 12);
             x = 4 + (j * 11);
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, x, y);
-            cpct_drawSprite(tiles[cells[i][j]], pvmem, 10, 40);
+            if (cells[i][j] > 0){ 
+                pvmem = cpct_getScreenPtr(CPCT_VMEM_START, x, y);
+                cpct_drawSprite(tiles[cells[i][j]], pvmem, TILE_W, TILE_H);
+            }
         }
     }
     pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 62, 20);
-    cpct_drawSprite(tiles[tileBag[currentTile]], pvmem, 10, 40);
+    cpct_drawSprite(tiles[tileBag[currentTile]], pvmem, TILE_W, TILE_H);
 }
 
 //////////////////////////////////////////////////////////////////
@@ -823,8 +857,8 @@ void game(void) {
     while (1) {
         delay(24);
         cpct_scanKeyboard_f();
-        
-            rotatedCells = 0;
+
+        rotatedCells = 0;
 
         if (cpct_isKeyPressed(keys.right)) {
             if (rotateCellsRight()) {
@@ -854,7 +888,7 @@ void game(void) {
             break;
 
         if (moved) {
-            animateCells();
+            //animation();
             //Empty the rotated cells buffer after ending the animation
             initCells(1);
             //printCells();
@@ -879,7 +913,7 @@ void game(void) {
 
 //////////////////////////////////////////////////////////////////
 // drawMenu
-//    
+//
 //
 //
 // Returns:
@@ -988,7 +1022,7 @@ void checkKeyboardMenu() {
 
     }
     else if ( cpct_isKeyPressed(Key_3)) {
-        if (!playing){
+        if (!playing) {
             playing = 1;
             cpct_setInterruptHandler(myInterruptHandler);
         } else {
@@ -1014,7 +1048,7 @@ void checkKeyboardMenu() {
 
 //////////////////////////////////////////////////////////////////
 // Threes
-//    
+//
 //
 //
 // Returns:

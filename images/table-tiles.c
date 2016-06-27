@@ -1,0 +1,141 @@
+#include "table-tiles.h"
+// Data created with Img2CPC - (c) Retroworks - 2007-2015
+// Palette uses hardware values.
+const u8 table_tile_palette[16] = { 0x44, 0x4a, 0x53, 0x4c, 0x4b, 0x54, 0x55, 0x4d, 0x46, 0x5e, 0x5f, 0x47, 0x52, 0x59, 0x4a, 0x47 };
+
+// Tile table_tile_table_tiles_00: 4x4 pixels, 2x4 bytes.
+const u8 table_tile_table_tiles_00[2 * 4] = {
+	0xf0, 0x0f,
+	0xa5, 0x0f,
+	0x0f, 0x5a,
+	0x0f, 0xa5
+};
+
+// Tile table_tile_table_tiles_01: 4x4 pixels, 2x4 bytes.
+const u8 table_tile_table_tiles_01[2 * 4] = {
+	0x0f, 0x0f,
+	0x0f, 0x0f,
+	0xf0, 0xf0,
+	0x0f, 0x0f
+};
+
+// Tile table_tile_table_tiles_02: 4x4 pixels, 2x4 bytes.
+const u8 table_tile_table_tiles_02[2 * 4] = {
+	0x0f, 0xf0,
+	0x0f, 0x5a,
+	0xa5, 0x0f,
+	0x5a, 0x0f
+};
+
+// Tile table_tile_table_tiles_03: 4x4 pixels, 2x4 bytes.
+const u8 table_tile_table_tiles_03[2 * 4] = {
+	0x0f, 0xa5,
+	0x0f, 0xa5,
+	0x0f, 0xa5,
+	0x0f, 0xa5
+};
+
+// Tile table_tile_table_tiles_04: 4x4 pixels, 2x4 bytes.
+const u8 table_tile_table_tiles_04[2 * 4] = {
+	0x0f, 0x0f,
+	0x0f, 0x0f,
+	0x0f, 0x0f,
+	0x0f, 0x0f
+};
+
+// Tile table_tile_table_tiles_05: 4x4 pixels, 2x4 bytes.
+const u8 table_tile_table_tiles_05[2 * 4] = {
+	0x5a, 0x0f,
+	0x5a, 0x0f,
+	0x5a, 0x0f,
+	0x5a, 0x0f
+};
+
+// Tile table_tile_table_tiles_06: 4x4 pixels, 2x4 bytes.
+const u8 table_tile_table_tiles_06[2 * 4] = {
+	0x0f, 0xa5,
+	0x0f, 0x5a,
+	0xa5, 0x0f,
+	0xf0, 0x0f
+};
+
+// Tile table_tile_table_tiles_07: 4x4 pixels, 2x4 bytes.
+const u8 table_tile_table_tiles_07[2 * 4] = {
+	0x0f, 0x0f,
+	0xf0, 0xf0,
+	0x0f, 0x0f,
+	0x0f, 0x0f
+};
+
+// Tile table_tile_table_tiles_08: 4x4 pixels, 2x4 bytes.
+const u8 table_tile_table_tiles_08[2 * 4] = {
+	0x5a, 0x0f,
+	0xa5, 0x0f,
+	0x0f, 0x5a,
+	0x0f, 0xf0
+};
+
+// Tile table_tile_table_tiles_09: 4x4 pixels, 2x4 bytes.
+const u8 table_tile_table_tiles_09[2 * 4] = {
+	0x0f, 0xf0,
+	0x5a, 0xa5,
+	0xf0, 0x0f,
+	0xa5, 0x0f
+};
+
+// Tile table_tile_table_tiles_10: 4x4 pixels, 2x4 bytes.
+const u8 table_tile_table_tiles_10[2 * 4] = {
+	0xf0, 0xf0,
+	0x0f, 0x0f,
+	0x0f, 0x0f,
+	0x0f, 0x0f
+};
+
+// Tile table_tile_table_tiles_11: 4x4 pixels, 2x4 bytes.
+const u8 table_tile_table_tiles_11[2 * 4] = {
+	0xf0, 0x0f,
+	0x5a, 0xa5,
+	0x0f, 0xf0,
+	0x0f, 0x5a
+};
+
+// Tile table_tile_table_tiles_12: 4x4 pixels, 2x4 bytes.
+const u8 table_tile_table_tiles_12[2 * 4] = {
+	0xa5, 0x0f,
+	0xf0, 0x0f,
+	0x5a, 0xa5,
+	0x0f, 0xf0
+};
+
+// Tile table_tile_table_tiles_13: 4x4 pixels, 2x4 bytes.
+const u8 table_tile_table_tiles_13[2 * 4] = {
+	0x0f, 0x0f,
+	0x0f, 0x0f,
+	0x0f, 0x0f,
+	0xf0, 0xf0
+};
+
+// Tile table_tile_table_tiles_14: 4x4 pixels, 2x4 bytes.
+const u8 table_tile_table_tiles_14[2 * 4] = {
+	0x0f, 0x5a,
+	0x0f, 0xf0,
+	0x5a, 0xa5,
+	0xf0, 0x0f
+};
+
+// Tile table_tile_table_tiles_15: 4x4 pixels, 2x4 bytes.
+const u8 table_tile_table_tiles_15[2 * 4] = {
+	0xa5, 0x0f,
+	0xa5, 0x0f,
+	0xa5, 0x0f,
+	0xa5, 0x0f
+};
+
+// Tile table_tile_table_tiles_16: 4x4 pixels, 2x4 bytes.
+const u8 table_tile_table_tiles_16[2 * 4] = {
+	0x0f, 0x5a,
+	0x0f, 0x5a,
+	0x0f, 0x5a,
+	0x0f, 0x5a
+};
+

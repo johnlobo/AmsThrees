@@ -24,6 +24,7 @@
 #include "../sprites/tiles.h"
 #include "../sprites/sprites.h"
 #include "../sprites/border.h"
+#include "../sprites/tilemap.h"
 
 #ifndef _DRAW_H_
 #define _DRAW_H_

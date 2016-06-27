@@ -16,6 +16,9 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //------------------------------------------------------------------------------
 
+#ifndef _GAME_H_
+#define _GAME_H_
+
 #include <cpctelera.h>
 #include "defines.h"
 #include "types/types.h"
@@ -31,15 +34,14 @@
 #include "video/video.h"
 #include "video/draw.h"
 #include "audio/song.h"
+#include "sprites/table.h"
 
-
-#ifndef _GAME_H_
-#define _GAME_H_
 
 #define LEFT 0
 #define RIGHT 1
 #define UP 2
 #define DOWN 3
+#define NUM_TILES 14
 
 // cells value
 //	0 empty
