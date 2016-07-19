@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include "game.h"
 
+
 Keys keys;
 
 // Global Variables
@@ -27,9 +28,10 @@ u8 cells[4][4];
 const u16 values[15] = { 0, 1, 2, 3, 6, 12, 24, 48, 96, 192, 384, 768, 1536, 3072, 6144};
 const u32 scores[15] = { 0, 0, 0, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683, 59049, 177147, 531441};
 TAdjacents adjacents;
-u8* const tiles[15] = {tile_tiles_00,tile_tiles_00, tile_tiles_01, tile_tiles_02, tile_tiles_03, tile_tiles_04,
+u8* const tiles[15] = {tile_tiles_00, tile_tiles_00, tile_tiles_01, tile_tiles_02, tile_tiles_03, tile_tiles_04,
                        tile_tiles_05, tile_tiles_06, tile_tiles_07, tile_tiles_08, tile_tiles_09,
-                       tile_tiles_10, tile_tiles_11, tile_tiles_12, tile_tiles_13};
+                       tile_tiles_10, tile_tiles_11, tile_tiles_12, tile_tiles_13
+                      };
 u32 score;
 u32 scoreHallOfFame[8];
 u8 nameHallOfFame[8][15];
@@ -45,36 +47,39 @@ u8 rotatedCells;
 u8 animateCells[4][4];
 u8 animateDirection;
 
+
 //////////////////////////////////////////////////////////////////
-// myInterruptHandler
+// animation
 //
 //
 //
 // Returns:
 //
 //
-void animation() {/*
-    u8 i, j, k, acum, x, y;
-    u8 buffer[16][3 * 11];
-    u8* pvmem;
+void animation() {
+    /*
+        u8 i, j, k, acum, x, y;
+        u8 buffer[16][3 * 11];
+        u8* pvmem;
 
-    if (rotatedCells > 0) {
-        for (k = 0; k < 4; k++) {
-            acum = 0;
-            for (i = 0; i < 4; i++) {
-                y = 6 + (i * 44);
-                for (j = 0; j < 4; j++)
-                    x = 4 + (j * 11);
-                if (animateCells[i][j] != 0) {
-                    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, x, y);
-                    cpct_memcpy(&buffer[acum],)
-                    acum++;
+        if (rotatedCells > 0) {
+            for (k = 0; k < 4; k++) {
+                acum = 0;
+                for (i = 0; i < 4; i++) {
+                    y = 6 + (i * 44);
+                    for (j = 0; j < 4; j++)
+                        x = 4 + (j * 11);
+                    if (animateCells[i][j] != 0) {
+                        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, x, y);
+                        cpct_memcpy(&buffer[acum],)
+                        acum++;
+                    }
                 }
             }
         }
-    }
 
-*/}
+    */
+}
 
 
 //////////////////////////////////////////////////////////////////
@@ -370,7 +375,7 @@ void initialization() {
     u32 seed;    // Value to initialize the random seed
 
     //cpct_akp_musicInit(G_Smoke);
-    cpct_akp_musicInit(G_Menu);
+    //cpct_akp_musicInit(G_Menu);
     //cpct_akp_musicPlay();
 
     drawText("AMSTHREES IS READY", 31, 76, 1);
@@ -403,22 +408,25 @@ void initialization() {
 
     clearScreen();
 
-    keys.up    = Key_Q;
-    keys.down  = Key_A;
-    keys.left  = Key_O;
-    keys.right = Key_P;
+    keys.up    = Key_CursorUp;
+    keys.down  = Key_CursorDown;
+    keys.left  = Key_CursorLeft;
+    keys.right = Key_CursorRight;
     //keys.fire  = Key_Space;
     keys.pause = Key_Del;
     keys.abort = Key_Esc;
 
     selectedOption = 1;
 
+
     // VERY IMPORTANT: Before using EasyTileMap functions (etm), the internal
     // pointer to the tileset must be set.
-    cpct_etm_setTileset2x4(tmx);
+    cpct_etm_setTileset2x4(tileset);
 
     // Music off
     playing = 0;
+
+
 }
 
 
@@ -628,7 +636,7 @@ u8 rotateCellsDown() {
 }
 
 //////////////////////////////////////////////////////////////////
-// printCells
+// Cells
 //
 //
 //
@@ -644,18 +652,26 @@ void printCells() {
 
     for (i = 0; i < 4; i++) {
         //y = 30 + (i * 10);
-        y = 6 + (i * 44);
+        y = 6 + (i * 45);
         for (j = 0; j < 4; j++) {
             //  x = 3 + (j * 12);
-            x = 4 + (j * 11);
-            if (cells[i][j] > 0){ 
+            x = 6 + (j * 12);
+            if (cells[i][j] > 0) {
                 pvmem = cpct_getScreenPtr(CPCT_VMEM_START, x, y);
-                cpct_drawSprite(tiles[cells[i][j]], pvmem, TILE_W, TILE_H);
+                //cpct_drawSprite(tiles[cells[i][j]], pvmem, TILE_W, TILE_H);
+                cpct_setBlendMode(CPCT_BLEND_AND);
+                cpct_drawSpriteBlended(pvmem, TILE_H, TILE_W, tile_mask);
+                cpct_setBlendMode(CPCT_BLEND_OR);
+                cpct_drawSpriteBlended(pvmem, TILE_H, TILE_W, tiles[cells[i][j]]);
             }
         }
     }
     pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 62, 20);
     cpct_drawSprite(tiles[tileBag[currentTile]], pvmem, TILE_W, TILE_H);
+    /*cpct_setBlendMode(CPCT_BLEND_AND);
+    cpct_drawSpriteBlended(pvmem, TILE_W, TILE_H, tile_mask);
+    cpct_setBlendMode(CPCT_BLEND_OR);
+    cpct_drawSpriteBlended(pvmem, TILE_W, TILE_H, tiles[tileBag[currentTile]]);*/
 }
 
 //////////////////////////////////////////////////////////////////
@@ -729,19 +745,19 @@ void getName() {
             moved = 1;
         } else if (cpct_isKeyPressed(keys.down)) {
             if (chr == 91) {
-                newNameHighScore[pos] = '\0';
+                newNameHighScore[pos] = '0';
                 break;
             }
             else {
                 pos++;
                 newNameHighScore[pos] = 65;
-                newNameHighScore[pos + 1] = '\0';
+                newNameHighScore[pos + 1] = '0';
                 chr = 65;
                 moved = 1;
             }
 
         } else if (cpct_isKeyPressed(keys.up)) {
-            newNameHighScore[pos] = '\0';
+            newNameHighScore[pos] = '0';
             pos--;
             chr = newNameHighScore[pos];
             moved = 1;
@@ -830,6 +846,22 @@ void drawScoreBoard() {
 }
 
 //////////////////////////////////////////////////////////////////
+// drawTable
+//
+//
+//
+// Returns:
+//    void
+//
+void drawTable() {
+    u8* pvmem;
+
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 2, 0);
+    cpct_etm_drawTilemap2x4_f(MAP_WIDTH, MAP_HEIGHT, pvmem, tmx);
+
+}
+
+//////////////////////////////////////////////////////////////////
 // game
 //
 //
@@ -840,17 +872,19 @@ void drawScoreBoard() {
 void game(void) {
     u8 moved;
 
+
     initGame();
 
     // Clear Screen
     clearScreen();
     //clearWindow(0, 0, 160, 200);
 
-    drawFrame(2, 1, 49, 182);
-    printCells();
+    //drawFrame(2, 1, 49, 182);
+    drawTable();
     drawText("NEXT", 62, 2, 0);
+    printCells();
 
-    wait4UserKeypress();
+    //wait4UserKeypress();
 
     moved = 0;
     // Loop forever
@@ -891,7 +925,9 @@ void game(void) {
             //animation();
             //Empty the rotated cells buffer after ending the animation
             initCells(1);
-            //printCells();
+            cpct_waitVSYNC();
+            drawTable();
+            printCells();
             moved = 0;
             if (anyMovesLeft() == 0) {
                 drawScore();
@@ -1024,7 +1060,7 @@ void checkKeyboardMenu() {
     else if ( cpct_isKeyPressed(Key_3)) {
         if (!playing) {
             playing = 1;
-            cpct_setInterruptHandler(myInterruptHandler);
+            //cpct_setInterruptHandler(myInterruptHandler);
         } else {
             playing = 0;
             cpct_disableFirmware();
@@ -1040,7 +1076,7 @@ void checkKeyboardMenu() {
         waitKeyUp(Key_1);
         cpct_disableFirmware();
         game();
-        cpct_setInterruptHandler( myInterruptHandler );
+        //cpct_setInterruptHandler( myInterruptHandler );
         drawMenu();
     }
 }
@@ -1057,7 +1093,7 @@ void checkKeyboardMenu() {
 void threes() {
     u32 lapso;
 
-    cpct_setInterruptHandler( myInterruptHandler );
+    //cpct_setInterruptHandler( myInterruptHandler );
     while (1) {
 
 

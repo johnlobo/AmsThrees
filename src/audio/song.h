@@ -23,6 +23,6 @@
 
 //extern const u8 G_font[27][4*4];
 //__at(0x2000) extern const u8 G_Smoke[630];
-__at(0x2000) extern const u8 G_Menu[590];
+//__at(0x2000) extern const u8 G_Menu[590];
 
 #endif
