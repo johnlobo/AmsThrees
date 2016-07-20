@@ -19,7 +19,11 @@
 #define TILESIZE     2*4
 #define NUMTILES      17
 #define MAP_WIDTH     27
+<<<<<<< HEAD
 #define MAP_HEIGHT    49
+=======
+#define MAP_HEIGHT    47
+>>>>>>> 5268eb3779c76c11abb47ec4dffc8cd0cd40a92d
 #define SCR_HEIGHT   172
 #define SCR_WIDTH     92
 

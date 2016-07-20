@@ -47,6 +47,43 @@ u8 rotatedCells;
 u8 touchedCells[4][4];
 u8 animateDirection;
 
+<<<<<<< HEAD
+=======
+
+//////////////////////////////////////////////////////////////////
+// animation
+//
+//
+//
+// Returns:
+//
+//
+void animation() {
+    /*
+        u8 i, j, k, acum, x, y;
+        u8 buffer[16][3 * 11];
+        u8* pvmem;
+
+        if (rotatedCells > 0) {
+            for (k = 0; k < 4; k++) {
+                acum = 0;
+                for (i = 0; i < 4; i++) {
+                    y = 6 + (i * 44);
+                    for (j = 0; j < 4; j++)
+                        x = 4 + (j * 11);
+                    if (animateCells[i][j] != 0) {
+                        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, x, y);
+                        cpct_memcpy(&buffer[acum],)
+                        acum++;
+                    }
+                }
+            }
+        }
+
+    */
+}
+
+>>>>>>> 5268eb3779c76c11abb47ec4dffc8cd0cd40a92d
 
 //////////////////////////////////////////////////////////////////
 // myInterruptHandler
@@ -639,7 +676,7 @@ void drawTable() {
 }
 
 //////////////////////////////////////////////////////////////////
-// printCells
+// Cells
 //
 //
 //
@@ -655,11 +692,16 @@ void printCells() {
 
     for (i = 0; i < 4; i++) {
         //y = 30 + (i * 10);
+<<<<<<< HEAD
         y = 4 + (i * 48);
+=======
+        y = 6 + (i * 45);
+>>>>>>> 5268eb3779c76c11abb47ec4dffc8cd0cd40a92d
         for (j = 0; j < 4; j++) {
             //  x = 3 + (j * 12);
             x = 6 + (j * 12);
             if (cells[i][j] > 0) {
+<<<<<<< HEAD
                 pvmem = cpct_getScreenPtr(CPCT_VMEM_START, x, y);
                 //cpct_drawSprite(tiles[cells[i][j]], pvmem, TILE_W, TILE_H);
                 cpct_setBlendMode(CPCT_BLEND_AND);
@@ -700,15 +742,20 @@ void printTouched() {
         for (j = 0; j < 4; j++) {
             x = 6 + (j * 12);
             if (touchedCells[i][j] == 1) {
+=======
+>>>>>>> 5268eb3779c76c11abb47ec4dffc8cd0cd40a92d
                 pvmem = cpct_getScreenPtr(CPCT_VMEM_START, x, y);
                 //cpct_drawSprite(tiles[cells[i][j]], pvmem, TILE_W, TILE_H);
                 cpct_setBlendMode(CPCT_BLEND_AND);
                 cpct_drawSpriteBlended(pvmem, TILE_H, TILE_W, tile_mask);
                 cpct_setBlendMode(CPCT_BLEND_OR);
                 cpct_drawSpriteBlended(pvmem, TILE_H, TILE_W, tiles[cells[i][j]]);
+<<<<<<< HEAD
             } else if (touchedCells[i][j] == 2) {
                 cpct_etm_drawTileBox2x4 (2 + (j * 6), 1 + (i * 12), (TILE_W / 2), (TILE_H / 4), MAP_WIDTH, pStartTable, tmx);
 
+=======
+>>>>>>> 5268eb3779c76c11abb47ec4dffc8cd0cd40a92d
             }
         }
     }
@@ -894,6 +941,22 @@ void drawScoreBoard() {
 
 
 //////////////////////////////////////////////////////////////////
+// drawTable
+//
+//
+//
+// Returns:
+//    void
+//
+void drawTable() {
+    u8* pvmem;
+
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 2, 0);
+    cpct_etm_drawTilemap2x4_f(MAP_WIDTH, MAP_HEIGHT, pvmem, tmx);
+
+}
+
+//////////////////////////////////////////////////////////////////
 // game
 //
 //
@@ -952,11 +1015,18 @@ void game(void) {
         if (moved) {
             //animation();
             //Empty the rotated cells buffer after ending the animation
+<<<<<<< HEAD
             cpct_waitVSYNC();
             //drawTable();
             //printCells();
             printTouched();
             initCells(1);
+=======
+            initCells(1);
+            cpct_waitVSYNC();
+            drawTable();
+            printCells();
+>>>>>>> 5268eb3779c76c11abb47ec4dffc8cd0cd40a92d
             moved = 0;
             if (anyMovesLeft() == 0) {
                 drawScore();
