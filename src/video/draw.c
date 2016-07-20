@@ -141,7 +141,3 @@ void drawStars(Coords *stars) {
 
 }
 
-void drawTable(){
-     //cpct_etm_drawTilemap2x4_f (23,43),
-}
-

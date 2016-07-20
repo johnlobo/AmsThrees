@@ -5,25 +5,26 @@
 #include <types.h>
 
 // Define constant sizes
-#define TILE_W	9
+#define TILE_W	10
 #define TILE_H 44
+#define TILE_SIZE TILE_W * TILE_H
 
 
-extern const u8 tile_palette[14];
+extern const u8 tile_tiles_00[TILE_SIZE];
+extern const u8 tile_tiles_01[TILE_SIZE];
+extern const u8 tile_tiles_02[TILE_W * TILE_H];
+extern const u8 tile_tiles_03[TILE_W * TILE_H];
+extern const u8 tile_tiles_04[TILE_W * TILE_H];
+extern const u8 tile_tiles_05[TILE_W * TILE_H];
+extern const u8 tile_tiles_06[TILE_W * TILE_H];
+extern const u8 tile_tiles_07[TILE_W * TILE_H];
+extern const u8 tile_tiles_08[TILE_W * TILE_H];
+extern const u8 tile_tiles_09[TILE_W * TILE_H];
+extern const u8 tile_tiles_10[TILE_W * TILE_H];
+extern const u8 tile_tiles_11[TILE_W * TILE_H];
+extern const u8 tile_tiles_12[TILE_W * TILE_H];
+extern const u8 tile_tiles_13[TILE_W * TILE_H];
 
-extern const u8 tile_tiles_00[9 * 44];
-extern const u8 tile_tiles_01[9 * 44];
-extern const u8 tile_tiles_02[9 * 44];
-extern const u8 tile_tiles_03[9 * 44];
-extern const u8 tile_tiles_04[9 * 44];
-extern const u8 tile_tiles_05[9 * 44];
-extern const u8 tile_tiles_06[9 * 44];
-extern const u8 tile_tiles_07[9 * 44];
-extern const u8 tile_tiles_08[9 * 44];
-extern const u8 tile_tiles_09[9 * 44];
-extern const u8 tile_tiles_10[9 * 44];
-extern const u8 tile_tiles_11[9 * 44];
-extern const u8 tile_tiles_12[9 * 44];
-extern const u8 tile_tiles_13[9 * 44];
+extern const u8 tile_mask[TILE_W * TILE_H];
 
 #endif
