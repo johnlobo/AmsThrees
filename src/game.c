@@ -278,6 +278,7 @@ void addRandomCellTurn(u8 dir) {
     //cells[i][j] = nextTile;
     //nextTile = (cpct_rand() / 85) + 1;
     cells[i][j] = tileBag[currentTile];
+    touchedCells[i][j] = 1;
     if (currentTile < 11)
         currentTile++;
     else
@@ -452,6 +453,7 @@ u8 rotateCellsLeft() {
     for (i = 0; i < 4; i++) {
         for (j = 1; j < 4; j++) {
             if (cells[i][j] != 0) {
+                touchedCells[i][j] = 1;
                 // empty cell on the left
                 if (cells[i][j - 1] == 0) {
                     cells[i][j - 1] = cells[i][j];
@@ -500,6 +502,7 @@ u8 rotateCellsRight() {
         do {
             j--;
             if (cells[i][j] != 0) {
+                touchedCells[i][j] = 1;
                 // empty cell on the left
                 if (cells[i][j + 1] == 0) {
                     cells[i][j + 1] = cells[i][j];
@@ -545,6 +548,7 @@ u8 rotateCellsUp() {
     for (i = 1; i < 4; i++) {
         for (j = 0; j < 4; j++) {
             if (cells[i][j] != 0) {
+                touchedCells[i][j] = 1;
                 // empty cell on the left
                 if (cells[i - 1][j] == 0) {
                     cells[i - 1][j] = cells[i][j];
@@ -591,14 +595,14 @@ u8 rotateCellsDown() {
     do {
         i--;
         for (j = 0; j < 4; j++) {
-            matched = 0;
             if (cells[i][j] != 0) {
+                touchedCells[i][j] = 1;
                 // empty cell on the left
                 if (cells[i + 1][j] == 0) {
                     cells[i + 1][j] = cells[i][j];
                     cells[i][j] = 0;
                     matched = 1;
-                } if (((cells[i + 1][j] == 1) && (cells[i][j] == 2)) ||
+                } else if (((cells[i + 1][j] == 1) && (cells[i][j] == 2)) ||
                         ((cells[i + 1][j] == 2) && (cells[i][j] == 1))) {
                     cells[i + 1][j] = 3;
                     cells[i][j] = 0;
@@ -992,15 +996,15 @@ void drawMarker(u8 color){
 
     if (color){
          //Draw marker
-        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 27, 60+(20*selectedOption));
+        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 17, 60+(20*selectedOption));
         cpct_drawSprite(g_tile_marker_0, pvmem, 2, 9);
-        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 60, 60+(20*selectedOption));
+        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 59, 60+(20*selectedOption));
         cpct_drawSprite(g_tile_marker_0, pvmem, 2, 9);
     } else {
         // Delete marker
-        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 27, 60+(20*selectedOption));
+        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 17, 60+(20*selectedOption));
         cpct_drawSprite(g_tile_marker_3, pvmem, 2, 9);
-        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 60, 60+(20*selectedOption));
+        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 59, 60+(20*selectedOption));
         cpct_drawSprite(g_tile_marker_3, pvmem, 2, 9);
     }
 
@@ -1021,7 +1025,7 @@ void drawMenu() {
     //cpct_memset_f64(CPCT_VMEM_START, cpct_px2byteM0(5, 5), 0x4000);
     cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(5, 5), 0x4000);
 
-    drawFrame(15, 48, 63, 124);
+    drawFrame(15, 43, 63, 129);
 
     drawText("AMSTHREES", 31, 2, 1);
 
@@ -1060,7 +1064,7 @@ void checkKeyboardMenu() {
     u8 *pvideo;
     
    
-    delay(24); 
+    //delay(24); 
 
     cpct_scanKeyboard_f();
 
