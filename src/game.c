@@ -382,7 +382,7 @@ void initialization() {
     keys.pause = Key_Del;
     keys.abort = Key_Esc;
 
-    selectedOption = 1;
+    selectedOption = 0;
 
 
     // VERY IMPORTANT: Before using EasyTileMap functions (etm), the internal
@@ -979,6 +979,34 @@ void game(void) {
 }
 
 //////////////////////////////////////////////////////////////////
+// drawMarker
+//
+//
+//
+// Returns:
+//    void
+//
+
+void drawMarker(u8 color){
+    u8* pvmem;
+
+    if (color){
+         //Draw marker
+        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 27, 60+(20*selectedOption));
+        cpct_drawSprite(g_tile_marker_0, pvmem, 2, 9);
+        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 60, 60+(20*selectedOption));
+        cpct_drawSprite(g_tile_marker_0, pvmem, 2, 9);
+    } else {
+        // Delete marker
+        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 27, 60+(20*selectedOption));
+        cpct_drawSprite(g_tile_marker_3, pvmem, 2, 9);
+        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 60, 60+(20*selectedOption));
+        cpct_drawSprite(g_tile_marker_3, pvmem, 2, 9);
+    }
+
+}
+
+//////////////////////////////////////////////////////////////////
 // drawMenu
 //
 //
@@ -993,29 +1021,31 @@ void drawMenu() {
     //cpct_memset_f64(CPCT_VMEM_START, cpct_px2byteM0(5, 5), 0x4000);
     cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(5, 5), 0x4000);
 
-    drawFrame(15, 38, 63, 134);
+    drawFrame(15, 48, 63, 124);
 
     drawText("AMSTHREES", 31, 2, 1);
 
-    drawText("TECLADO", 30, 50, 0);
-    drawText("JOYSTICK", 30, 70, 0);
-    drawText("MUSICA", 30, 90, 0);
+    //drawText("TECLADO", 30, 40, 0);
+    drawText("REDEFINE", 30, 60, 0);
+    drawText("MUSIC", 30, 80, 0);
     if (playing)
-        drawText("OFF", 51, 90, 0);
+        drawText("OFF", 48, 80, 0);
     else
-        drawText("ON", 51, 90, 0);
-    drawText("JUGAR", 30, 110, 0);
+        drawText("ON", 48, 80, 0);
+    drawText("PLAY", 30, 100, 0);
 
-    drawNumber(1, 1, 23, 50);
-    drawNumber(2, 1, 23, 70);
-    drawNumber(3, 1, 23, 90);
-    drawNumber(4, 1, 23, 110);
-
+//    drawNumber(1, 1, 23, 40);
+    drawNumber(1, 1, 23, 60);
+    drawNumber(2, 1, 23, 80);
+    drawNumber(3, 1, 23, 100);
 
     drawText("JOHN LOBO", 25, 170, 1);
     drawText("@ GLASNOST CORP 2016", 11, 185, 1);
 
+    drawMarker(1);
+
 }
+
 
 //////////////////////////////////////////////////////////////////
 // checkKeyboardMenu
@@ -1028,33 +1058,17 @@ void drawMenu() {
 void checkKeyboardMenu() {
 
     u8 *pvideo;
+    
+   
+    delay(24); 
 
     cpct_scanKeyboard_f();
 
-    if (selectedOption == 1) {
-        pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 27, 71);
-        cpct_drawSprite(g_tile_marker_3, pvideo, 2, 9);
-        pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 54, 71);
-        cpct_drawSprite(g_tile_marker_3, pvideo, 2, 9);
-        pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 27, 51);
-        cpct_drawSprite(g_tile_marker_0, pvideo, 2, 9);
-        pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 54, 51);
-        cpct_drawSprite(g_tile_marker_0, pvideo, 2, 9);
-    } else {
-        pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 27, 51);
-        cpct_drawSprite(g_tile_marker_3, pvideo, 2, 9);
-        pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 54, 51);
-        cpct_drawSprite(g_tile_marker_3, pvideo, 2, 9);
-        pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 27, 71);
-        cpct_drawSprite(g_tile_marker_0, pvideo, 2, 9);
-        pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 54, 71);
-        cpct_drawSprite(g_tile_marker_0, pvideo, 2, 9);
-
-    }
-
     if (cpct_isKeyPressed(Key_1)) {
-
-        selectedOption = 1;
+        
+        drawMarker(0);
+        selectedOption = 0;
+        drawMarker(1);
 
         waitKeyUp(Key_1);
 
@@ -1070,9 +1084,11 @@ void checkKeyboardMenu() {
 
     }
 
-    else if (cpct_isKeyPressed(Key_2)) {
+/*    else if (cpct_isKeyPressed(Key_2)) {
 
-        selectedOption = 2;
+        drawMarker(0);
+        selectedOption = 1;
+        drawMarker(1);
 
         keys.up    = Joy0_Up;
         keys.down  = Joy0_Down;
@@ -1087,8 +1103,8 @@ void checkKeyboardMenu() {
         pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 39 - 10 * FONT_W, 144);
         cpct_drawSolidBox(pvideo, cpct_px2byteM0(5, 5), 15 * FONT_W, FONT_H);
 
-    }
-    else if ( cpct_isKeyPressed(Key_3)) {
+    }*/
+    else if ( cpct_isKeyPressed(Key_2)) {
         if (!playing) {
             playing = 1;
             //cpct_setInterruptHandler(myInterruptHandler);
@@ -1102,13 +1118,35 @@ void checkKeyboardMenu() {
     }
 
 
-    else if (cpct_isKeyPressed(Key_4)) {
+    else if (cpct_isKeyPressed(Key_3)) {
 
         waitKeyUp(Key_1);
         cpct_disableFirmware();
         game();
         //cpct_setInterruptHandler( myInterruptHandler );
         drawMenu();
+    }else if ((cpct_isKeyPressed(Key_CursorUp)) || (cpct_isKeyPressed(Joy0_Up))){
+        if (selectedOption>0){
+            drawMarker(0);
+            selectedOption--;
+            drawMarker(1);
+        } else{
+            drawMarker(0);
+            selectedOption = 2;
+            drawMarker(1);
+        }
+
+    }else if ((cpct_isKeyPressed(Key_CursorDown)) || (cpct_isKeyPressed(Joy0_Down))){
+        if (selectedOption<2){
+            drawMarker(0);
+            selectedOption++;
+            drawMarker(1);
+        } else{
+            drawMarker(0);
+            selectedOption = 0;
+            drawMarker(1);
+        } 
+    
     }
 }
 
