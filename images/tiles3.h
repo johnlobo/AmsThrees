@@ -3,6 +3,8 @@
 #define _TILES3_H_
 
 #include <types.h>
+extern u8* const g_tile_tileset[14];
+
 #define G_TILE_TILES3_00_W 10
 #define G_TILE_TILES3_00_H 44
 extern const u8 g_tile_tiles3_00[10 * 44];

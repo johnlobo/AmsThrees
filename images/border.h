@@ -3,6 +3,8 @@
 #define _BORDER_H_
 
 #include <types.h>
+extern u8* const g_tile_tileset[8];
+
 #define G_TILE_BORDER_0_W 2
 #define G_TILE_BORDER_0_H 4
 extern const u8 g_tile_border_0[2 * 4];

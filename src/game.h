@@ -35,6 +35,8 @@
 #include "video/draw.h"
 #include "audio/song.h"
 #include "sprites/table.h"
+#include "sprites/logo-small.h"
+#include "sprites/logo-micro.h"
 
 
 #define LEFT 0

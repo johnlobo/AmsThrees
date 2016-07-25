@@ -17,7 +17,7 @@
 
 // Define constant sizes
 #define TILESIZE     2*4
-#define NUMTILES      17
+#define NUMTILES      18
 #define MAP_WIDTH     27
 #define MAP_HEIGHT    49
 #define SCR_HEIGHT   172
@@ -43,6 +43,7 @@ extern const u8 table_tiles_13[TILESIZE];
 extern const u8 table_tiles_14[TILESIZE];
 extern const u8 table_tiles_15[TILESIZE];
 extern const u8 table_tiles_16[TILESIZE];
+extern const u8 table_tiles_17[TILESIZE];
 
 extern const u8 tmx[MAP_WIDTH * MAP_HEIGHT];
 

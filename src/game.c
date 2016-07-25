@@ -603,7 +603,7 @@ u8 rotateCellsDown() {
                     cells[i][j] = 0;
                     matched = 1;
                 } else if (((cells[i + 1][j] == 1) && (cells[i][j] == 2)) ||
-                        ((cells[i + 1][j] == 2) && (cells[i][j] == 1))) {
+                           ((cells[i + 1][j] == 2) && (cells[i][j] == 1))) {
                     cells[i + 1][j] = 3;
                     cells[i][j] = 0;
                     matched = 1;
@@ -874,7 +874,7 @@ void drawScoreBoard() {
 
     cpct_waitVSYNC();
 
-    cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(5, 5), 0x4000);
+    cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(0, 0), 0x4000);
 
     drawText("AMSTHREES SCOREBOARD", 13, 2, 1);
 
@@ -908,6 +908,7 @@ void drawScoreBoard() {
 //
 void game(void) {
     u8 moved;
+    u8 *pvmem;
 
 
     initGame();
@@ -915,6 +916,9 @@ void game(void) {
     // Clear Screen
     clearScreen();
     //clearWindow(0, 0, 160, 200);
+
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 60, 100);
+    cpct_drawSprite(logo_small, pvmem, 15, 55);
 
     //drawFrame(2, 1, 49, 182);
     drawTable();
@@ -994,17 +998,21 @@ void game(void) {
 void drawMarker(u8 color){
     u8* pvmem;
 
-    if (color){
-         //Draw marker
-        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 17, 60+(20*selectedOption));
-        cpct_drawSprite(g_tile_marker_0, pvmem, 2, 9);
-        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 59, 60+(20*selectedOption));
-        cpct_drawSprite(g_tile_marker_0, pvmem, 2, 9);
+    if (color) {
+        //Draw marker
+        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 17, 60 + (20 * selectedOption));
+        //cpct_drawSprite(g_tile_marker_0, pvmem, 2, 9);
+        cpct_drawSprite(G_redstar, pvmem, 2, 7);
+        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 59, 60 + (20 * selectedOption));
+        //cpct_drawSprite(g_tile_marker_0, pvmem, 2, 9);
+        cpct_drawSprite(G_redstar, pvmem, 2, 7);
     } else {
         // Delete marker
-        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 17, 60+(20*selectedOption));
+        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 17, 60 + (20 * selectedOption));
+        //cpct_drawSprite(g_tile_marker_3, pvmem, 2, 9);
         cpct_drawSprite(g_tile_marker_3, pvmem, 2, 9);
-        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 59, 60+(20*selectedOption));
+        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 59, 60 + (20 * selectedOption));
+        //cpct_drawSprite(g_tile_marker_3, pvmem, 2, 9);
         cpct_drawSprite(g_tile_marker_3, pvmem, 2, 9);
     }
 
@@ -1019,15 +1027,20 @@ void drawMarker(u8 color){
 //    void
 //
 void drawMenu() {
+    u8* pvmem;
 
     cpct_waitVSYNC();
 
     //cpct_memset_f64(CPCT_VMEM_START, cpct_px2byteM0(5, 5), 0x4000);
-    cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(5, 5), 0x4000);
+    cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(0, 0), 0x4000);
+
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 20, 0);
+    cpct_drawSprite(logo_micro, pvmem, 5, 18);
+
 
     drawFrame(15, 43, 63, 129);
 
-    drawText("AMSTHREES", 31, 2, 1);
+    drawText("AMSTHREES", 35, 3, 1);
 
     //drawText("TECLADO", 30, 40, 0);
     drawText("REDEFINE", 30, 60, 0);
@@ -1062,14 +1075,14 @@ void drawMenu() {
 void checkKeyboardMenu() {
 
     u8 *pvideo;
-    
-   
-    //delay(24); 
+
+
+    //delay(24);
 
     cpct_scanKeyboard_f();
 
     if (cpct_isKeyPressed(Key_1)) {
-        
+
         drawMarker(0);
         selectedOption = 0;
         drawMarker(1);
@@ -1088,26 +1101,26 @@ void checkKeyboardMenu() {
 
     }
 
-/*    else if (cpct_isKeyPressed(Key_2)) {
+    /*    else if (cpct_isKeyPressed(Key_2)) {
 
-        drawMarker(0);
-        selectedOption = 1;
-        drawMarker(1);
+            drawMarker(0);
+            selectedOption = 1;
+            drawMarker(1);
 
-        keys.up    = Joy0_Up;
-        keys.down  = Joy0_Down;
-        keys.left  = Joy0_Left;
-        keys.right = Joy0_Right;
+            keys.up    = Joy0_Up;
+            keys.down  = Joy0_Down;
+            keys.left  = Joy0_Left;
+            keys.right = Joy0_Right;
 
-        waitKeyUp(Key_2);
+            waitKeyUp(Key_2);
 
-        keys.pause = redefineKey("PAUSE");
-        keys.abort = redefineKey("ABORT");
+            keys.pause = redefineKey("PAUSE");
+            keys.abort = redefineKey("ABORT");
 
-        pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 39 - 10 * FONT_W, 144);
-        cpct_drawSolidBox(pvideo, cpct_px2byteM0(5, 5), 15 * FONT_W, FONT_H);
+            pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 39 - 10 * FONT_W, 144);
+            cpct_drawSolidBox(pvideo, cpct_px2byteM0(5, 5), 15 * FONT_W, FONT_H);
 
-    }*/
+        }*/
     else if ( cpct_isKeyPressed(Key_2)) {
         if (!playing) {
             playing = 1;
@@ -1129,28 +1142,28 @@ void checkKeyboardMenu() {
         game();
         //cpct_setInterruptHandler( myInterruptHandler );
         drawMenu();
-    }else if ((cpct_isKeyPressed(Key_CursorUp)) || (cpct_isKeyPressed(Joy0_Up))){
-        if (selectedOption>0){
+    } else if ((cpct_isKeyPressed(Key_CursorUp)) || (cpct_isKeyPressed(Joy0_Up))) {
+        if (selectedOption > 0) {
             drawMarker(0);
             selectedOption--;
             drawMarker(1);
-        } else{
+        } else {
             drawMarker(0);
             selectedOption = 2;
             drawMarker(1);
         }
 
-    }else if ((cpct_isKeyPressed(Key_CursorDown)) || (cpct_isKeyPressed(Joy0_Down))){
-        if (selectedOption<2){
+    } else if ((cpct_isKeyPressed(Key_CursorDown)) || (cpct_isKeyPressed(Joy0_Down))) {
+        if (selectedOption < 2) {
             drawMarker(0);
             selectedOption++;
             drawMarker(1);
-        } else{
+        } else {
             drawMarker(0);
             selectedOption = 0;
             drawMarker(1);
-        } 
-    
+        }
+
     }
 }
 

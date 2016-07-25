@@ -20,7 +20,9 @@
 #include "video.h"
 
 
-const u8 G_graphics_palette[16] = { 1, 24, 20, 6, 26, 0, 2, 8, 10, 12, 14, 16, 18, 22, 24, 13};
+//const u8 G_graphics_palette[16] = { 1, 24, 11, 6, 26, 0, 2, 8, 10, 12, 14, 16, 18, 22, 24, 13};
+//const u8 G_graphics_palette[16] = { 0, 13, 1, 2, 4, 14, 11, 20, 9, 12, 18, 3, 6, 15, 24, 26};
+const u8 G_graphics_palette[16] = {0, 1, 15, 20, 6, 2, 8, 10, 12, 14, 16, 18, 3, 24, 11, 26};
 
 
 
@@ -40,7 +42,7 @@ void setUpVideo() {
 
     cpct_fw2hw(G_graphics_palette, 16);
     cpct_setPalette  (G_graphics_palette, 16);
-    cpct_setBorder(G_graphics_palette[5]);
+    cpct_setBorder(G_graphics_palette[0]);
     cpct_setVideoMode(0);
     clearScreen();
 
@@ -56,7 +58,7 @@ void setUpVideo() {
 //
 void clearScreen() {
     // Clear Screen
-    cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(5,5), 0x4000);
+    cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(0,0), 0x4000);
 }
 
 //////////////////////////////////////////////////////////////////
@@ -70,6 +72,6 @@ void clearScreen() {
 void clearWindow(u8 xPos, u8 yPos, u8 width, u8 height) {
 
     u8* pvideo = cpct_getScreenPtr(CPCT_VMEM_START, xPos, yPos);
-    cpct_drawSolidBox(pvideo, cpct_px2byteM0(5,5), width, height);
+    cpct_drawSolidBox(pvideo, cpct_px2byteM0(0,0), width, height);
 
 }

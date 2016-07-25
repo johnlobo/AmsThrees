@@ -3,6 +3,8 @@
 #define _FONTS_BIG_H_
 
 #include <types.h>
+extern u8* const g_tile_tileset[38];
+
 #define G_TILE_FONTS_BIG_00_W 3
 #define G_TILE_FONTS_BIG_00_H 11
 extern const u8 g_tile_fonts_big_00[3 * 11];

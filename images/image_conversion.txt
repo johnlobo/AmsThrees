@@ -1,0 +1,8 @@
+cpct_img2tileset  -m 0 -pf { 0 1 15 20 6 2 8 10 12 14 16 18 3 24 11 26 } -tw 20 -th 44 tiles3.png
+cpct_img2tileset  -m 0 -pf { 0 1 15 20 6 2 8 10 12 14 16 18 3 24 11 26 } -tw 4 -th 4 table-tiles.png
+cpct_img2tileset  -m 0 -pf { 0 1 15 20 6 2 8 10 12 14 16 18 3 24 11 26 } -tw 20 -th 44 tile_mask.png
+cpct_img2tileset  -m 0 -pf { 0 1 15 20 6 2 8 10 12 14 16 18 3 24 11 26 } -tw 6 -th 11 fonts-big.png
+cpct_img2tileset  -m 0 -pf { 0 1 15 20 6 2 8 10 12 14 16 18 3 24 11 26 } -tw 6 -th 11 -nt numbers-big.png
+cpct_img2tileset  -m 0 -pf { 0 1 15 20 6 2 8 10 12 14 16 18 3 24 11 26 } -tw 4 -th 4 border.png
+cpct_img2tileset  -m 0 -pf { 0 1 15 20 6 2 8 10 12 14 16 18 3 24 11 26 } -tw 30 -th 55 logo-small.png
+cpct_img2tileset  -m 0 -pf { 0 1 15 20 6 2 8 10 12 14 16 18 3 24 11 26 } -tw 10 -th 18 logo-micro.png
