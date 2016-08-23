@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "music/song.h"
+#include "sprites/icons.h"
 #include "game.h"
 
 
@@ -1046,27 +1047,14 @@ void game(void) {
 //    void
 //
 
-void drawMarker(u8 color) {
+
+void drawMarker() {
     u8* pvmem;
-
-    if (color) {
-        //Draw marker
-        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 17, 60 + (20 * selectedOption));
-        //cpct_drawSprite(g_tile_marker_0, pvmem, 2, 9);
-        cpct_drawSprite(G_redstar, pvmem, 2, 7);
-        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 59, 60 + (20 * selectedOption));
-        //cpct_drawSprite(g_tile_marker_0, pvmem, 2, 9);
-        cpct_drawSprite(G_redstar, pvmem, 2, 7);
-    } else {
-        // Delete marker
-        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 17, 60 + (20 * selectedOption));
-        //cpct_drawSprite(g_tile_marker_3, pvmem, 2, 9);
-        cpct_drawSprite(g_tile_marker_3, pvmem, 2, 9);
-        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 59, 60 + (20 * selectedOption));
-        //cpct_drawSprite(g_tile_marker_3, pvmem, 2, 9);
-        cpct_drawSprite(g_tile_marker_3, pvmem, 2, 9);
-    }
-
+    cpct_setBlendMode(CPCT_BLEND_XOR);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 17, 60 + (20 * selectedOption));
+    cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 58, 60 + (20 * selectedOption));
+    cpct_drawSpriteBlended(pvmem, IC_ICONS_1_H, IC_ICONS_1_W, ic_icons_1);
 }
 
 //////////////////////////////////////////////////////////////////
@@ -1110,7 +1098,7 @@ void drawMenu() {
     drawText("JOHN LOBO", 25, 170, 1);
     drawText("@ GLASNOST CORP 2016", 11, 185, 1);
 
-    drawMarker(1);
+    drawMarker();
 
 }
 
@@ -1128,15 +1116,15 @@ void checkKeyboardMenu() {
     u8 *pvideo;
 
 
-    delay(25);
+    delay(20);
 
     //cpct_scanKeyboard_f();
 
-    if (cpct_isKeyPressed(Key_1)) {
+    if (( cpct_isKeyPressed(Key_1)) || (((cpct_isKeyPressed(keys.fire) || (cpct_isKeyPressed(Joy0_Fire1)))  && (selectedOption == 0)))) {
 
-        drawMarker(0);
+        drawMarker();
         selectedOption = 0;
-        drawMarker(1);
+        drawMarker();
 
         waitKeyUp(Key_1);
 
@@ -1144,6 +1132,7 @@ void checkKeyboardMenu() {
         keys.down  = redefineKey("DOWN");
         keys.left  = redefineKey("LEFT");
         keys.right = redefineKey("RIGHT");
+        keys.fire = redefineKey("FIRE");
         keys.pause = redefineKey("PAUSE");
         keys.abort = redefineKey("ABORT");
         keys.music = redefineKey("MUSIC");
@@ -1173,7 +1162,11 @@ void checkKeyboardMenu() {
             cpct_drawSolidBox(pvideo, cpct_px2byteM0(5, 5), 15 * FONT_W, FONT_H);
 
         }*/
-    else if ( cpct_isKeyPressed(Key_2)) {
+    else if (( cpct_isKeyPressed(Key_2)) || (((cpct_isKeyPressed(keys.fire) || (cpct_isKeyPressed(Joy0_Fire1)))  && (selectedOption == 1)))) {
+        drawMarker();
+        selectedOption = 1;
+        drawMarker();
+
         if (!playing) {
             playing = 1;
             //cpct_setInterruptHandler(interruptHandler);
@@ -1187,7 +1180,7 @@ void checkKeyboardMenu() {
     }
 
 
-    else if (cpct_isKeyPressed(Key_3)) {
+    else if (( cpct_isKeyPressed(Key_3)) || (((cpct_isKeyPressed(keys.fire) || (cpct_isKeyPressed(Joy0_Fire1))) && (selectedOption == 2)))) {
 
         waitKeyUp(Key_1);
         //cpct_disableFirmware();
@@ -1195,28 +1188,37 @@ void checkKeyboardMenu() {
         game();
         //cpct_setInterruptHandler( myInterruptHandler );
         drawMenu();
-    } else if ((cpct_isKeyPressed(Key_CursorUp)) || (cpct_isKeyPressed(Joy0_Up))) {
+    } else if ((cpct_isKeyPressed(keys.up)) || (cpct_isKeyPressed(Joy0_Up))) {
         if (selectedOption > 0) {
-            drawMarker(0);
+            drawMarker();
             selectedOption--;
-            drawMarker(1);
+            drawMarker();
         } else {
-            drawMarker(0);
+            drawMarker();
             selectedOption = 2;
-            drawMarker(1);
+            drawMarker();
         }
 
-    } else if ((cpct_isKeyPressed(Key_CursorDown)) || (cpct_isKeyPressed(Joy0_Down))) {
+    } else if ((cpct_isKeyPressed(keys.down)) || (cpct_isKeyPressed(Joy0_Down))) {
         if (selectedOption < 2) {
-            drawMarker(0);
+            drawMarker();
             selectedOption++;
-            drawMarker(1);
+            drawMarker();
         } else {
-            drawMarker(0);
+            drawMarker();
             selectedOption = 0;
-            drawMarker(1);
+            drawMarker();
         }
 
+    } else if ( cpct_isKeyPressed(keys.music)) {
+        if (!playing) {
+            playing = 1;
+            //cpct_setInterruptHandler(interruptHandler);
+        } else {
+            playing = 0;
+            //cpct_disableFirmware();
+            cpct_akp_stop ();
+        }
     }
 }
 
@@ -1237,6 +1239,7 @@ void threes() {
 
 
         drawMenu();
+        //drawMarker2();
 
         lapso = 0;
 
