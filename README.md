@@ -1,2 +1,2 @@
-# AmsThrees
-Amstrad version of the famous Threes Game
+# Heroes Clash
+Amstrad version of the famous Dungeons and dragons game

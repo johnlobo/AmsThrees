@@ -43,6 +43,7 @@ typedef struct Keys{
     cpct_keyID fire;
     cpct_keyID pause;
     cpct_keyID abort;
+    cpct_keyID music;
     
 } Keys;
 

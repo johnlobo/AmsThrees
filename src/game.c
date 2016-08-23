@@ -18,6 +18,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "music/song.h"
 #include "game.h"
 
 
@@ -49,6 +50,33 @@ u8 animateDirection;
 
 
 //////////////////////////////////////////////////////////////////
+// playmusic
+//
+//
+//
+// Returns:
+//
+//
+
+void playmusic() {
+    __asm
+    exx
+    .db #0x08
+    push af
+    push bc
+    push de
+    push hl
+    call _cpct_akp_musicPlay
+    pop hl
+    pop de
+    pop bc
+    pop af
+    .db #0x08
+    exx
+    __endasm;
+}
+
+//////////////////////////////////////////////////////////////////
 // myInterruptHandler
 //
 //
@@ -56,10 +84,22 @@ u8 animateDirection;
 // Returns:
 //
 //
-void myInterruptHandler() {
-    if (playing) {
-        // Call music player 50 times per second, synchronized with VSYNC to have great precision
-        cpct_akp_musicPlay();
+
+void interruptHandler() {
+    static u8 i;
+
+    i++;
+    switch (i) {
+    case 5:
+        cpct_scanKeyboard_if();
+        break;
+    case 6:
+        // Play music
+        if (playing)
+            playmusic();
+        break;
+    case 7:
+        i = 0;
     }
 }
 
@@ -341,9 +381,13 @@ void initCells(u8 touched) {
 void initialization() {
     u32 seed;    // Value to initialize the random seed
 
-    //cpct_akp_musicInit(G_Smoke);
+    // Music on
+    playing = 1;
+    cpct_akp_musicInit(hc_smoke);
     //cpct_akp_musicInit(G_Menu);
-    //cpct_akp_musicPlay();
+    cpct_setInterruptHandler(interruptHandler);
+    cpct_akp_musicPlay();
+
 
     drawText("AMSTHREES IS READY", 31, 76, 1);
     drawText("PRESS ANY KEY", 20, 90, 1);
@@ -379,9 +423,10 @@ void initialization() {
     keys.down  = Key_CursorDown;
     keys.left  = Key_CursorLeft;
     keys.right = Key_CursorRight;
-    //keys.fire  = Key_Space;
+    keys.fire  = Key_Space;
     keys.pause = Key_Del;
     keys.abort = Key_Esc;
+    keys.music = Key_M;
 
     selectedOption = 0;
 
@@ -389,10 +434,6 @@ void initialization() {
     // VERY IMPORTANT: Before using EasyTileMap functions (etm), the internal
     // pointer to the tileset must be set.
     cpct_etm_setTileset2x4(tileset);
-
-    // Music off
-    playing = 0;
-
 
 }
 
@@ -931,7 +972,7 @@ void game(void) {
     // Loop forever
     while (1) {
         delay(24);
-        cpct_scanKeyboard_f();
+        //cpct_scanKeyboard_f();
 
         rotatedCells = 0;
 
@@ -954,6 +995,16 @@ void game(void) {
             if (rotateCellsUp() > 0) {
                 addRandomCellTurn(UP);
                 moved = 1;
+            }
+
+        } else if ( cpct_isKeyPressed(keys.music)) {
+            if (!playing) {
+                playing = 1;
+                //cpct_setInterruptHandler(interruptHandler);
+            } else {
+                playing = 0;
+                //cpct_disableFirmware();
+                cpct_akp_stop ();
             }
         } else if (cpct_isKeyPressed(keys.abort))
             break;
@@ -995,7 +1046,7 @@ void game(void) {
 //    void
 //
 
-void drawMarker(u8 color){
+void drawMarker(u8 color) {
     u8* pvmem;
 
     if (color) {
@@ -1077,9 +1128,9 @@ void checkKeyboardMenu() {
     u8 *pvideo;
 
 
-    //delay(24);
+    delay(25);
 
-    cpct_scanKeyboard_f();
+    //cpct_scanKeyboard_f();
 
     if (cpct_isKeyPressed(Key_1)) {
 
@@ -1095,6 +1146,7 @@ void checkKeyboardMenu() {
         keys.right = redefineKey("RIGHT");
         keys.pause = redefineKey("PAUSE");
         keys.abort = redefineKey("ABORT");
+        keys.music = redefineKey("MUSIC");
 
         pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 39 - 10 * FONT_W, 144);
         cpct_drawSolidBox(pvideo, cpct_px2byteM0(5, 5), 15 * FONT_W, FONT_H);
@@ -1124,10 +1176,10 @@ void checkKeyboardMenu() {
     else if ( cpct_isKeyPressed(Key_2)) {
         if (!playing) {
             playing = 1;
-            //cpct_setInterruptHandler(myInterruptHandler);
+            //cpct_setInterruptHandler(interruptHandler);
         } else {
             playing = 0;
-            cpct_disableFirmware();
+            //cpct_disableFirmware();
             cpct_akp_stop ();
         }
 
@@ -1138,7 +1190,8 @@ void checkKeyboardMenu() {
     else if (cpct_isKeyPressed(Key_3)) {
 
         waitKeyUp(Key_1);
-        cpct_disableFirmware();
+        //cpct_disableFirmware();
+        //cpct_akp_stop ();
         game();
         //cpct_setInterruptHandler( myInterruptHandler );
         drawMenu();
