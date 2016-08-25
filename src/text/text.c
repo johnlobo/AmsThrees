@@ -16,7 +16,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //------------------------------------------------------------------------------
 
-
+#include "../game.h"
 #include "text.h"
 
 u8 strLength(u8 str[]) {
@@ -59,6 +59,7 @@ void drawNumber(u16 aNumber, u8 length, u8 xPos, u8 yPos) {
 
         pvideo = cpct_getScreenPtr(CPCT_VMEM_START, (zeros + x) * FONT_W + xPos, yPos);
         cpct_drawSprite(G_numbers_big[number - 48], pvideo, FONT_W, FONT_H);
+        //cpct_drawSpriteMaskedAlignedTable(G_numbers_big[number - 48], pvideo, FONT_W, FONT_H, am_tablatrans);
 
         number = str[++x];
     }
@@ -87,12 +88,14 @@ void drawText(u8 text[], u8 xPos, u8 yPos, u8 centered) {
         //NUMEROS
         if (character >= 48 && character <= 57) {
 
-            cpct_drawSprite(G_numbers_big[character - 48], pvideo, FONT_W, FONT_H);
+            //cpct_drawSprite(G_numbers_big[character - 48], pvideo, FONT_W, FONT_H);
+            cpct_drawSpriteMaskedAlignedTable(G_numbers_big[character - 48], pvideo, FONT_W, FONT_H, am_tablatrans);
         }
 
         else if (character != 32) { //32 = SPACE
 
-            cpct_drawSprite(g_font_big[character - 64], pvideo, FONT_W, FONT_H);
+            //cpct_drawSprite(g_font_big[character - 64], pvideo, FONT_W, FONT_H);
+            cpct_drawSpriteMaskedAlignedTable(g_font_big[character - 64], pvideo, FONT_W, FONT_H, am_tablatrans);
         }
 
         character = text[++x];

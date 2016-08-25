@@ -70,3 +70,4 @@ PAL={ 0 1 15 20 6 2 8 10 12 14 16 18 3 24 11 26 }
  #$(eval $(call IMG2SPRITES,images/tiles2.png,0,pre,24,12,$(PALETTE),mask,src/,hwpalette))
  $(eval $(call IMG2SPRITES,images/icons.png,0,ic,6,11,$(PAL),,src/sprites,))
  $(eval $(call IMG2SPRITES,images/border.png,0,g_tile,4,4,$(PAL),,src/sprites,))
+ $(eval $(call IMG2SPRITES,images/marker.png,0,am_,10,15,$(PAL),,src/sprites,))

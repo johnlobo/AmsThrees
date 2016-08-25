@@ -74,6 +74,10 @@ typedef struct {
 
 extern const u8 G_graphics_palette[16];
 
+// Declare g_transparencyMaskTable, which is defined in t.c, and used
+// in a.c and in b.c also.
+cpctm_declareMaskTable(am_tablatrans);
+
 // Declare mask table that will be used to draw transparent sprites using
 // palette index 0 as transparent instead of colour 0. This statement only
 // declares the existence of the table, but does not define it. This lets 

@@ -82,12 +82,12 @@ cpct_keyID redefineKey(u8 text[]) {
 
     cpct_keyID key;
 
-    u8* pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 39 - 10 * FONT_W, 144);
-    cpct_drawSolidBox(pvideo, cpct_px2byteM0(5,5), 15 * FONT_W, FONT_H);
+    u8* pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 8, 144);
+    cpct_drawSolidBox(pvideo, cpct_px2byteM0(0,0), 64, FONT_H);
 
     x = strlen(text);
 
-    drawText(text, 39 - ((x / 2) * FONT_W), 144,1);
+    drawText(text, 8, 144,1);
 
     key = esperaUnaTecla();
     waitKeyUp(key);

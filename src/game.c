@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include "music/song.h"
 #include "sprites/icons.h"
+#include "sprites/marker.h"
 #include "game.h"
 
 
@@ -49,6 +50,8 @@ u8 rotatedCells;
 u8 touchedCells[4][4];
 u8 animateDirection;
 
+// Máscara de transparencia
+cpctm_createTransparentMaskTable(am_tablatrans, 0x100, M0, 0);
 
 //////////////////////////////////////////////////////////////////
 // playmusic
@@ -777,10 +780,13 @@ void printTouched() {
 //
 void drawScore() {
     u8 i, j, z;
+    u8 x, y;
     u32 partialScore;
 
     for (i = 0; i < 4; i++) {
+        y = 4 + (i * 48);
         for (j = 0; j < 4; j++) {
+            x = 6 + (j * 12);
             // value cache to speed up a bit
             z = cells[i][j];
             if (z >= 3) {
@@ -790,7 +796,8 @@ void drawScore() {
                     partialScore = scores[z];
                 }
                 score += partialScore;
-                drawNumber(partialScore, 4, 3 + (11 * j), 6 + (44 * i));
+                //drawNumber(partialScore, 4, 3 + (11 * j), 6 + (44 * i));
+                drawNumber(partialScore, 4, x-3, y);
             }
         }
     }
@@ -958,6 +965,8 @@ void game(void) {
     // Clear Screen
     clearScreen();
     //clearWindow(0, 0, 160, 200);
+
+    //cpct_setInterruptHandler( myInterruptHandler );
 
     pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 60, 100);
     cpct_drawSprite(logo_small, pvmem, 15, 55);
@@ -1137,8 +1146,11 @@ void checkKeyboardMenu() {
         keys.abort = redefineKey("ABORT");
         keys.music = redefineKey("MUSIC");
 
-        pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 39 - 10 * FONT_W, 144);
-        cpct_drawSolidBox(pvideo, cpct_px2byteM0(5, 5), 15 * FONT_W, FONT_H);
+        //pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 39 - 10 * FONT_W, 144);
+        //cpct_drawSolidBox(pvideo, #0, 15 * FONT_W, FONT_H);
+
+        pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 8, 144);
+        cpct_drawSolidBox(pvideo, cpct_px2byteM0(0, 0), 64, FONT_H);
 
     }
 
@@ -1183,8 +1195,8 @@ void checkKeyboardMenu() {
     else if (( cpct_isKeyPressed(Key_3)) || (((cpct_isKeyPressed(keys.fire) || (cpct_isKeyPressed(Joy0_Fire1))) && (selectedOption == 2)))) {
 
         waitKeyUp(Key_1);
-        //cpct_disableFirmware();
-        //cpct_akp_stop ();
+        playing = 0;
+        cpct_akp_stop ();
         game();
         //cpct_setInterruptHandler( myInterruptHandler );
         drawMenu();
