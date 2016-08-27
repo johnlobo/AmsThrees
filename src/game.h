@@ -1,7 +1,4 @@
 //-----------------------------LICENSE NOTICE------------------------------------
-//  This file is part of Space Moves
-//  Copyright (C) 2015 Toni Ramírez (@AmstradGamer)
-//
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
@@ -20,23 +17,31 @@
 #define _GAME_H_
 
 #include <cpctelera.h>
-#include "defines.h"
-#include "types/types.h"
-#include "sprites/font.h"
-#include "sprites/numbers.h"
 #include "sprites/numbers-big.h"
 #include "sprites/tilemap.h"
 #include "sprites/tiles.h"
 #include "sprites/symbols.h"
+#include "sprites/table.h"
+#include "sprites/logo-small.h"
+#include "sprites/logo-micro.h"
+#include "sprites/fonts-big.h"
 #include "utils/itoa.h"
 #include "utils/keyboard.h"
 #include "text/text.h"
 #include "video/video.h"
-#include "video/draw.h"
-#include "audio/song.h"
-#include "sprites/table.h"
-#include "sprites/logo-small.h"
-#include "sprites/logo-micro.h"
+
+
+//Sprites Size
+#define FONT_H 11
+#define FONT_W 3
+
+
+//FALLING TEXT
+#define FALLING_TEXT_SPEED  3
+#define FALLING_TEXT_MAX_BOUNCES 6
+#define FALLING_TEXT_MAX_LENGHT  20
+
+#define SWITCH_SCREENS 7000
 
 
 #define LEFT 0
@@ -72,18 +77,30 @@ typedef struct {
 	u8 name[20];
 } TScoreBoard;
 
+typedef struct Keys{
+    
+    cpct_keyID up;
+    cpct_keyID down;
+    cpct_keyID left;
+    cpct_keyID right;
+    cpct_keyID fire;
+    cpct_keyID pause;
+    cpct_keyID abort;
+    cpct_keyID music;
+    cpct_keyID debug;
+    
+} Keys;
+
+typedef struct Coords{
+    u8 xPos;
+    u8 yPos;
+} Coords;
+
 extern const u8 G_graphics_palette[16];
 
 // Declare g_transparencyMaskTable, which is defined in t.c, and used
 // in a.c and in b.c also.
 cpctm_declareMaskTable(am_tablatrans);
-
-// Declare mask table that will be used to draw transparent sprites using
-// palette index 0 as transparent instead of colour 0. This statement only
-// declares the existence of the table, but does not define it. This lets 
-// all files including this header use the table. Definition is in main.c
-//
-//cpctm_declareMaskTable(g_masktable);
 
 void init();
 void initialization();

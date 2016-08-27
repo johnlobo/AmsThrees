@@ -1,7 +1,4 @@
 //-----------------------------LICENSE NOTICE------------------------------------
-//  This file is part of Space Moves
-//  Copyright (C) 2015 Toni Ramírez (@AmstradGamer)
-//
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
@@ -75,3 +72,69 @@ void clearWindow(u8 xPos, u8 yPos, u8 width, u8 height) {
     cpct_drawSolidBox(pvideo, cpct_px2byteM0(0,0), width, height);
 
 }
+
+//////////////////////////////////////////////////////////////////
+// clearGameScreen
+//
+//
+//
+// Returns:
+//    void
+//
+void clearGameScreen() {
+    u8* pvideo = cpct_getScreenPtr(CPCT_VMEM_START, MIN_X, MIN_Y);
+
+    cpct_drawSolidBox(pvideo, 0, MAX_X - MIN_X + 1, MAX_Y - MIN_Y);
+}
+
+//////////////////////////////////////////////////////////////////
+// drawFrame
+//
+//
+//
+// Returns:
+//    void
+//
+void drawFrame(u8 x1, u8 y1, u8 x2, u8 y2) {
+    u8 *pvideo;
+    u8 x, frame_w, frame_h;
+
+    frame_w = x2 - x1;
+    frame_h = y2 - y1;
+
+    clearWindow(x1, y1, x2 - x1, y2 - y1);
+
+    //UPLEFTCORNER
+    pvideo = cpct_getScreenPtr(CPCT_VMEM_START, x1, y1);
+    cpct_drawSprite(g_tile_border_0,  pvideo, 2, 4);
+
+    //UPPER BAR
+    //for (x = 1; x < (frame_w * 2) - 1; x++) {
+    for (x = x1 + 2; x < (x2 - 2); x = x + 2) {
+        cpct_drawSprite(g_tile_border_4,  pvideo + (x - x1), 2, 4);
+    }
+
+    //UPRIGHTCORNER
+    cpct_drawSprite(g_tile_border_1,  pvideo + (frame_w - 2), 2, 4);
+
+    //LEFT & RIGHT BARS
+    for (x = y1 + 4; x < (y2 - 4); x = x + 4) {
+        pvideo = cpct_getScreenPtr(CPCT_VMEM_START, x1, x);
+        cpct_drawSprite(g_tile_border_5,  pvideo, 2, 4);
+        cpct_drawSprite(g_tile_border_6,  pvideo + (frame_w - 2), 2, 4);
+    }
+
+    pvideo = cpct_getScreenPtr(CPCT_VMEM_START, x1, y2 - 4);
+
+    //DOWNLEFTCORNER
+    cpct_drawSprite(g_tile_border_2,  pvideo, 2, 4);
+
+    //LOWER BAR
+    for (x = x1 + 2; x < (x2 - 2); x = x + 2) {
+        cpct_drawSprite(g_tile_border_7,  pvideo + (x - x1), 2, 4);
+    }
+
+    //DOWNRIGHTCORNER
+    cpct_drawSprite(g_tile_border_3,  pvideo + (frame_w - 2), 2, 4);
+}
+

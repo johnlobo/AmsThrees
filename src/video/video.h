@@ -1,7 +1,4 @@
 //-----------------------------LICENSE NOTICE------------------------------------
-//  This file is part of Space Moves
-//  Copyright (C) 2015 Toni Ramírez (@AmstradGamer)
-//
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
@@ -18,16 +15,23 @@
 
 
 #include <cpctelera.h>
-#include "../defines.h"
-#include "../sprites/sprites.h"
+#include "../sprites/border.h"
+#include "../game.h"
 
 #ifndef _VIDEO_H_
 #define _VIDEO_H_
+
+//Screen Sizes
+#define MIN_X  9
+#define MIN_Y  5
+#define MAX_X  MIN_X + (FRAME_WIDTH - 2) * FONT_W + 1
+#define MAX_Y  MIN_Y + (FRAME_HEIGHT/2 - 1) * FONT_H - 1
 
 extern const u8 G_graphics_palette[16];
 
 void clearWindow(u8 xPos, u8 yPos, u8 width, u8 height);
 void setUpVideo();
 void clearScreen();
+void drawFrame(u8 x1, u8 y1, u8 x2, u8 y2);
 
 #endif

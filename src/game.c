@@ -1,7 +1,4 @@
 //-----------------------------LICENSE NOTICE------------------------------------
-//  This file is part of Space Moves
-//  Copyright (C) 2015 Toni Ramírez (@AmstradGamer)
-//
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
@@ -431,6 +428,7 @@ void initialization() {
     keys.pause = Key_Del;
     keys.abort = Key_Esc;
     keys.music = Key_M;
+    keys.debug = Key_D;
 
     selectedOption = 0;
 
@@ -750,12 +748,14 @@ void printTouched() {
         for (j = 0; j < 4; j++) {
             x = 6 + (j * 12);
             if (touchedCells[i][j] == 1) {
+                /* pvmem = cpct_getScreenPtr(CPCT_VMEM_START, x, y);
+                 //cpct_drawSprite(tiles[cells[i][j]], pvmem, TILE_W, TILE_H);
+                 cpct_setBlendMode(CPCT_BLEND_AND);
+                 cpct_drawSpriteBlended(pvmem, TILE_H, TILE_W, tile_mask);
+                 cpct_setBlendMode(CPCT_BLEND_OR);
+                 cpct_drawSpriteBlended(pvmem, TILE_H, TILE_W, tiles[cells[i][j]]);*/
                 pvmem = cpct_getScreenPtr(CPCT_VMEM_START, x, y);
-                //cpct_drawSprite(tiles[cells[i][j]], pvmem, TILE_W, TILE_H);
-                cpct_setBlendMode(CPCT_BLEND_AND);
-                cpct_drawSpriteBlended(pvmem, TILE_H, TILE_W, tile_mask);
-                cpct_setBlendMode(CPCT_BLEND_OR);
-                cpct_drawSpriteBlended(pvmem, TILE_H, TILE_W, tiles[cells[i][j]]);
+                cpct_drawSpriteMaskedAlignedTable(tiles[cells[i][j]], pvmem, TILE_W, TILE_H, am_tablatrans);
 
             } else if (touchedCells[i][j] == 2) {
                 cpct_etm_drawTileBox2x4 (2 + (j * 6), 1 + (i * 12), (TILE_W / 2), (TILE_H / 4), MAP_WIDTH, pStartTable, tmx);
@@ -771,7 +771,7 @@ void printTouched() {
 }
 
 //////////////////////////////////////////////////////////////////
-// drawCells
+// drawScore
 //
 //
 //
@@ -797,23 +797,25 @@ void drawScore() {
                 }
                 score += partialScore;
                 //drawNumber(partialScore, 4, 3 + (11 * j), 6 + (44 * i));
-                drawNumber(partialScore, 4, x-3, y);
+                drawNumber(partialScore, 4, x - 3, y);
             }
         }
     }
 }
 
 //////////////////////////////////////////////////////////////////
-// game
+// getName()
 //
 //
 //
 // Returns:
 //    void
 //
+
 void getName() {
     u8* pvmem;
     u8 moved, pos, chr;
+    u8 markerX, markerY;
 
     drawFrame(9, 60, 73, 150);
 
@@ -821,43 +823,51 @@ void getName() {
     drawText("ENTER YOUR NAME", 18, 85, 1);
     pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 11, 100);
     cpct_drawSprite(g_tile_symbols_1, pvmem, 3, 11);
-    drawText(" TO CHANGE LETTER", 19, 100, 0);
-    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 16, 100);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 14, 100);
     cpct_drawSprite(g_tile_symbols_2, pvmem, 3, 11);
-    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 16, 100);
-    cpct_drawSprite(g_font_big[38], pvmem, 3, 11);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 17, 100);
+    cpct_drawSprite(g_tile_symbols_3, pvmem, 3, 11);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 20, 100);
+    cpct_drawSprite(g_tile_symbols_4, pvmem, 3, 11);
+    drawText("CHANGE LETTER", 24, 100, 0);
     drawText(" [ TO END", 20, 115, 1);
     drawFrame(12, 130, 70, 160);
     strcpy(newNameHighScore, "A");
-    drawText(newNameHighScore, 0, 140, 1);
+    drawText(newNameHighScore, 16, 140, 0);
+
+    markerX = 15;
+    markerY = 138;
+    cpct_setBlendMode(CPCT_BLEND_XOR);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, markerX, markerY);
+    cpct_drawSpriteBlended(pvmem, AM_MARKER_H, AM_MARKER_W, am_marker);
     pos = 0;
     chr = 65;
     moved = 0;
     while (1) {
         delay(24);
-        cpct_scanKeyboard_f();
+        //cpct_scanKeyboard_f();
 
-        if (cpct_isKeyPressed(keys.right)) {
+        if ((cpct_isKeyPressed(Joy0_Down)) || (cpct_isKeyPressed(keys.down))) {
             chr++;
             moved = 1;
-        } else if (cpct_isKeyPressed(keys.left)) {
+        } else if ((cpct_isKeyPressed(Joy0_Up)) || (cpct_isKeyPressed(keys.up))) {
             chr--;
             moved = 1;
-        } else if (cpct_isKeyPressed(keys.down)) {
+        } else if ((pos < 14) && ((cpct_isKeyPressed(Joy0_Right)) || (cpct_isKeyPressed(Joy0_Fire1)) || (cpct_isKeyPressed(keys.right)))) {
             if (chr == 91) {
-                newNameHighScore[pos] = '0';
+                newNameHighScore[pos] = '\0';
                 break;
             }
             else {
                 pos++;
                 newNameHighScore[pos] = 65;
-                newNameHighScore[pos + 1] = '0';
+                newNameHighScore[pos + 1] = '\0';
                 chr = 65;
                 moved = 1;
             }
 
-        } else if (cpct_isKeyPressed(keys.up)) {
-            newNameHighScore[pos] = '0';
+        } else if ((pos > 0) && ((cpct_isKeyPressed(Joy0_Left)) || (cpct_isKeyPressed(keys.left)))) {
+            newNameHighScore[pos] = '\0';
             pos--;
             chr = newNameHighScore[pos];
             moved = 1;
@@ -871,10 +881,14 @@ void getName() {
             else if (chr < 65)
                 chr = 91;
             newNameHighScore[pos] = chr;
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 13, 140);
-            cpct_drawSolidBox(pvmem, cpct_px2byteM0(5, 5), 60, 11);
-            drawText(newNameHighScore, 20, 140, 1);
-
+            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, markerX, markerY);
+            cpct_drawSpriteBlended(pvmem, AM_MARKER_H, AM_MARKER_W, am_marker);
+            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 16, 140);
+            cpct_drawSolidBox(pvmem, #0, 45, 11);
+            drawText(newNameHighScore, 16, 140, 0);
+            markerX = 15 + (pos * 3);
+            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, markerX, markerY);
+            cpct_drawSpriteBlended(pvmem, AM_MARKER_H, AM_MARKER_W, am_marker);
         }
     }
 
@@ -976,32 +990,30 @@ void game(void) {
     drawText("NEXT", 62, 2, 0);
     printCells();
 
-    //wait4UserKeypress();
 
     moved = 0;
     // Loop forever
     while (1) {
         delay(24);
-        //cpct_scanKeyboard_f();
 
         rotatedCells = 0;
 
-        if (cpct_isKeyPressed(keys.right)) {
+        if ((cpct_isKeyPressed(Joy0_Right)) || (cpct_isKeyPressed(keys.right))) {
             if (rotateCellsRight() > 0) {
                 addRandomCellTurn(RIGHT);
                 moved = 1;
             }
-        } else if (cpct_isKeyPressed(keys.left)) {
+        } else if ((cpct_isKeyPressed(Joy0_Left)) || (cpct_isKeyPressed(keys.left))) {
             if (rotateCellsLeft() > 0) {
                 addRandomCellTurn(LEFT);
                 moved = 1;
             }
-        } else if (cpct_isKeyPressed(keys.down)) {
+        } else if ((cpct_isKeyPressed(Joy0_Down)) || (cpct_isKeyPressed(keys.down))) {
             if (rotateCellsDown() > 0) {
                 addRandomCellTurn(DOWN);
                 moved = 1;
             }
-        } else if (cpct_isKeyPressed(keys.up)) {
+        } else if ((cpct_isKeyPressed(Joy0_Up)) || (cpct_isKeyPressed(keys.up))) {
             if (rotateCellsUp() > 0) {
                 addRandomCellTurn(UP);
                 moved = 1;
@@ -1023,8 +1035,6 @@ void game(void) {
             //animation();
             //Empty the rotated cells buffer after ending the animation
             cpct_waitVSYNC();
-            //drawTable();
-            //printCells();
             printTouched();
             initCells(1);
 
@@ -1045,6 +1055,20 @@ void game(void) {
         }
 
     }
+}
+
+void debug() {
+    clearScreen();
+    drawText("DEBUG MODE", 0, 0, 1);
+    while (1) {
+        delay(24);
+        if (cpct_isKeyPressed(keys.abort)) {
+            break;
+        } else if (cpct_isKeyPressed(Key_G)) {
+            getName();
+        }
+    }
+
 }
 
 //////////////////////////////////////////////////////////////////
@@ -1144,36 +1168,12 @@ void checkKeyboardMenu() {
         keys.fire = redefineKey("FIRE");
         keys.pause = redefineKey("PAUSE");
         keys.abort = redefineKey("ABORT");
-        keys.music = redefineKey("MUSIC");
-
-        //pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 39 - 10 * FONT_W, 144);
-        //cpct_drawSolidBox(pvideo, #0, 15 * FONT_W, FONT_H);
+        //keys.music = redefineKey("MUSIC");
 
         pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 8, 144);
         cpct_drawSolidBox(pvideo, cpct_px2byteM0(0, 0), 64, FONT_H);
 
     }
-
-    /*    else if (cpct_isKeyPressed(Key_2)) {
-
-            drawMarker(0);
-            selectedOption = 1;
-            drawMarker(1);
-
-            keys.up    = Joy0_Up;
-            keys.down  = Joy0_Down;
-            keys.left  = Joy0_Left;
-            keys.right = Joy0_Right;
-
-            waitKeyUp(Key_2);
-
-            keys.pause = redefineKey("PAUSE");
-            keys.abort = redefineKey("ABORT");
-
-            pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 39 - 10 * FONT_W, 144);
-            cpct_drawSolidBox(pvideo, cpct_px2byteM0(5, 5), 15 * FONT_W, FONT_H);
-
-        }*/
     else if (( cpct_isKeyPressed(Key_2)) || (((cpct_isKeyPressed(keys.fire) || (cpct_isKeyPressed(Joy0_Fire1)))  && (selectedOption == 1)))) {
         drawMarker();
         selectedOption = 1;
@@ -1231,6 +1231,9 @@ void checkKeyboardMenu() {
             //cpct_disableFirmware();
             cpct_akp_stop ();
         }
+    } else if (cpct_isKeyPressed(keys.debug)) {
+        debug();
+        drawMenu();
     }
 }
 

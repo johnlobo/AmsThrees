@@ -1,7 +1,4 @@
 //-----------------------------LICENSE NOTICE------------------------------------
-//  This file is part of Space Moves
-//  Copyright (C) 2015 Toni Ramírez (@AmstradGamer)
-//
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
@@ -18,6 +15,17 @@
 
 #include "../game.h"
 #include "text.h"
+
+u8* const font[39] = { g_fonts_big_00, g_fonts_big_01, g_fonts_big_02, g_fonts_big_03, g_fonts_big_04,
+                       g_fonts_big_05, g_fonts_big_06, g_fonts_big_07, g_fonts_big_08, g_fonts_big_09,
+                       g_fonts_big_10, g_fonts_big_11, g_fonts_big_12, g_fonts_big_13, g_fonts_big_14,
+                       g_fonts_big_15, g_fonts_big_16, g_fonts_big_17, g_fonts_big_18, g_fonts_big_19,
+                       g_fonts_big_20, g_fonts_big_21, g_fonts_big_22, g_fonts_big_23, g_fonts_big_24,
+                       g_fonts_big_25, g_fonts_big_26, g_fonts_big_27, g_fonts_big_28, g_fonts_big_29,
+                       g_fonts_big_30, g_fonts_big_31, g_fonts_big_32, g_fonts_big_33, g_fonts_big_34, 
+                       g_fonts_big_35, g_fonts_big_36, g_fonts_big_37, g_fonts_big_38 };
+u8* const numbers[10] = { g_numbers_big_00, g_numbers_big_01, g_numbers_big_02, g_numbers_big_03, g_numbers_big_04,
+                       g_numbers_big_05, g_numbers_big_06, g_numbers_big_07, g_numbers_big_08, g_numbers_big_09};
 
 u8 strLength(u8 str[]) {
     u8 result;
@@ -58,7 +66,7 @@ void drawNumber(u16 aNumber, u8 length, u8 xPos, u8 yPos) {
     while (number != '\0') {
 
         pvideo = cpct_getScreenPtr(CPCT_VMEM_START, (zeros + x) * FONT_W + xPos, yPos);
-        cpct_drawSprite(G_numbers_big[number - 48], pvideo, FONT_W, FONT_H);
+        cpct_drawSprite(numbers[number - 48], pvideo, FONT_W, FONT_H);
         //cpct_drawSpriteMaskedAlignedTable(G_numbers_big[number - 48], pvideo, FONT_W, FONT_H, am_tablatrans);
 
         number = str[++x];
@@ -89,13 +97,13 @@ void drawText(u8 text[], u8 xPos, u8 yPos, u8 centered) {
         if (character >= 48 && character <= 57) {
 
             //cpct_drawSprite(G_numbers_big[character - 48], pvideo, FONT_W, FONT_H);
-            cpct_drawSpriteMaskedAlignedTable(G_numbers_big[character - 48], pvideo, FONT_W, FONT_H, am_tablatrans);
+            cpct_drawSpriteMaskedAlignedTable(numbers[character - 48], pvideo, FONT_W, FONT_H, am_tablatrans);
         }
 
         else if (character != 32) { //32 = SPACE
 
             //cpct_drawSprite(g_font_big[character - 64], pvideo, FONT_W, FONT_H);
-            cpct_drawSpriteMaskedAlignedTable(g_font_big[character - 64], pvideo, FONT_W, FONT_H, am_tablatrans);
+            cpct_drawSpriteMaskedAlignedTable(font[character - 64], pvideo, FONT_W, FONT_H, am_tablatrans);
         }
 
         character = text[++x];

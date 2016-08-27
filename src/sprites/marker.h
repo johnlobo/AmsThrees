@@ -3,8 +3,8 @@
 #define _IMAGES_MARKER_H_
 
 #include <types.h>
-#define AM__MARKER_W 5
-#define AM__MARKER_H 15
-extern const u8 am__marker[5 * 15];
+#define AM_MARKER_W 5
+#define AM_MARKER_H 15
+extern const u8 am_marker[5 * 15];
 
 #endif

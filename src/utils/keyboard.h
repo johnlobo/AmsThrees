@@ -1,7 +1,4 @@
 //-----------------------------LICENSE NOTICE------------------------------------
-//  This file is part of Space Moves
-//  Copyright (C) 2015 Toni Ramírez (@AmstradGamer)
-//
 //  This program is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
 //  the Free Software Foundation, either version 3 of the License, or
@@ -19,9 +16,8 @@
 
 #include <cpctelera.h>
 #include <string.h>
-#include "../defines.h"
 #include "../video/video.h"
-#include "../video/draw.h"
+#include "../game.h"
 
 #ifndef _KEYBOARD_H_
 #define _KEYBOARD_H_
