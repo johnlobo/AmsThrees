@@ -16,7 +16,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "music/song.h"
-#include "music/sfx.h"
 #include "sprites/icons.h"
 #include "sprites/marker.h"
 #include "game.h"
@@ -408,7 +407,6 @@ u8 getHighestCard() {
             // Music on
             playing = 1;
             cpct_akp_musicInit(am_smoke);
-            //cpct_akp_SFXInit(am_sfx);
             cpct_akp_SFXInit(am_smoke);
             cpct_setInterruptHandler(interruptHandler);
             cpct_akp_musicPlay();
@@ -1272,18 +1270,7 @@ u8 getHighestCard() {
 
                 waitKeyUp(Key_3);
 
-                //playing = 0;
-                //playing= 1;
-                //cpct_akp_stop ();
-                //cpct_akp_musicInit(am_sfx);
-                //cpct_akp_SFXInit(am_sfx);
-                //cpct_akp_musicPlay();
-
                 game();
-
-                //cpct_akp_stop ();
-                //cpct_akp_musicInit(am_smoke);
-                //cpct_akp_musicPlay();
 
                 playing = 1;
                 drawMenu();
