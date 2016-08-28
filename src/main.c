@@ -17,6 +17,9 @@
 #include "game.h"
 
 void main(void) {
+
+   // Set up new location for the stack (to use 0x8000-0xBFFF as backbuffer)
+   cpct_setStackLocation((void*)0xBFFF);
         
    setUpVideo();
     
