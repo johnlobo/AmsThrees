@@ -3,6 +3,6 @@
 
 #include <types.h>
 
-extern __at(0x200) const u8 am_smoke[630];
+extern __at(0x200) const u8 song02[532];
 
 #endif

@@ -15,6 +15,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+//#include "music/song02.h"
 #include "music/song.h"
 #include "sprites/icons.h"
 #include "sprites/marker.h"
@@ -92,15 +93,15 @@ void interruptHandler() {
 
     i++;
     switch (i) {
-    case 5:
+    case 4:
         cpct_scanKeyboard_if();
         break;
-    case 6:
+    case 5:
         // Play music
         if (playing)
             playmusic();
         break;
-    case 7:
+    case 6:
         i = 0;
     }
 }
@@ -406,8 +407,10 @@ u8 getHighestCard() {
 
             // Music on
             playing = 1;
-            cpct_akp_musicInit(am_smoke);
-            cpct_akp_SFXInit(am_smoke);
+            //cpct_akp_musicInit(am_smoke);
+            //cpct_akp_SFXInit(am_smoke);
+            cpct_akp_musicInit(song02);
+            cpct_akp_SFXInit(song02);
             cpct_setInterruptHandler(interruptHandler);
             cpct_akp_musicPlay();
 
