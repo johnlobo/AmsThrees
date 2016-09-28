@@ -10,8 +10,8 @@
 #define CARD_SIZE CARD_W * CARD_H
 
 
-extern const u8 cards_00[TILE_SIZE];
-extern const u8 cards_01[TILE_SIZE];
+extern const u8 cards_00[CARD_SIZE];
+extern const u8 cards_01[CARD_SIZE];
 extern const u8 cards_02[CARD_W * CARD_H];
 extern const u8 cards_03[CARD_W * CARD_H];
 extern const u8 cards_04[CARD_W * CARD_H];

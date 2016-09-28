@@ -78,7 +78,6 @@ typedef struct {
 } TScoreBoard;
 
 typedef struct Keys{
-    
     cpct_keyID up;
     cpct_keyID down;
     cpct_keyID left;
@@ -88,7 +87,6 @@ typedef struct Keys{
     cpct_keyID abort;
     cpct_keyID music;
     cpct_keyID debug;
-    
 } Keys;
 
 typedef struct Coords{

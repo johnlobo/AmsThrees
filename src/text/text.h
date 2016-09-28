@@ -24,7 +24,6 @@
 #define _TEXT_H_
 
 typedef struct FChar{
-    
     u8 phase;
     u8 xPos;
     u8 yPos;
@@ -32,7 +31,6 @@ typedef struct FChar{
     u8 endyPos;
     u8 destinationyPos;
     u8 character[2];
-    
 } FChar;
 
 extern u8* const font[39];
@@ -44,6 +42,5 @@ void drawNumber(u16 aNumber, u8 length, u8 xPos, u8 yPos);
 void drawText(u8 text[], u8 xPos, u8 yPos, u8 centered);
 u8 moveFallingText(FChar *text, u8 lenght);
 void drawFallingText(u8 text[], u8 xPos, u8 yPos, u8 destinationyPos);
-
 
 #endif

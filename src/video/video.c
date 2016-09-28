@@ -16,13 +16,7 @@
 
 #include "video.h"
 
-
-//const u8 G_graphics_palette[16] = { 1, 24, 11, 6, 26, 0, 2, 8, 10, 12, 14, 16, 18, 22, 24, 13};
-//const u8 G_graphics_palette[16] = { 0, 13, 1, 2, 4, 14, 11, 20, 9, 12, 18, 3, 6, 15, 24, 26};
 const u8 G_graphics_palette[16] = {0, 1, 15, 20, 6, 2, 8, 10, 12, 14, 16, 18, 3, 24, 11, 26};
-
-
-
 
 //////////////////////////////////////////////////////////////////
 // setupVideo
@@ -32,6 +26,7 @@ const u8 G_graphics_palette[16] = {0, 1, 15, 20, 6, 2, 8, 10, 12, 14, 16, 18, 3,
 // Returns:
 //    void
 //
+
 void setUpVideo() {
 
     //Disable firmware
@@ -53,6 +48,7 @@ void setUpVideo() {
 // Returns:
 //    void
 //
+
 void clearScreen() {
     // Clear Screen
     cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(0,0), 0x4000);
@@ -66,6 +62,7 @@ void clearScreen() {
 // Returns:
 //    void
 //
+
 void clearWindow(u8 xPos, u8 yPos, u8 width, u8 height) {
 
     u8* pvideo = cpct_getScreenPtr(CPCT_VMEM_START, xPos, yPos);
@@ -81,6 +78,7 @@ void clearWindow(u8 xPos, u8 yPos, u8 width, u8 height) {
 // Returns:
 //    void
 //
+
 void clearGameScreen() {
     u8* pvideo = cpct_getScreenPtr(CPCT_VMEM_START, MIN_X, MIN_Y);
 
@@ -95,6 +93,7 @@ void clearGameScreen() {
 // Returns:
 //    void
 //
+
 void drawFrame(u8 x1, u8 y1, u8 x2, u8 y2) {
     u8 *pvideo;
     u8 x, frame_w, frame_h;
@@ -109,7 +108,6 @@ void drawFrame(u8 x1, u8 y1, u8 x2, u8 y2) {
     cpct_drawSprite(g_tile_border_0,  pvideo, 2, 4);
 
     //UPPER BAR
-    //for (x = 1; x < (frame_w * 2) - 1; x++) {
     for (x = x1 + 2; x < (x2 - 2); x = x + 2) {
         cpct_drawSprite(g_tile_border_4,  pvideo + (x - x1), 2, 4);
     }
@@ -137,4 +135,3 @@ void drawFrame(u8 x1, u8 y1, u8 x2, u8 y2) {
     //DOWNRIGHTCORNER
     cpct_drawSprite(g_tile_border_3,  pvideo + (frame_w - 2), 2, 4);
 }
-

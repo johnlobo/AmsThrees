@@ -108,6 +108,7 @@ void interruptHandler() {
 // Returns:
 //    void
 //
+
 void renewCardBag() {
     u8 i;
     u8 currentValue = 0;
@@ -136,6 +137,7 @@ void renewCardBag() {
 // Returns:
 //    void
 //
+
 void delay(u32 cycles) {
     u32 i;
     for (i = 0; i < cycles; i++) {
@@ -153,6 +155,7 @@ void delay(u32 cycles) {
 // Returns:
 //    <u8> Number of zeroes in cells
 //
+
 u8 countZeroes() {
     u8 i, j;
     u8 count;
@@ -177,6 +180,7 @@ u8 countZeroes() {
 // Returns:
 //    the index to the highest card in the cells
 //
+
 u8 getHighestCard() {
     u8 i, j;
     u8 highest;
@@ -184,7 +188,7 @@ u8 getHighestCard() {
     highest = 0;
     for (i = 0; i < 4; i++) {
         for (j = 0; j < 4; j++) {
-            if (cells[i][j]>highest)
+            if (cells[i][j] > highest)
                 highest = cells[i][j];
         }
     }
@@ -200,49 +204,50 @@ u8 getHighestCard() {
 // Returns:
 //    void
 //
-        void initAdjacents() {
-            u8 i;
 
-            for (i = 0; i < 4; i++) {
-                adjacents.values[i] = 255;
-            }
-            adjacents.count = 0;
-        }
+void initAdjacents() {
+    u8 i;
+
+    for (i = 0; i < 4; i++) {
+        adjacents.values[i] = 255;
+    }
+    adjacents.count = 0;
+}
 
 //////////////////////////////////////////////////////////////////
 // getAdjacents
 //
-//      Get the adjacents     
+//      Get the adjacents
 //
 //
 // Returns:
 //    void
 //
-        void getAdjacents(u8 i, u8 j) {
-            u8 count;
+void getAdjacents(u8 i, u8 j) {
+    u8 count;
 
-            initAdjacents();
+    initAdjacents();
 
-            count = 0;
-            if (i != 0) {
-                adjacents.values[count] = cells [i - 1][j];
-                count++;
-            }
-            if (j != 3) {
-                adjacents.values[count] = cells [i][j + 1];
-                count++;
-            }
-            if (i != 3) {
-                adjacents.values[count] = cells [i + 1][j];
-                count++;
-            }
-            if (j != 0) {
-                adjacents.values[count] = cells [i][j - 1];
-                count++;
-            }
+    count = 0;
+    if (i != 0) {
+        adjacents.values[count] = cells [i - 1][j];
+        count++;
+    }
+    if (j != 3) {
+        adjacents.values[count] = cells [i][j + 1];
+        count++;
+    }
+    if (i != 3) {
+        adjacents.values[count] = cells [i + 1][j];
+        count++;
+    }
+    if (j != 0) {
+        adjacents.values[count] = cells [i][j - 1];
+        count++;
+    }
 
-            adjacents.count = count;
-        }
+    adjacents.count = count;
+}
 
 //////////////////////////////////////////////////////////////////
 // anyOfThisInAdjacents
@@ -252,19 +257,19 @@ u8 getHighestCard() {
 // Returns:
 //    void
 //
-        u8 anyOfThisInAdjacents(u8 value) {
-            u8 i;
-            u8 result;
+u8 anyOfThisInAdjacents(u8 value) {
+    u8 i;
+    u8 result;
 
-            result = 0;
-            for (i = 0; i < adjacents.count; i++) {
-                if (adjacents.values[i] == value) {
-                    result = 1;
-                    break;
-                }
-            }
-            return result;
+    result = 0;
+    for (i = 0; i < adjacents.count; i++) {
+        if (adjacents.values[i] == value) {
+            result = 1;
+            break;
         }
+    }
+    return result;
+}
 
 //////////////////////////////////////////////////////////////////
 // anyMovesLeft
@@ -275,31 +280,32 @@ u8 getHighestCard() {
 // Returns:
 //    true if there are more moves left, false otherways
 //
-        u8 anyMovesLeft() {
-            u8 i, j;
-            u8 movesLeft;
 
-            movesLeft = 0;
+u8 anyMovesLeft() {
+    u8 i, j;
+    u8 movesLeft;
 
-            if (countZeroes() == 0) {
-                for (i = 0; i < 4; i++) {
-                    for (j = 0; j < 4; j++) {
-                        getAdjacents(i, j);
-                        if (((cells[i][j] == 1) && anyOfThisInAdjacents(2)) ||
-                                ((cells[i][j] == 2) && anyOfThisInAdjacents(1)) ||
-                                ((cells[i][j] > 2) && anyOfThisInAdjacents(cells[i][j]))) {
-                            movesLeft = 1;
-                            break;
-                        }
-                    }
-                    if (movesLeft)
-                        break;
+    movesLeft = 0;
+
+    if (countZeroes() == 0) {
+        for (i = 0; i < 4; i++) {
+            for (j = 0; j < 4; j++) {
+                getAdjacents(i, j);
+                if (((cells[i][j] == 1) && anyOfThisInAdjacents(2)) ||
+                        ((cells[i][j] == 2) && anyOfThisInAdjacents(1)) ||
+                        ((cells[i][j] > 2) && anyOfThisInAdjacents(cells[i][j]))) {
+                    movesLeft = 1;
+                    break;
                 }
-
-            } else
-                movesLeft = 1;
-            return movesLeft;
+            }
+            if (movesLeft)
+                break;
         }
+
+    } else
+        movesLeft = 1;
+    return movesLeft;
+}
 
 //////////////////////////////////////////////////////////////////
 // addRandomCellTurn
@@ -309,42 +315,43 @@ u8 getHighestCard() {
 // Returns:
 //    void
 //
-        void addRandomCellTurn(u8 dir) {
-            u8 i = 0;
-            u8 j = 0;
 
-            // Fix the row or column
-            switch (dir) {
-            case LEFT:
-                j = 3;
-                break;
-            case RIGHT:
-                j = 0;
-                break;
-            case UP:
-                i = 3;
-                break;
-            case DOWN:
-                i = 0;
-                break;
-            }
-            if ((dir == LEFT) || (dir == RIGHT))
-                i = cpct_rand() / 64;
-            else
-                j = cpct_rand() / 64;
-            while (cells[i][j] != 0) {
-                if ((dir == LEFT) || (dir == RIGHT))
-                    i = cpct_rand() / 64;
-                else
-                    j = cpct_rand() / 64;
-            }
-            cells[i][j] = cardBag[currentCard];
-            touchedCells[i][j] = 1;
-            if (currentCard < 11)
-                currentCard++;
-            else
-                renewCardBag();
-        }
+void addRandomCellTurn(u8 dir) {
+    u8 i = 0;
+    u8 j = 0;
+
+    // Fix the row or column
+    switch (dir) {
+    case LEFT:
+        j = 3;
+        break;
+    case RIGHT:
+        j = 0;
+        break;
+    case UP:
+        i = 3;
+        break;
+    case DOWN:
+        i = 0;
+        break;
+    }
+    if ((dir == LEFT) || (dir == RIGHT))
+        i = cpct_rand() / 64;
+    else
+        j = cpct_rand() / 64;
+    while (cells[i][j] != 0) {
+        if ((dir == LEFT) || (dir == RIGHT))
+            i = cpct_rand() / 64;
+        else
+            j = cpct_rand() / 64;
+    }
+    cells[i][j] = cardBag[currentCard];
+    touchedCells[i][j] = 1;
+    if (currentCard < 11)
+        currentCard++;
+    else
+        renewCardBag();
+}
 
 
 //////////////////////////////////////////////////////////////////
@@ -356,86 +363,86 @@ u8 getHighestCard() {
 // Returns:
 //    void
 //
-        void initCells(u8 touched) {
-            u8 i, j;
+void initCells(u8 touched) {
+    u8 i, j;
 
-            for (i = 0; i < 4; i++) {
-                for (j = 0; j < 4; j++) {
-                    if (touched)
-                        touchedCells[i][j] = 0;
-                    else
-                        cells[i][j] = 0;
-                }
-            }
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            if (touched)
+                touchedCells[i][j] = 0;
+            else
+                cells[i][j] = 0;
         }
+    }
+}
 
 
 //////////////////////////////////////////////////////////////////
 // initialization
-//  
+//
 //  initializes the whole program
 //
 // Returns:
 //    void
 //
-        void initialization() {
-            u32 seed;    // Value to initialize the random seed
+void initialization() {
+    u32 seed;    // Value to initialize the random seed
 
-            // Music on
-            playing = 1;
-            cpct_akp_musicInit(song02);
-            cpct_akp_SFXInit(song02);
-            cpct_setInterruptHandler(interruptHandler);
-            cpct_akp_musicPlay();
+    // Music on
+    playing = 1;
+    cpct_akp_musicInit(song02);
+    cpct_akp_SFXInit(song02);
+    cpct_setInterruptHandler(interruptHandler);
+    cpct_akp_musicPlay();
 
-            drawText("AMSTHREES IS READY", 31, 76, 1);
-            drawText("PRESS ANY KEY", 20, 90, 1);
+    drawText("AMSTHREES IS READY", 31, 76, 1);
+    drawText("PRESS ANY KEY", 20, 90, 1);
 
-            seed = wait4UserKeypress();
-            // Random seed may never be 0, so check first and add 1 if it was 0
-            if (!seed)
-                seed++;
-            cpct_srand(seed);
+    seed = wait4UserKeypress();
+    // Random seed may never be 0, so check first and add 1 if it was 0
+    if (!seed)
+        seed++;
+    cpct_srand(seed);
 
-            scoreHallOfFame[0] = 6000;
-            scoreHallOfFame[1] = 5000;
-            scoreHallOfFame[2] = 4000;
-            scoreHallOfFame[3] = 3000;
-            scoreHallOfFame[4] = 1500;
-            scoreHallOfFame[5] = 1000;
-            scoreHallOfFame[6] = 500;
-            scoreHallOfFame[7] = 300;
+    scoreHallOfFame[0] = 6000;
+    scoreHallOfFame[1] = 5000;
+    scoreHallOfFame[2] = 4000;
+    scoreHallOfFame[3] = 3000;
+    scoreHallOfFame[4] = 1500;
+    scoreHallOfFame[5] = 1000;
+    scoreHallOfFame[6] = 500;
+    scoreHallOfFame[7] = 300;
 
-            strcpy(nameHallOfFame[0], "MARTIN");
-            strcpy(nameHallOfFame[1], "DIEGO");
-            strcpy(nameHallOfFame[2], "MARIA");
-            strcpy(nameHallOfFame[3], "DAVID");
-            strcpy(nameHallOfFame[4], "MASTER");
-            strcpy(nameHallOfFame[5], "EXPERT");
-            strcpy(nameHallOfFame[6], "INTERMEDIATE");
-            strcpy(nameHallOfFame[7], "BEGINNER");
-
-
-            clearScreen();
-
-            keys.up    = Key_CursorUp;
-            keys.down  = Key_CursorDown;
-            keys.left  = Key_CursorLeft;
-            keys.right = Key_CursorRight;
-            keys.fire  = Key_Space;
-            keys.pause = Key_Del;
-            keys.abort = Key_Esc;
-            keys.music = Key_M;
-            keys.debug = Key_D;
-
-            selectedOption = 0;
-
-            highestCardAll = 0;
+    strcpy(nameHallOfFame[0], "MARTIN");
+    strcpy(nameHallOfFame[1], "DIEGO");
+    strcpy(nameHallOfFame[2], "MARIA");
+    strcpy(nameHallOfFame[3], "DAVID");
+    strcpy(nameHallOfFame[4], "MASTER");
+    strcpy(nameHallOfFame[5], "EXPERT");
+    strcpy(nameHallOfFame[6], "INTERMEDIATE");
+    strcpy(nameHallOfFame[7], "BEGINNER");
 
 
-            cpct_etm_setTileset2x4(tileset);
+    clearScreen();
 
-        }
+    keys.up    = Key_CursorUp;
+    keys.down  = Key_CursorDown;
+    keys.left  = Key_CursorLeft;
+    keys.right = Key_CursorRight;
+    keys.fire  = Key_Space;
+    keys.pause = Key_Del;
+    keys.abort = Key_Esc;
+    keys.music = Key_M;
+    keys.debug = Key_D;
+
+    selectedOption = 0;
+
+    highestCardAll = 0;
+
+
+    cpct_etm_setTileset2x4(tileset);
+
+}
 
 
 //////////////////////////////////////////////////////////////////
@@ -446,33 +453,33 @@ u8 getHighestCard() {
 // Returns:
 //    void
 //
-        void initGame() {
-            u8 i, j, k;
+void initGame() {
+    u8 i, j, k;
 
-            initCells(0);
-            initCells(1);
+    initCells(0);
+    initCells(1);
 
-            renewCardBag();
+    renewCardBag();
 
-            for (i = 0; i < 9; i++) {
-                j = cpct_rand() / 64;
-                k = cpct_rand() / 64;
-                while (cells[j][k] != 0) {
-                    j = cpct_rand() / 64;
-                    k = cpct_rand() / 64;
-                }
-                cells[j][k] = cardBag[currentCard];
-                currentCard++;
-            }
-
-            score = 0;
-
-            highestCardGame = 0;
-
-
-
-
+    for (i = 0; i < 9; i++) {
+        j = cpct_rand() / 64;
+        k = cpct_rand() / 64;
+        while (cells[j][k] != 0) {
+            j = cpct_rand() / 64;
+            k = cpct_rand() / 64;
         }
+        cells[j][k] = cardBag[currentCard];
+        currentCard++;
+    }
+
+    score = 0;
+
+    highestCardGame = 0;
+
+
+
+
+}
 
 //////////////////////////////////////////////////////////////////
 // rotateCellsLeft
@@ -482,44 +489,44 @@ u8 getHighestCard() {
 // Returns:
 //    void
 //
-        u8 rotateCellsLeft() {
-            u8 i, j;
-            u8 tilesMatched, matched;
+u8 rotateCellsLeft() {
+    u8 i, j;
+    u8 tilesMatched, matched;
 
-            tilesMatched = 0;
-            matched = 0;
+    tilesMatched = 0;
+    matched = 0;
 
-            for (i = 0; i < 4; i++) {
-                for (j = 1; j < 4; j++) {
-                    if (cells[i][j] != 0) {
-                        touchedCells[i][j] = 1;
-                        // empty cell on the left
-                        if (cells[i][j - 1] == 0) {
-                            cells[i][j - 1] = cells[i][j];
-                            cells[i][j] = 0;
-                            matched = 1;
-                        } else if (((cells[i][j - 1] == 1) && (cells[i][j] == 2)) ||
-                                   ((cells[i][j - 1] == 2) && (cells[i][j] == 1))) {
-                            cells[i][j - 1] = 3;
-                            cells[i][j] = 0;
-                            matched = 1;
-                        } else if ((cells[i][j - 1] == cells[i][j]) && (cells[i][j] > 2)) {
-                            cells[i][j - 1]++;
-                            cells[i][j] = 0;
-                            matched = 1;
-                        }
-                        if (matched) {
-                            touchedCells[i][j] = 2;
-                            touchedCells[i][j - 1] = 1;
-                            tilesMatched++;
-                            matched = 0;
-                        }
-
-                    }
+    for (i = 0; i < 4; i++) {
+        for (j = 1; j < 4; j++) {
+            if (cells[i][j] != 0) {
+                touchedCells[i][j] = 1;
+                // empty cell on the left
+                if (cells[i][j - 1] == 0) {
+                    cells[i][j - 1] = cells[i][j];
+                    cells[i][j] = 0;
+                    matched = 1;
+                } else if (((cells[i][j - 1] == 1) && (cells[i][j] == 2)) ||
+                           ((cells[i][j - 1] == 2) && (cells[i][j] == 1))) {
+                    cells[i][j - 1] = 3;
+                    cells[i][j] = 0;
+                    matched = 1;
+                } else if ((cells[i][j - 1] == cells[i][j]) && (cells[i][j] > 2)) {
+                    cells[i][j - 1]++;
+                    cells[i][j] = 0;
+                    matched = 1;
                 }
+                if (matched) {
+                    touchedCells[i][j] = 2;
+                    touchedCells[i][j - 1] = 1;
+                    tilesMatched++;
+                    matched = 0;
+                }
+
             }
-            return tilesMatched;
         }
+    }
+    return tilesMatched;
+}
 
 //////////////////////////////////////////////////////////////////
 // rotateCellsRight
@@ -529,45 +536,45 @@ u8 getHighestCard() {
 // Returns:
 //    void
 //
-        u8 rotateCellsRight() {
-            u8 i, j;
-            u8 tilesMatched, matched;
+u8 rotateCellsRight() {
+    u8 i, j;
+    u8 tilesMatched, matched;
 
-            tilesMatched = 0;
-            matched = 0;
+    tilesMatched = 0;
+    matched = 0;
 
-            for (i = 0; i < 4; i++) {
-                j = 3;
-                do {
-                    j--;
-                    if (cells[i][j] != 0) {
-                        touchedCells[i][j] = 1;
-                        // empty cell on the left
-                        if (cells[i][j + 1] == 0) {
-                            cells[i][j + 1] = cells[i][j];
-                            cells[i][j] = 0;
-                            matched = 1;
-                        } if (((cells[i][j + 1] == 1) && (cells[i][j] == 2)) ||
-                                ((cells[i][j + 1] == 2) && (cells[i][j] == 1))) {
-                            cells[i][j + 1] = 3;
-                            cells[i][j] = 0;
-                            matched = 1;
-                        } else if ((cells[i][j + 1] == cells[i][j]) && (cells[i][j] > 2)) {
-                            cells[i][j + 1]++;
-                            cells[i][j] = 0;
-                            matched = 1;
-                        }
-                        if (matched) {
-                            touchedCells[i][j] = 2;
-                            touchedCells[i][j + 1] = 1;
-                            tilesMatched++;
-                            matched = 0;
-                        }
-                    }
-                } while (j > 0);
+    for (i = 0; i < 4; i++) {
+        j = 3;
+        do {
+            j--;
+            if (cells[i][j] != 0) {
+                touchedCells[i][j] = 1;
+                // empty cell on the left
+                if (cells[i][j + 1] == 0) {
+                    cells[i][j + 1] = cells[i][j];
+                    cells[i][j] = 0;
+                    matched = 1;
+                } if (((cells[i][j + 1] == 1) && (cells[i][j] == 2)) ||
+                        ((cells[i][j + 1] == 2) && (cells[i][j] == 1))) {
+                    cells[i][j + 1] = 3;
+                    cells[i][j] = 0;
+                    matched = 1;
+                } else if ((cells[i][j + 1] == cells[i][j]) && (cells[i][j] > 2)) {
+                    cells[i][j + 1]++;
+                    cells[i][j] = 0;
+                    matched = 1;
+                }
+                if (matched) {
+                    touchedCells[i][j] = 2;
+                    touchedCells[i][j + 1] = 1;
+                    tilesMatched++;
+                    matched = 0;
+                }
             }
-            return tilesMatched;
-        }
+        } while (j > 0);
+    }
+    return tilesMatched;
+}
 
 //////////////////////////////////////////////////////////////////
 // rotateCellsUp
@@ -577,43 +584,43 @@ u8 getHighestCard() {
 // Returns:
 //    void
 //
-        u8 rotateCellsUp() {
-            u8 i, j;
-            u8 tilesMatched, matched;
+u8 rotateCellsUp() {
+    u8 i, j;
+    u8 tilesMatched, matched;
 
-            tilesMatched = 0;
-            matched = 0;
+    tilesMatched = 0;
+    matched = 0;
 
-            for (i = 1; i < 4; i++) {
-                for (j = 0; j < 4; j++) {
-                    if (cells[i][j] != 0) {
-                        touchedCells[i][j] = 1;
-                        // empty cell on the left
-                        if (cells[i - 1][j] == 0) {
-                            cells[i - 1][j] = cells[i][j];
-                            cells[i][j] = 0;
-                            matched = 1;
-                        } else if (((cells[i - 1][j] == 1) && (cells[i][j] == 2)) ||
-                                   ((cells[i - 1][j] == 2) && (cells[i][j] == 1))) {
-                            cells[i - 1][j] = 3;
-                            cells[i][j] = 0;
-                            matched = 1;
-                        } else if ((cells[i - 1][j] == cells[i][j]) && (cells[i][j] > 2)) {
-                            cells[i - 1][j]++;
-                            cells[i][j] = 0;
-                            matched = 1;
-                        }
-                        if (matched) {
-                            touchedCells[i][j] = 2;
-                            touchedCells[i - 1][j] = 1;
-                            tilesMatched++;
-                            matched = 0;
-                        }
-                    }
+    for (i = 1; i < 4; i++) {
+        for (j = 0; j < 4; j++) {
+            if (cells[i][j] != 0) {
+                touchedCells[i][j] = 1;
+                // empty cell on the left
+                if (cells[i - 1][j] == 0) {
+                    cells[i - 1][j] = cells[i][j];
+                    cells[i][j] = 0;
+                    matched = 1;
+                } else if (((cells[i - 1][j] == 1) && (cells[i][j] == 2)) ||
+                           ((cells[i - 1][j] == 2) && (cells[i][j] == 1))) {
+                    cells[i - 1][j] = 3;
+                    cells[i][j] = 0;
+                    matched = 1;
+                } else if ((cells[i - 1][j] == cells[i][j]) && (cells[i][j] > 2)) {
+                    cells[i - 1][j]++;
+                    cells[i][j] = 0;
+                    matched = 1;
+                }
+                if (matched) {
+                    touchedCells[i][j] = 2;
+                    touchedCells[i - 1][j] = 1;
+                    tilesMatched++;
+                    matched = 0;
                 }
             }
-            return tilesMatched;
         }
+    }
+    return tilesMatched;
+}
 
 //////////////////////////////////////////////////////////////////
 // rotateCellsDown
@@ -623,46 +630,47 @@ u8 getHighestCard() {
 // Returns:
 //    void
 //
-        u8 rotateCellsDown() {
-            u8 i, j;
-            u8 tilesMatched, matched;
 
-            tilesMatched = 0;
-            matched = 0;
+u8 rotateCellsDown() {
+    u8 i, j;
+    u8 tilesMatched, matched;
 
-            i = 3;
-            do {
-                i--;
-                for (j = 0; j < 4; j++) {
-                    if (cells[i][j] != 0) {
-                        touchedCells[i][j] = 1;
-                        if (cells[i + 1][j] == 0) {
-                            cells[i + 1][j] = cells[i][j];
-                            cells[i][j] = 0;
-                            matched = 1;
-                        } else if (((cells[i + 1][j] == 1) && (cells[i][j] == 2)) ||
-                                   ((cells[i + 1][j] == 2) && (cells[i][j] == 1))) {
-                            cells[i + 1][j] = 3;
-                            cells[i][j] = 0;
-                            matched = 1;
-                        } else if ((cells[i + 1][j] == cells[i][j]) && (cells[i][j] > 2)) {
-                            cells[i + 1][j]++;
-                            cells[i][j] = 0;
-                            matched = 1;
+    tilesMatched = 0;
+    matched = 0;
 
-                        }
-                        if (matched) {
-                            touchedCells[i][j] = 2;
-                            touchedCells[i + 1][j] = 1;
-                            tilesMatched++;
-                            matched = 0;
-                        }
-                    }
+    i = 3;
+    do {
+        i--;
+        for (j = 0; j < 4; j++) {
+            if (cells[i][j] != 0) {
+                touchedCells[i][j] = 1;
+                if (cells[i + 1][j] == 0) {
+                    cells[i + 1][j] = cells[i][j];
+                    cells[i][j] = 0;
+                    matched = 1;
+                } else if (((cells[i + 1][j] == 1) && (cells[i][j] == 2)) ||
+                           ((cells[i + 1][j] == 2) && (cells[i][j] == 1))) {
+                    cells[i + 1][j] = 3;
+                    cells[i][j] = 0;
+                    matched = 1;
+                } else if ((cells[i + 1][j] == cells[i][j]) && (cells[i][j] > 2)) {
+                    cells[i + 1][j]++;
+                    cells[i][j] = 0;
+                    matched = 1;
+
                 }
-            } while (i > 0);
-
-            return tilesMatched;
+                if (matched) {
+                    touchedCells[i][j] = 2;
+                    touchedCells[i + 1][j] = 1;
+                    tilesMatched++;
+                    matched = 0;
+                }
+            }
         }
+    } while (i > 0);
+
+    return tilesMatched;
+}
 
 //////////////////////////////////////////////////////////////////
 // drawTable
@@ -672,13 +680,14 @@ u8 getHighestCard() {
 // Returns:
 //    void
 //
-        void drawTable() {
-            u8* pvmem;
 
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 2, 0);
-            cpct_etm_drawTilemap2x4_f(MAP_WIDTH, MAP_HEIGHT, pvmem, tmx);
+void drawTable() {
+    u8* pvmem;
 
-        }
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 2, 0);
+    cpct_etm_drawTilemap2x4_f(MAP_WIDTH, MAP_HEIGHT, pvmem, tmx);
+
+}
 
 //////////////////////////////////////////////////////////////////
 // Cells
@@ -688,29 +697,30 @@ u8 getHighestCard() {
 // Returns:
 //    void
 //
-        void printCells() {
-            u8 i;
-            u8 j;
-            u8 x;
-            u8 y;
-            u8* pvmem;  // Pointer to video memory
 
-            for (i = 0; i < 4; i++) {
-                //y = 30 + (i * 10);
-                y = 4 + (i * 48);
+void printCells() {
+    u8 i;
+    u8 j;
+    u8 x;
+    u8 y;
+    u8* pvmem;  // Pointer to video memory
 
-                for (j = 0; j < 4; j++) {
-                    //  x = 3 + (j * 12);
-                    x = 6 + (j * 12);
-                    if (cells[i][j] > 0) {
-                        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, x, y);
-                        cpct_drawSpriteMaskedAlignedTable(tiles[cells[i][j]], pvmem, TILE_W, TILE_H, am_tablatrans);
-                    }
-                }
+    for (i = 0; i < 4; i++) {
+        //y = 30 + (i * 10);
+        y = 4 + (i * 48);
+
+        for (j = 0; j < 4; j++) {
+            //  x = 3 + (j * 12);
+            x = 6 + (j * 12);
+            if (cells[i][j] > 0) {
+                pvmem = cpct_getScreenPtr(CPCT_VMEM_START, x, y);
+                cpct_drawSpriteMaskedAlignedTable(cards[cells[i][j]], pvmem, CARD_W, CARD_H, am_tablatrans);
             }
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 63, 18);
-            cpct_drawSprite(tiles[cardBag[currentCard]], pvmem, TILE_W, TILE_H);
         }
+    }
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 63, 18);
+    cpct_drawSprite(cards[cardBag[currentCard]], pvmem, CARD_W, CARD_H);
+}
 
 //////////////////////////////////////////////////////////////////
 // printTouched
@@ -720,32 +730,32 @@ u8 getHighestCard() {
 // Returns:
 //    void
 //
-        void printTouched() {
-            u8 i;
-            u8 j;
-            u8 x;
-            u8 y;
-            u8* pvmem;
-            u8* pStartTable;  // Pointer to video memory
+void printTouched() {
+    u8 i;
+    u8 j;
+    u8 x;
+    u8 y;
+    u8* pvmem;
+    u8* pStartTable;  // Pointer to video memory
 
-            pStartTable = cpct_getScreenPtr(CPCT_VMEM_START, 2, 0);
+    pStartTable = cpct_getScreenPtr(CPCT_VMEM_START, 2, 0);
 
-            for (i = 0; i < 4; i++) {
-                y = 4 + (i * 48);
-                for (j = 0; j < 4; j++) {
-                    x = 6 + (j * 12);
-                    if (touchedCells[i][j] == 1) {
-                        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, x, y);
-                        cpct_drawSpriteMaskedAlignedTable(tiles[cells[i][j]], pvmem, TILE_W, TILE_H, am_tablatrans);
+    for (i = 0; i < 4; i++) {
+        y = 4 + (i * 48);
+        for (j = 0; j < 4; j++) {
+            x = 6 + (j * 12);
+            if (touchedCells[i][j] == 1) {
+                pvmem = cpct_getScreenPtr(CPCT_VMEM_START, x, y);
+                cpct_drawSpriteMaskedAlignedTable(cards[cells[i][j]], pvmem, CARD_W, CARD_H, am_tablatrans);
 
-                    } else if (touchedCells[i][j] == 2) {
-                        cpct_etm_drawTileBox2x4 (2 + (j * 6), 1 + (i * 12), (TILE_W / 2), (TILE_H / 4), MAP_WIDTH, pStartTable, tmx);
-                    }
-                }
+            } else if (touchedCells[i][j] == 2) {
+                cpct_etm_drawTileBox2x4 (2 + (j * 6), 1 + (i * 12), (CARD_W / 2), (CARD_H / 4), MAP_WIDTH, pStartTable, tmx);
             }
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 63, 18);
-            cpct_drawSprite(tiles[cardBag[currentCard]], pvmem, TILE_W, TILE_H);
         }
+    }
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 63, 18);
+    cpct_drawSprite(cards[cardBag[currentCard]], pvmem, CARD_W, CARD_H);
+}
 
 //////////////////////////////////////////////////////////////////
 // drawScore
@@ -755,28 +765,28 @@ u8 getHighestCard() {
 // Returns:
 //    void
 //
-        void drawScore() {
-            u8 i, j, z;
-            u8 x, y;
-            u32 partialScore;
+void drawScore() {
+    u8 i, j, z;
+    u8 x, y;
+    u32 partialScore;
 
-            for (i = 0; i < 4; i++) {
-                y = 4 + (i * 48);
-                for (j = 0; j < 4; j++) {
-                    x = 6 + (j * 12);
-                    z = cells[i][j];
-                    if (z >= 3) {
-                        if (z == 3) {
-                            partialScore = 1;
-                        } else {
-                            partialScore = scores[z];
-                        }
-                        score += partialScore;
-                        drawNumber(partialScore, 4, x - 3, y);
-                    }
+    for (i = 0; i < 4; i++) {
+        y = 4 + (i * 48);
+        for (j = 0; j < 4; j++) {
+            x = 6 + (j * 12);
+            z = cells[i][j];
+            if (z >= 3) {
+                if (z == 3) {
+                    partialScore = 1;
+                } else {
+                    partialScore = scores[z];
                 }
+                score += partialScore;
+                drawNumber(partialScore, 4, x - 3, y);
             }
         }
+    }
+}
 
 //////////////////////////////////////////////////////////////////
 // getName()
@@ -787,86 +797,86 @@ u8 getHighestCard() {
 //    void
 //
 
-        void getName() {
-            u8* pvmem;
-            u8 moved, pos, chr;
-            u8 markerX, markerY;
+void getName() {
+    u8* pvmem;
+    u8 moved, pos, chr;
+    u8 markerX, markerY;
 
-            drawFrame(9, 60, 73, 150);
+    drawFrame(9, 60, 73, 150);
 
-            drawText("NEW HIGH SCORE", 20, 70, 1);
-            drawText("ENTER YOUR NAME", 18, 85, 1);
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 11, 100);
-            cpct_drawSprite(g_tile_symbols_1, pvmem, 3, 11);
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 14, 100);
-            cpct_drawSprite(g_tile_symbols_2, pvmem, 3, 11);
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 17, 100);
-            cpct_drawSprite(g_tile_symbols_3, pvmem, 3, 11);
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 20, 100);
-            cpct_drawSprite(g_tile_symbols_4, pvmem, 3, 11);
-            drawText("CHANGE LETTER", 24, 100, 0);
-            drawText(" [ TO END", 20, 115, 1);
-            drawFrame(12, 130, 70, 160);
-            strcpy(newNameHighScore, "A");
-            drawText(newNameHighScore, 16, 140, 0);
+    drawText("NEW HIGH SCORE", 20, 70, 1);
+    drawText("ENTER YOUR NAME", 18, 85, 1);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 11, 100);
+    cpct_drawSprite(g_tile_symbols_1, pvmem, 3, 11);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 14, 100);
+    cpct_drawSprite(g_tile_symbols_2, pvmem, 3, 11);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 17, 100);
+    cpct_drawSprite(g_tile_symbols_3, pvmem, 3, 11);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 20, 100);
+    cpct_drawSprite(g_tile_symbols_4, pvmem, 3, 11);
+    drawText("CHANGE LETTER", 24, 100, 0);
+    drawText(" [ TO END", 20, 115, 1);
+    drawFrame(12, 130, 70, 160);
+    strcpy(newNameHighScore, "A");
+    drawText(newNameHighScore, 16, 140, 0);
 
-            markerX = 15;
-            markerY = 138;
-            cpct_setBlendMode(CPCT_BLEND_XOR);
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, markerX, markerY);
-            cpct_drawSpriteBlended(pvmem, AM_MARKER_H, AM_MARKER_W, am_marker);
-            pos = 0;
-            chr = 65;
-            moved = 0;
-            while (1) {
-                delay(24);
+    markerX = 15;
+    markerY = 138;
+    cpct_setBlendMode(CPCT_BLEND_XOR);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, markerX, markerY);
+    cpct_drawSpriteBlended(pvmem, AM_MARKER_H, AM_MARKER_W, am_marker);
+    pos = 0;
+    chr = 65;
+    moved = 0;
+    while (1) {
+        delay(24);
 
-                if ((cpct_isKeyPressed(Joy0_Down)) || (cpct_isKeyPressed(keys.down))) {
-                    chr++;
-                    moved = 1;
-                } else if ((cpct_isKeyPressed(Joy0_Up)) || (cpct_isKeyPressed(keys.up))) {
-                    chr--;
-                    moved = 1;
-                } else if ((pos < 14) && ((cpct_isKeyPressed(Joy0_Right)) || (cpct_isKeyPressed(Joy0_Fire1)) || (cpct_isKeyPressed(keys.right)))) {
-                    if (chr == 91) {
-                        newNameHighScore[pos] = '\0';
-                        break;
-                    }
-                    else {
-                        pos++;
-                        newNameHighScore[pos] = 65;
-                        newNameHighScore[pos + 1] = '\0';
-                        chr = 65;
-                        moved = 1;
-                    }
-
-                } else if ((pos > 0) && ((cpct_isKeyPressed(Joy0_Left)) || (cpct_isKeyPressed(keys.left)))) {
-                    newNameHighScore[pos] = '\0';
-                    pos--;
-                    chr = newNameHighScore[pos];
-                    moved = 1;
-                } else if (cpct_isKeyPressed(keys.abort)) {
-                    break;
-                }
-                if (moved) {
-                    moved = 0;
-                    if (chr > 91)
-                        chr = 65;
-                    else if (chr < 65)
-                        chr = 91;
-                    newNameHighScore[pos] = chr;
-                    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, markerX, markerY);
-                    cpct_drawSpriteBlended(pvmem, AM_MARKER_H, AM_MARKER_W, am_marker);
-                    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 16, 140);
-                    cpct_drawSolidBox(pvmem, #0, 45, 11);
-                    drawText(newNameHighScore, 16, 140, 0);
-                    markerX = 15 + (pos * 3);
-                    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, markerX, markerY);
-                    cpct_drawSpriteBlended(pvmem, AM_MARKER_H, AM_MARKER_W, am_marker);
-                }
+        if ((cpct_isKeyPressed(Joy0_Down)) || (cpct_isKeyPressed(keys.down))) {
+            chr++;
+            moved = 1;
+        } else if ((cpct_isKeyPressed(Joy0_Up)) || (cpct_isKeyPressed(keys.up))) {
+            chr--;
+            moved = 1;
+        } else if ((pos < 14) && ((cpct_isKeyPressed(Joy0_Right)) || (cpct_isKeyPressed(Joy0_Fire1)) || (cpct_isKeyPressed(keys.right)))) {
+            if (chr == 91) {
+                newNameHighScore[pos] = '\0';
+                break;
+            }
+            else {
+                pos++;
+                newNameHighScore[pos] = 65;
+                newNameHighScore[pos + 1] = '\0';
+                chr = 65;
+                moved = 1;
             }
 
+        } else if ((pos > 0) && ((cpct_isKeyPressed(Joy0_Left)) || (cpct_isKeyPressed(keys.left)))) {
+            newNameHighScore[pos] = '\0';
+            pos--;
+            chr = newNameHighScore[pos];
+            moved = 1;
+        } else if (cpct_isKeyPressed(keys.abort)) {
+            break;
         }
+        if (moved) {
+            moved = 0;
+            if (chr > 91)
+                chr = 65;
+            else if (chr < 65)
+                chr = 91;
+            newNameHighScore[pos] = chr;
+            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, markerX, markerY);
+            cpct_drawSpriteBlended(pvmem, AM_MARKER_H, AM_MARKER_W, am_marker);
+            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 16, 140);
+            cpct_drawSolidBox(pvmem, #0, 45, 11);
+            drawText(newNameHighScore, 16, 140, 0);
+            markerX = 15 + (pos * 3);
+            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, markerX, markerY);
+            cpct_drawSpriteBlended(pvmem, AM_MARKER_H, AM_MARKER_W, am_marker);
+        }
+    }
+
+}
 
 //////////////////////////////////////////////////////////////////
 // setHighScore
@@ -876,27 +886,27 @@ u8 getHighestCard() {
 // Returns:
 //    void
 //
-        void setHighScore(u32 score) {
-            u8 i, j;
+void setHighScore(u32 score) {
+    u8 i, j;
 
-            i = 8;
-            while ((score > scoreHallOfFame[i - 1]) && (i > 0)) {
-                i--;
-            }
-            j = 7;
-            if (i <= j) {
-                while ((i < j) && (j > 0)) {
-                    scoreHallOfFame[j] = scoreHallOfFame[j - 1];
-                    strcpy(nameHallOfFame[j], nameHallOfFame[j - 1]);
-                    j--;
-                }
-                getName();
-                wait4UserKeypress();
-                scoreHallOfFame[j] = score;
-                strcpy(nameHallOfFame[j], newNameHighScore);
-            }
-            highestCardAll = highestCardGame;
+    i = 8;
+    while ((score > scoreHallOfFame[i - 1]) && (i > 0)) {
+        i--;
+    }
+    j = 7;
+    if (i <= j) {
+        while ((i < j) && (j > 0)) {
+            scoreHallOfFame[j] = scoreHallOfFame[j - 1];
+            strcpy(nameHallOfFame[j], nameHallOfFame[j - 1]);
+            j--;
         }
+        getName();
+        wait4UserKeypress();
+        scoreHallOfFame[j] = score;
+        strcpy(nameHallOfFame[j], newNameHighScore);
+    }
+    highestCardAll = highestCardGame;
+}
 
 //////////////////////////////////////////////////////////////////
 // drawScoreBoard
@@ -906,33 +916,33 @@ u8 getHighestCard() {
 //    void
 //
 
-        void drawScoreBoard() {
-            u8 i;
-            u32 c = 0;
+void drawScoreBoard() {
+    u8 i;
+    u32 c = 0;
 
-            cpct_waitVSYNC();
+    cpct_waitVSYNC();
 
-            cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(0, 0), 0x4000);
+    cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(0, 0), 0x4000);
 
-            drawText("AMSTHREES SCOREBOARD", 13, 2, 1);
+    drawText("AMSTHREES SCOREBOARD", 13, 2, 1);
 
-            for (i = 0; i < 8; i++) {
-                drawNumber(i + 1, 2, 5, 30 + (i * 15));
-                drawText(nameHallOfFame[i], 14, 30 + (i * 15), 0);
-                drawNumber(scoreHallOfFame[i], 1, 69, 30 + (i * 15));
-            }
+    for (i = 0; i < 8; i++) {
+        drawNumber(i + 1, 2, 5, 30 + (i * 15));
+        drawText(nameHallOfFame[i], 14, 30 + (i * 15), 0);
+        drawNumber(scoreHallOfFame[i], 1, 69, 30 + (i * 15));
+    }
 
-            drawText("JOHN LOBO", 25, 170, 1);
-            drawText("@ GLASNOST CORP 2016", 11, 185, 1);
+    drawText("JOHN LOBO", 25, 170, 1);
+    drawText("@ GLASNOST CORP 2016", 11, 185, 1);
 
-            c = 40000;     // Number of loops passed if not keypressed
-            // Wait 'till the user presses a key, counting loop iterations
-            do {
-                c--;                       // One more cycle
-                cpct_scanKeyboard_f();     // Scan the keyboard
-            } while (( ! cpct_isAnyKeyPressed_f() ) && c > 0);
-            //delay(2000);
-        }
+    c = 40000;     // Number of loops passed if not keypressed
+    // Wait 'till the user presses a key, counting loop iterations
+    do {
+        c--;                       // One more cycle
+        cpct_scanKeyboard_f();     // Scan the keyboard
+    } while (( ! cpct_isAnyKeyPressed_f() ) && c > 0);
+    //delay(2000);
+}
 
 
 
@@ -944,170 +954,178 @@ u8 getHighestCard() {
 // Returns:
 //    void
 //
-        void game(void) {
-            u8 moved;
-            u8 *pvmem;
+void game(void) {
+    u8 moved;
+    u8 *pvmem;
 
 
-            initGame();
+    initGame();
 
-            // Clear Screen
-            clearScreen();
+    // Clear Screen
+    clearScreen();
 
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 61, 72);
-            cpct_drawSprite(logo_small, pvmem, 15, 55);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 61, 72);
+    cpct_drawSprite(logo_small, pvmem, 15, 55);
 
-            //drawFrame(2, 1, 49, 182);
-            drawTable();
-            drawText("NEXT", 62, 2, 0);
-            printCells();
+    //drawFrame(2, 1, 49, 182);
+    drawTable();
+    drawText("NEXT", 62, 2, 0);
+    printCells();
+    highestCardGame = getHighestCard();
+    drawText("HIGHEST", 59, 138, 0);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 63, 154);
+    cpct_drawSprite(cards[highestCardGame], pvmem, CARD_W, CARD_H);
+
+    moved = 0;
+    // Loop forever
+    while (1) {
+        delay(24);
+
+        rotatedCells = 0;
+
+        if ((cpct_isKeyPressed(Joy0_Right)) || (cpct_isKeyPressed(keys.right))) {
+            if (rotateCellsRight() > 0) {
+                addRandomCellTurn(RIGHT);
+                moved = 1;
+            }
+        } else if ((cpct_isKeyPressed(Joy0_Left)) || (cpct_isKeyPressed(keys.left))) {
+            if (rotateCellsLeft() > 0) {
+                addRandomCellTurn(LEFT);
+                moved = 1;
+            }
+        } else if ((cpct_isKeyPressed(Joy0_Down)) || (cpct_isKeyPressed(keys.down))) {
+            if (rotateCellsDown() > 0) {
+                addRandomCellTurn(DOWN);
+                moved = 1;
+            }
+        } else if ((cpct_isKeyPressed(Joy0_Up)) || (cpct_isKeyPressed(keys.up))) {
+            if (rotateCellsUp() > 0) {
+                addRandomCellTurn(UP);
+                moved = 1;
+            }
+
+        } else if ( cpct_isKeyPressed(keys.music)) {
+            if (!playing) {
+                playing = 1;
+            } else {
+                playing = 0;
+                cpct_akp_stop ();
+            }
+        } else if (cpct_isKeyPressed(keys.abort))
+            break;
+
+        if (moved) {
+            //Empty the rotated cells buffer after ending the animation
+            cpct_waitVSYNC();
+
             highestCardGame = getHighestCard();
-            drawText("HIGHEST", 59, 138, 0);
             pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 63, 154);
-            cpct_drawSprite(tiles[highestCardGame], pvmem, TILE_W, TILE_H);
+            cpct_drawSprite(cards[highestCardGame], pvmem, CARD_W, CARD_H);
+
+            // Play sound Effect
+            cpct_akp_SFXPlay(3, 8, 50 + (highestCardGame * 2), 1, 0, AY_CHANNEL_A);
+
+            printTouched();
+            initCells(1);
 
             moved = 0;
-            // Loop forever
-            while (1) {
-                delay(24);
-
-                rotatedCells = 0;
-
-                if ((cpct_isKeyPressed(Joy0_Right)) || (cpct_isKeyPressed(keys.right))) {
-                    if (rotateCellsRight() > 0) {
-                        addRandomCellTurn(RIGHT);
-                        moved = 1;
-                    }
-                } else if ((cpct_isKeyPressed(Joy0_Left)) || (cpct_isKeyPressed(keys.left))) {
-                    if (rotateCellsLeft() > 0) {
-                        addRandomCellTurn(LEFT);
-                        moved = 1;
-                    }
-                } else if ((cpct_isKeyPressed(Joy0_Down)) || (cpct_isKeyPressed(keys.down))) {
-                    if (rotateCellsDown() > 0) {
-                        addRandomCellTurn(DOWN);
-                        moved = 1;
-                    }
-                } else if ((cpct_isKeyPressed(Joy0_Up)) || (cpct_isKeyPressed(keys.up))) {
-                    if (rotateCellsUp() > 0) {
-                        addRandomCellTurn(UP);
-                        moved = 1;
-                    }
-
-                } else if ( cpct_isKeyPressed(keys.music)) {
-                    if (!playing) {
-                        playing = 1;
-                    } else {
-                        playing = 0;
-                        cpct_akp_stop ();
-                    }
-                } else if (cpct_isKeyPressed(keys.abort))
-                    break;
-
-                if (moved) {
-                    //Empty the rotated cells buffer after ending the animation
-                    cpct_waitVSYNC();
-
-                    highestCardGame = getHighestCard();
-                    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 63, 154);
-                    cpct_drawSprite(tiles[highestCardGame], pvmem, TILE_W, TILE_H);
-
-                    // Play sound Effect
-                    cpct_akp_SFXPlay(3, 8, 50+(highestCardGame*2), 1, 0, AY_CHANNEL_C);
-
-                    printTouched();
-                    initCells(1);
-
-                    moved = 0;
-                    if (anyMovesLeft() == 0) {
-                        drawScore();
-                        wait4UserKeypress();
-                        drawFrame(14, 60, 68, 142);
-                        drawFallingText("NO MORE MOVES", 20, 90, 96);
-                        drawText("GAME OVER", 22, 70, 1);
-                        sprintf(aux_txt, "SCORE  %d", score);
-                        drawText(aux_txt, 22, 120, 1);
-                        wait4UserKeypress();
-                        setHighScore(score);
-                        drawScoreBoard();
-                        break;
-                    }
-                }
-
+            if (anyMovesLeft() == 0) {
+                drawScore();
+                wait4UserKeypress();
+                drawFrame(14, 60, 68, 142);
+                drawFallingText("NO MORE MOVES", 20, 90, 96);
+                drawText("GAME OVER", 22, 70, 1);
+                sprintf(aux_txt, "SCORE  %d", score);
+                drawText(aux_txt, 22, 120, 1);
+                wait4UserKeypress();
+                setHighScore(score);
+                drawScoreBoard();
+                break;
             }
         }
 
-        void debug() {
-            u8 selected = 0;
-            u8 p[5];
-            u8* pvmem;
-            u8 moved = 1;
-            u8 i;
+    }
+}
 
-            p[0] = 1;
-            p[1] = 15;
-            p[2] = 0;
-            p[3] = 0;
-            p[4] = 0;
-            clearScreen();
-            drawText("DEBUG MODE", 0, 0, 1);
-            cpct_setBlendMode(CPCT_BLEND_XOR);
+void debug() {
+    u8 selected = 0;
+    u8 p[5];
+    u8* pvmem;
+    u8 moved = 1;
+    u8 i;
+
+    p[0] = 1;
+    p[1] = 15;
+    p[2] = 0;
+    p[3] = 0;
+    p[4] = 0;
+    clearScreen();
+    drawText("DEBUG MODE", 0, 0, 1);
+    cpct_setBlendMode(CPCT_BLEND_XOR);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 3 + (selected * 15), 50);
+    cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
+    while (1) {
+        delay(24);
+        if (cpct_isKeyPressed(keys.abort)) {
+            break;
+        } else if (cpct_isKeyPressed(Key_G)) {
+            getName();
+        } else if ((cpct_isKeyPressed(keys.down)) || (cpct_isKeyPressed(Joy0_Down))) {
+            moved = 1;
+            if (p[selected] > 0)
+                p[selected]--;
+            else
+                p[selected] = 255;
+        } else if ((cpct_isKeyPressed(keys.up)) || (cpct_isKeyPressed(Joy0_Up))) {
+            moved = 1;
+            if (p[selected] < 255)
+                p[selected]++;
+            else
+                p[selected] = 0;
+        } else if ((cpct_isKeyPressed(keys.left)) || (cpct_isKeyPressed(Joy0_Left))) {
             pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 3 + (selected * 15), 50);
             cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
-            while (1) {
-                delay(24);
-                if (cpct_isKeyPressed(keys.abort)) {
-                    break;
-                } else if (cpct_isKeyPressed(Key_G)) {
-                    getName();
-                } else if ((cpct_isKeyPressed(keys.down)) || (cpct_isKeyPressed(Joy0_Down))) {
-                    moved = 1;
-                    if (p[selected] > 0)
-                        p[selected]--;
-                    else
-                        p[selected] = 255;
-                } else if ((cpct_isKeyPressed(keys.up)) || (cpct_isKeyPressed(Joy0_Up))) {
-                    moved = 1;
-                    if (p[selected] < 255)
-                        p[selected]++;
-                    else
-                        p[selected] = 0;
-                } else if ((cpct_isKeyPressed(keys.left)) || (cpct_isKeyPressed(Joy0_Left))) {
-                    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 3 + (selected * 15), 50);
-                    cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
-                    if (selected > 0)
-                        selected--;
-                    else
-                        selected = 4;
-                    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 3 + (selected * 15), 50);
-                    cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
-                } else if ((cpct_isKeyPressed(keys.right)) || (cpct_isKeyPressed(Joy0_Right))) {
-                    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 3 + (selected * 15), 50);
-                    cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
-                    if (selected < 4)
-                        selected++;
-                    else
-                        selected = 0;
-                    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 3 + (selected * 15), 50);
-                    cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
-                } else if ((cpct_isKeyPressed(keys.fire)) || (cpct_isKeyPressed(Joy0_Fire1))) {
-                    // Play sound Effect
-                    cpct_akp_SFXPlay(p[0], p[1], p[2], p[3], p[4], AY_CHANNEL_C);
-                }
-                if (moved) {
-                    moved = 0;
-                    cpct_waitVSYNC();
-                    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 3, 50);
-                    cpct_drawSolidBox(pvmem,#0,64,11);
-                    for (i = 0; i < 5; i++) {
-                        drawNumber(p[i], 3, 4 + (i * 15), 50);
-                    }
-                    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 3 + (selected * 15), 50);
-                    cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
-                }
-            }
-
+            if (selected > 0)
+                selected--;
+            else
+                selected = 4;
+            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 3 + (selected * 15), 50);
+            cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
+        } else if ((cpct_isKeyPressed(keys.right)) || (cpct_isKeyPressed(Joy0_Right))) {
+            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 3 + (selected * 15), 50);
+            cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
+            if (selected < 4)
+                selected++;
+            else
+                selected = 0;
+            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 3 + (selected * 15), 50);
+            cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
+        } else if ((cpct_isKeyPressed(keys.fire)) || (cpct_isKeyPressed(Joy0_Fire1))) {
+            // Play sound Effect
+            cpct_akp_SFXPlay(p[0], p[1], p[2], p[3], p[4], AY_CHANNEL_C);
         }
+        if (moved) {
+            moved = 0;
+            cpct_waitVSYNC();
+            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 3, 50);
+            cpct_drawSolidBox(pvmem, #0,64,11);
+            for (i = 0; i < 5; i++) {
+                drawNumber(p[i], 3, 4 + (i * 15), 50);
+            }
+            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 3 + (selected * 15), 50);
+            cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
+        }
+    }
+
+    wait4UserKeypress();
+    drawFrame(14, 60, 68, 142);
+    drawFallingText("NO MORE MOVES", 20, 90, 96);
+    drawText("GAME OVER", 22, 70, 1);
+    sprintf(aux_txt, "SCORE  %d", score);
+    drawText(aux_txt, 22, 120, 1);
+    wait4UserKeypress();
+
+}
 
 //////////////////////////////////////////////////////////////////
 // drawMarker
@@ -1119,14 +1137,14 @@ u8 getHighestCard() {
 //
 
 
-        void drawMarker() {
-            u8* pvmem;
-            cpct_setBlendMode(CPCT_BLEND_XOR);
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 17, 60 + (20 * selectedOption));
-            cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 58, 60 + (20 * selectedOption));
-            cpct_drawSpriteBlended(pvmem, IC_ICONS_1_H, IC_ICONS_1_W, ic_icons_1);
-        }
+void drawMarker() {
+    u8* pvmem;
+    cpct_setBlendMode(CPCT_BLEND_XOR);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 17, 60 + (20 * selectedOption));
+    cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 58, 60 + (20 * selectedOption));
+    cpct_drawSpriteBlended(pvmem, IC_ICONS_1_H, IC_ICONS_1_W, ic_icons_1);
+}
 
 //////////////////////////////////////////////////////////////////
 // drawMenu
@@ -1136,42 +1154,37 @@ u8 getHighestCard() {
 // Returns:
 //    void
 //
-        void drawMenu() {
-            u8* pvmem;
+void drawMenu() {
+    u8* pvmem;
 
-            cpct_waitVSYNC();
+    cpct_waitVSYNC();
 
-            //cpct_memset_f64(CPCT_VMEM_START, cpct_px2byteM0(5, 5), 0x4000);
-            cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(0, 0), 0x4000);
+    cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(0, 0), 0x4000);
 
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 20, 0);
-            cpct_drawSprite(logo_micro, pvmem, 5, 18);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 20, 0);
+    cpct_drawSprite(logo_micro, pvmem, 5, 18);
 
+    drawFrame(15, 43, 63, 129);
 
-            drawFrame(15, 43, 63, 129);
+    drawText("AMSTHREES", 35, 3, 1);
 
-            drawText("AMSTHREES", 35, 3, 1);
+    drawText("REDEFINE", 30, 60, 0);
+    drawText("MUSIC", 30, 80, 0);
+    if (playing)
+        drawText("OFF", 48, 80, 0);
+    else
+        drawText("ON", 48, 80, 0);
+    drawText("PLAY", 30, 100, 0);
 
-            //drawText("TECLADO", 30, 40, 0);
-            drawText("REDEFINE", 30, 60, 0);
-            drawText("MUSIC", 30, 80, 0);
-            if (playing)
-                drawText("OFF", 48, 80, 0);
-            else
-                drawText("ON", 48, 80, 0);
-            drawText("PLAY", 30, 100, 0);
+    drawNumber(1, 1, 23, 60);
+    drawNumber(2, 1, 23, 80);
+    drawNumber(3, 1, 23, 100);
 
-//    drawNumber(1, 1, 23, 40);
-            drawNumber(1, 1, 23, 60);
-            drawNumber(2, 1, 23, 80);
-            drawNumber(3, 1, 23, 100);
+    drawText("JOHN LOBO", 25, 170, 1);
+    drawText("@ GLASNOST CORP 2016", 11, 185, 1);
 
-            drawText("JOHN LOBO", 25, 170, 1);
-            drawText("@ GLASNOST CORP 2016", 11, 185, 1);
-
-            drawMarker();
-
-        }
+    drawMarker();
+}
 
 
 //////////////////////////////////////////////////////////////////
@@ -1182,95 +1195,93 @@ u8 getHighestCard() {
 // Returns:
 //    void
 //
-        void checkKeyboardMenu() {
+void checkKeyboardMenu() {
 
-            u8 *pvideo;
-
-
-            delay(20);
-
-            //cpct_scanKeyboard_f();
-
-            if (( cpct_isKeyPressed(Key_1)) || (((cpct_isKeyPressed(keys.fire) || (cpct_isKeyPressed(Joy0_Fire1)))  && (selectedOption == 0)))) {
-
-                drawMarker();
-                selectedOption = 0;
-                drawMarker();
-
-                waitKeyUp(Key_1);
-
-                keys.up    = redefineKey("UP");
-                keys.down  = redefineKey("DOWN");
-                keys.left  = redefineKey("LEFT");
-                keys.right = redefineKey("RIGHT");
-                keys.fire = redefineKey("FIRE");
-                keys.pause = redefineKey("PAUSE");
-                keys.abort = redefineKey("ABORT");
-                //keys.music = redefineKey("MUSIC");
-
-                pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 8, 144);
-                cpct_drawSolidBox(pvideo, #0, 64, FONT_H);
-
-            }
-            else if (( cpct_isKeyPressed(Key_2)) || (((cpct_isKeyPressed(keys.fire) || (cpct_isKeyPressed(Joy0_Fire1)))  && (selectedOption == 1)))) {
-                drawMarker();
-                selectedOption = 1;
-                drawMarker();
-
-                if (!playing) {
-                    playing = 1;
-                } else {
-                    playing = 0;
-                    cpct_akp_stop ();
-                }
-
-                drawMenu();
-            }
+    u8 *pvideo;
 
 
-            else if (( cpct_isKeyPressed(Key_3)) || (((cpct_isKeyPressed(keys.fire) || (cpct_isKeyPressed(Joy0_Fire1))) && (selectedOption == 2)))) {
+    delay(20);
 
-                waitKeyUp(Key_3);
+    if (( cpct_isKeyPressed(Key_1)) || (((cpct_isKeyPressed(keys.fire) || (cpct_isKeyPressed(Joy0_Fire1)))  && (selectedOption == 0)))) {
 
-                game();
+        drawMarker();
+        selectedOption = 0;
+        drawMarker();
 
-                playing = 1;
-                drawMenu();
+        waitKeyUp(Key_1);
 
-            } else if ((cpct_isKeyPressed(keys.up)) || (cpct_isKeyPressed(Joy0_Up))) {
-                if (selectedOption > 0) {
-                    drawMarker();
-                    selectedOption--;
-                    drawMarker();
-                } else {
-                    drawMarker();
-                    selectedOption = 2;
-                    drawMarker();
-                }
+        keys.up    = redefineKey("UP");
+        keys.down  = redefineKey("DOWN");
+        keys.left  = redefineKey("LEFT");
+        keys.right = redefineKey("RIGHT");
+        keys.fire  = redefineKey("FIRE");
+        keys.pause = redefineKey("PAUSE");
+        keys.abort = redefineKey("ABORT");
+        //keys.music = redefineKey("MUSIC");
 
-            } else if ((cpct_isKeyPressed(keys.down)) || (cpct_isKeyPressed(Joy0_Down))) {
-                if (selectedOption < 2) {
-                    drawMarker();
-                    selectedOption++;
-                    drawMarker();
-                } else {
-                    drawMarker();
-                    selectedOption = 0;
-                    drawMarker();
-                }
+        pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 8, 144);
+        cpct_drawSolidBox(pvideo, #0, 64, FONT_H);
 
-            } else if ( cpct_isKeyPressed(keys.music)) {
-                if (!playing) {
-                    playing = 1;
-                } else {
-                    playing = 0;
-                    cpct_akp_stop ();
-                }
-            } else if (cpct_isKeyPressed(keys.debug)) {
-                debug();
-                drawMenu();
-            }
+    }
+    else if (( cpct_isKeyPressed(Key_2)) || (((cpct_isKeyPressed(keys.fire) || (cpct_isKeyPressed(Joy0_Fire1)))  && (selectedOption == 1)))) {
+        drawMarker();
+        selectedOption = 1;
+        drawMarker();
+
+        if (!playing) {
+            playing = 1;
+        } else {
+            playing = 0;
+            cpct_akp_stop ();
         }
+
+        drawMenu();
+    }
+
+
+    else if (( cpct_isKeyPressed(Key_3)) || (((cpct_isKeyPressed(keys.fire) || (cpct_isKeyPressed(Joy0_Fire1))) && (selectedOption == 2)))) {
+
+        waitKeyUp(Key_3);
+
+        game();
+
+        playing = 1;
+        drawMenu();
+
+    } else if ((cpct_isKeyPressed(keys.up)) || (cpct_isKeyPressed(Joy0_Up))) {
+        if (selectedOption > 0) {
+            drawMarker();
+            selectedOption--;
+            drawMarker();
+        } else {
+            drawMarker();
+            selectedOption = 2;
+            drawMarker();
+        }
+
+    } else if ((cpct_isKeyPressed(keys.down)) || (cpct_isKeyPressed(Joy0_Down))) {
+        if (selectedOption < 2) {
+            drawMarker();
+            selectedOption++;
+            drawMarker();
+        } else {
+            drawMarker();
+            selectedOption = 0;
+            drawMarker();
+        }
+
+    } else if ( cpct_isKeyPressed(keys.music)) {
+        if (!playing) {
+            playing = 1;
+        } else {
+            playing = 0;
+            cpct_akp_stop ();
+        }
+    } else if (cpct_isKeyPressed(keys.debug)) {
+        debug();
+        drawMenu();
+    }
+}
 
 
 //////////////////////////////////////////////////////////////////
@@ -1281,27 +1292,26 @@ u8 getHighestCard() {
 // Returns:
 //    void
 //
-        void threes() {
-            u32 lapso;
+void threes() {
+    u32 lapso;
 
-            while (1) {
+    while (1) {
 
+        drawMenu();
 
-                drawMenu();
+        lapso = 0;
 
-                lapso = 0;
+        while (lapso < SWITCH_SCREENS) {
+            cpct_waitVSYNC();
 
-                while (lapso < SWITCH_SCREENS) {
-                    cpct_waitVSYNC();
+            checkKeyboardMenu();
 
-                    checkKeyboardMenu();
+            lapso++;
 
-                    lapso++;
-
-                }
-
-                drawScoreBoard();
-
-            }
-            cpct_disableFirmware();
         }
+
+        drawScoreBoard();
+
+    }
+    cpct_disableFirmware();
+}
