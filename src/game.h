@@ -19,7 +19,7 @@
 #include <cpctelera.h>
 #include "sprites/numbers-big.h"
 #include "sprites/tilemap.h"
-#include "sprites/tiles.h"
+#include "sprites/cards.h"
 #include "sprites/symbols.h"
 #include "sprites/table.h"
 #include "sprites/logo-small.h"
@@ -98,8 +98,7 @@ typedef struct Coords{
 
 extern const u8 G_graphics_palette[16];
 
-// Declare g_transparencyMaskTable, which is defined in t.c, and used
-// in a.c and in b.c also.
+// Declare am_tablatrans, which is defined in game.c, and used in more places
 cpctm_declareMaskTable(am_tablatrans);
 
 void init();

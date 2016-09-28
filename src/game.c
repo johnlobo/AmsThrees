@@ -15,49 +15,43 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-//#include "music/song02.h"
 #include "music/song.h"
 #include "sprites/icons.h"
 #include "sprites/marker.h"
 #include "game.h"
 
-
-Keys keys;
-
 // Global Variables
+Keys keys;
 u8 cells[4][4];
 const u16 values[15] = { 0, 1, 2, 3, 6, 12, 24, 48, 96, 192, 384, 768, 1536, 3072, 6144};
 const u32 scores[15] = { 0, 0, 0, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683, 59049, 177147, 531441};
 TAdjacents adjacents;
-u8* const tiles[15] = {tile_tiles_00, tile_tiles_00, tile_tiles_01, tile_tiles_02, tile_tiles_03, tile_tiles_04,
-                       tile_tiles_05, tile_tiles_06, tile_tiles_07, tile_tiles_08, tile_tiles_09,
-                       tile_tiles_10, tile_tiles_11, tile_tiles_12, tile_tiles_13
+u8* const cards[15] = {cards_00, cards_00, cards_01, cards_02, cards_03, cards_04,
+                       cards_05, cards_06, cards_07, cards_08, cards_09,
+                       cards_10, cards_11, cards_12, cards_13
                       };
 u8 highestCardGame, highestCardAll;
 u32 score;
 u32 scoreHallOfFame[8];
 u8 nameHallOfFame[8][15];
 u8 newNameHighScore[15] = {32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 0};
-u8 nextTile;
 u8 selectedOption;
 u8 aux_txt[26];
-u8 tileBag[12];
-u8 currentTile;
-u8 maxTiles;
+u8 cardBag[12];
+u8 currentCard;
 u8 playing = 0;
 u8 rotatedCells;
 u8 touchedCells[4][4];
-u8 animateDirection;
 
-// Máscara de transparencia
+// Define Transparency mask
 cpctm_createTransparentMaskTable(am_tablatrans, 0x100, M0, 0);
 
 //////////////////////////////////////////////////////////////////
 // playmusic
 //
+//  Function to play music saving the registers
 //
-//
-// Returns:
+// Returns: void.
 //
 //
 
@@ -82,10 +76,10 @@ void playmusic() {
 //////////////////////////////////////////////////////////////////
 // myInterruptHandler
 //
-//
+//  Interruphandler that subsitutes the default one. Includes calls for reading the keyboard and playing music, if activated
 //
 // Returns:
-//
+//  void
 //
 
 void interruptHandler() {
@@ -107,14 +101,14 @@ void interruptHandler() {
 }
 
 //////////////////////////////////////////////////////////////////
-// renewTileBag
-//    Count the number of zeroes that still remains in the cells
+// renewCardBag
+//    renew the cardBag that ensures the proper ammount of every tile type
 //
 //
 // Returns:
-//    <u8> Number of zeroes in cells
+//    void
 //
-void renewTileBag() {
+void renewCardBag() {
     u8 i;
     u8 currentValue = 0;
     u8 counters[3];
@@ -128,18 +122,19 @@ void renewTileBag() {
             currentValue = (cpct_rand() / 85) + 1;
         while (counters[currentValue - 1] > 3);
         counters[currentValue - 1]++;
-        tileBag[i] = currentValue;
+        cardBag[i] = currentValue;
     }
-    currentTile = 0;
+    currentCard = 0;
 }
 
 //////////////////////////////////////////////////////////////////
 // delay
-//    Count the number of zeroes that still remains in the cells
+//
+//    Wait for an specific number of cycles
 //
 //
 // Returns:
-//    <u8> Number of zeroes in cells
+//    void
 //
 void delay(u32 cycles) {
     u32 i;
@@ -175,11 +170,12 @@ u8 countZeroes() {
 
 //////////////////////////////////////////////////////////////////
 // getHighestCard
+//
 //    returns the highest card in the table
 //
 //
 // Returns:
-//    void
+//    the index to the highest card in the cells
 //
 u8 getHighestCard() {
     u8 i, j;
@@ -197,7 +193,8 @@ u8 getHighestCard() {
 
 //////////////////////////////////////////////////////////////////
 // initAdjacents
-//    Initialize the adjacents variable
+//
+//    Initialize the adjacents structure
 //
 //
 // Returns:
@@ -213,8 +210,9 @@ u8 getHighestCard() {
         }
 
 //////////////////////////////////////////////////////////////////
-// trace
+// getAdjacents
 //
+//      Get the adjacents     
 //
 //
 // Returns:
@@ -247,7 +245,7 @@ u8 getHighestCard() {
         }
 
 //////////////////////////////////////////////////////////////////
-// trace
+// anyOfThisInAdjacents
 //
 //
 //
@@ -269,12 +267,13 @@ u8 getHighestCard() {
         }
 
 //////////////////////////////////////////////////////////////////
-// trace
+// anyMovesLeft
 //
+//      Checks if are ther any more moves left
 //
 //
 // Returns:
-//    void
+//    true if there are more moves left, false otherways
 //
         u8 anyMovesLeft() {
             u8 i, j;
@@ -303,7 +302,7 @@ u8 getHighestCard() {
         }
 
 //////////////////////////////////////////////////////////////////
-// trace
+// addRandomCellTurn
 //
 //
 //
@@ -339,42 +338,19 @@ u8 getHighestCard() {
                 else
                     j = cpct_rand() / 64;
             }
-            //cells[i][j] = nextTile;
-            //nextTile = (cpct_rand() / 85) + 1;
-            cells[i][j] = tileBag[currentTile];
+            cells[i][j] = cardBag[currentCard];
             touchedCells[i][j] = 1;
-            if (currentTile < 11)
-                currentTile++;
+            if (currentCard < 11)
+                currentCard++;
             else
-                renewTileBag();
+                renewCardBag();
         }
 
-//////////////////////////////////////////////////////////////////
-// addRandomCell
-//
-//
-//
-// Returns:
-//    void
-//
-        void addRandomCell() {
-            u8 i, j;
-
-            i = cpct_rand() / 64;
-            j = cpct_rand() / 64;
-            while (cells[i][j] != 0) {
-                i = cpct_rand() / 64;
-                j = cpct_rand() / 64;
-            }
-            //cells[i][j] = nextTile;
-            //nextTile = (cpct_rand() / 85) + 1;
-            //cells[i][j] = (cpct_rand() / 85) + 1;
-            cells[i][j] = (cpct_rand() / 85) + 1;
-        }
 
 //////////////////////////////////////////////////////////////////
 // initCells
 //
+//      Initializes the cells
 //
 //
 // Returns:
@@ -396,8 +372,8 @@ u8 getHighestCard() {
 
 //////////////////////////////////////////////////////////////////
 // initialization
-//
-//
+//  
+//  initializes the whole program
 //
 // Returns:
 //    void
@@ -407,13 +383,10 @@ u8 getHighestCard() {
 
             // Music on
             playing = 1;
-            //cpct_akp_musicInit(am_smoke);
-            //cpct_akp_SFXInit(am_smoke);
             cpct_akp_musicInit(song02);
             cpct_akp_SFXInit(song02);
             cpct_setInterruptHandler(interruptHandler);
             cpct_akp_musicPlay();
-
 
             drawText("AMSTHREES IS READY", 31, 76, 1);
             drawText("PRESS ANY KEY", 20, 90, 1);
@@ -460,8 +433,6 @@ u8 getHighestCard() {
             highestCardAll = 0;
 
 
-            // VERY IMPORTANT: Before using EasyTileMap functions (etm), the internal
-            // pointer to the tileset must be set.
             cpct_etm_setTileset2x4(tileset);
 
         }
@@ -481,7 +452,7 @@ u8 getHighestCard() {
             initCells(0);
             initCells(1);
 
-            renewTileBag();
+            renewCardBag();
 
             for (i = 0; i < 9; i++) {
                 j = cpct_rand() / 64;
@@ -490,8 +461,8 @@ u8 getHighestCard() {
                     j = cpct_rand() / 64;
                     k = cpct_rand() / 64;
                 }
-                cells[j][k] = tileBag[currentTile];
-                currentTile++;
+                cells[j][k] = cardBag[currentCard];
+                currentCard++;
             }
 
             score = 0;
@@ -665,7 +636,6 @@ u8 getHighestCard() {
                 for (j = 0; j < 4; j++) {
                     if (cells[i][j] != 0) {
                         touchedCells[i][j] = 1;
-                        // empty cell on the left
                         if (cells[i + 1][j] == 0) {
                             cells[i + 1][j] = cells[i][j];
                             cells[i][j] = 0;
@@ -739,7 +709,7 @@ u8 getHighestCard() {
                 }
             }
             pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 63, 18);
-            cpct_drawSprite(tiles[tileBag[currentTile]], pvmem, TILE_W, TILE_H);
+            cpct_drawSprite(tiles[cardBag[currentCard]], pvmem, TILE_W, TILE_H);
         }
 
 //////////////////////////////////////////////////////////////////
@@ -774,7 +744,7 @@ u8 getHighestCard() {
                 }
             }
             pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 63, 18);
-            cpct_drawSprite(tiles[tileBag[currentTile]], pvmem, TILE_W, TILE_H);
+            cpct_drawSprite(tiles[cardBag[currentCard]], pvmem, TILE_W, TILE_H);
         }
 
 //////////////////////////////////////////////////////////////////
@@ -794,7 +764,6 @@ u8 getHighestCard() {
                 y = 4 + (i * 48);
                 for (j = 0; j < 4; j++) {
                     x = 6 + (j * 12);
-                    // value cache to speed up a bit
                     z = cells[i][j];
                     if (z >= 3) {
                         if (z == 3) {
@@ -803,7 +772,6 @@ u8 getHighestCard() {
                             partialScore = scores[z];
                         }
                         score += partialScore;
-                        //drawNumber(partialScore, 4, 3 + (11 * j), 6 + (44 * i));
                         drawNumber(partialScore, 4, x - 3, y);
                     }
                 }
@@ -852,7 +820,6 @@ u8 getHighestCard() {
             moved = 0;
             while (1) {
                 delay(24);
-                //cpct_scanKeyboard_f();
 
                 if ((cpct_isKeyPressed(Joy0_Down)) || (cpct_isKeyPressed(keys.down))) {
                     chr++;
@@ -962,7 +929,7 @@ u8 getHighestCard() {
             // Wait 'till the user presses a key, counting loop iterations
             do {
                 c--;                       // One more cycle
-                cpct_scanKeyboard_f();     // Scan the scan the keyboard
+                cpct_scanKeyboard_f();     // Scan the keyboard
             } while (( ! cpct_isAnyKeyPressed_f() ) && c > 0);
             //delay(2000);
         }
@@ -986,9 +953,6 @@ u8 getHighestCard() {
 
             // Clear Screen
             clearScreen();
-            //clearWindow(0, 0, 160, 200);
-
-            //cpct_setInterruptHandler( myInterruptHandler );
 
             pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 61, 72);
             cpct_drawSprite(logo_small, pvmem, 15, 55);
@@ -1033,17 +997,14 @@ u8 getHighestCard() {
                 } else if ( cpct_isKeyPressed(keys.music)) {
                     if (!playing) {
                         playing = 1;
-                        //cpct_setInterruptHandler(interruptHandler);
                     } else {
                         playing = 0;
-                        //cpct_disableFirmware();
                         cpct_akp_stop ();
                     }
                 } else if (cpct_isKeyPressed(keys.abort))
                     break;
 
                 if (moved) {
-                    //animation();
                     //Empty the rotated cells buffer after ending the animation
                     cpct_waitVSYNC();
 
@@ -1258,10 +1219,8 @@ u8 getHighestCard() {
 
                 if (!playing) {
                     playing = 1;
-                    //cpct_setInterruptHandler(interruptHandler);
                 } else {
                     playing = 0;
-                    //cpct_disableFirmware();
                     cpct_akp_stop ();
                 }
 
@@ -1303,10 +1262,8 @@ u8 getHighestCard() {
             } else if ( cpct_isKeyPressed(keys.music)) {
                 if (!playing) {
                     playing = 1;
-                    //cpct_setInterruptHandler(interruptHandler);
                 } else {
                     playing = 0;
-                    //cpct_disableFirmware();
                     cpct_akp_stop ();
                 }
             } else if (cpct_isKeyPressed(keys.debug)) {
@@ -1327,20 +1284,15 @@ u8 getHighestCard() {
         void threes() {
             u32 lapso;
 
-            //cpct_setInterruptHandler( myInterruptHandler );
             while (1) {
 
 
                 drawMenu();
-                //drawMarker2();
 
                 lapso = 0;
 
                 while (lapso < SWITCH_SCREENS) {
-                    // Synchronize with Vertical VSYNC signal, which happens 50 times per second (frequency = 1/50)
                     cpct_waitVSYNC();
-
-
 
                     checkKeyboardMenu();
 
