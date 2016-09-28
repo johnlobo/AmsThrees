@@ -1,2 +1,4 @@
-# Heroes Clash
-Amstrad version of the famous Dungeons and dragons game
+# Amsthrees 
+Amstrad version of the famous mobile game Threes
+
+Work in progress!!
