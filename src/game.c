@@ -15,7 +15,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "music/song.h"
+#include "music/song02.h"
 #include "sprites/icons.h"
 #include "sprites/marker.h"
 #include "game.h"
@@ -390,8 +390,8 @@ void initialization() {
 
     // Music on
     playing = 1;
-    cpct_akp_musicInit(song02);
-    cpct_akp_SFXInit(song02);
+    cpct_akp_musicInit(song);
+    cpct_akp_SFXInit(song);
     cpct_setInterruptHandler(interruptHandler);
     cpct_akp_musicPlay();
 
@@ -404,11 +404,11 @@ void initialization() {
         seed++;
     cpct_srand(seed);
 
-    scoreHallOfFame[0] = 6000;
-    scoreHallOfFame[1] = 5000;
-    scoreHallOfFame[2] = 4000;
-    scoreHallOfFame[3] = 3000;
-    scoreHallOfFame[4] = 1500;
+    scoreHallOfFame[0] = 10000;
+    scoreHallOfFame[1] = 8000;
+    scoreHallOfFame[2] = 6000;
+    scoreHallOfFame[3] = 5000;
+    scoreHallOfFame[4] = 2500;
     scoreHallOfFame[5] = 1000;
     scoreHallOfFame[6] = 500;
     scoreHallOfFame[7] = 300;
@@ -1033,7 +1033,7 @@ void game(void) {
                 drawScore();
                 wait4UserKeypress();
                 drawFrame(14, 60, 68, 142);
-                drawFallingText("NO MORE MOVES", 20, 90, 96);
+                drawText("NO MORE MOVES", 20, 90, 1);
                 drawText("GAME OVER", 22, 70, 1);
                 sprintf(aux_txt, "SCORE  %d", score);
                 drawText(aux_txt, 22, 120, 1);
