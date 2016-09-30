@@ -1047,6 +1047,49 @@ void game(void) {
     }
 }
 
+//////////////////////////////////////////////////////////////////
+// help 
+//  help screen
+//
+//
+// Returns:
+//    void
+//
+
+void help() {
+    u8* pvmem;
+
+    clearScreen();
+    drawText("HELP", 0, 0, 1);
+    drawText("COMBINE TWO CARDS TO CREATE",0,20,0);
+    drawText("A NEW ONE",0,35,0);
+    
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 15, 58);
+    cpct_drawSprite(cards[1], pvmem, CARD_W, CARD_H);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 29, 78);
+    cpct_drawSprite(ic_icons_2, pvmem, IC_ICONS_2_W, IC_ICONS_2_H);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 35, 58);
+    cpct_drawSprite(cards[2], pvmem, CARD_W, CARD_H);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 49, 78);
+    cpct_drawSprite(ic_icons_3, pvmem, IC_ICONS_3_W, IC_ICONS_3_H);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 55, 58);
+    cpct_drawSprite(cards[3], pvmem, CARD_W, CARD_H);
+
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 15, 108);
+    cpct_drawSprite(cards[3], pvmem, CARD_W, CARD_H);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 29, 128);
+    cpct_drawSprite(ic_icons_2, pvmem, IC_ICONS_2_W, IC_ICONS_2_H);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 35, 108);
+    cpct_drawSprite(cards[3], pvmem, CARD_W, CARD_H);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 49, 128);
+    cpct_drawSprite(ic_icons_3, pvmem, IC_ICONS_3_W, IC_ICONS_3_H);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 55, 105);
+    cpct_drawSprite(cards[4], pvmem, CARD_W, CARD_H);
+
+    drawText("PRESS ANY KEY TO CONTINUE", 0, 180, 1);
+    wait4UserKeypress();
+}
+
 void debug() {
     u8 selected = 0;
     u8 p[5];
@@ -1164,7 +1207,7 @@ void drawMenu() {
     pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 20, 0);
     cpct_drawSprite(logo_micro, pvmem, 5, 18);
 
-    drawFrame(15, 43, 63, 129);
+    drawFrame(15, 43, 63, 149);
 
     drawText("AMSTHREES", 35, 3, 1);
 
@@ -1174,11 +1217,14 @@ void drawMenu() {
         drawText("OFF", 48, 80, 0);
     else
         drawText("ON", 48, 80, 0);
-    drawText("PLAY", 30, 100, 0);
+    drawText("HELP", 30, 100, 0);
+    drawText("PLAY", 30, 120, 0);
 
     drawNumber(1, 1, 23, 60);
     drawNumber(2, 1, 23, 80);
     drawNumber(3, 1, 23, 100);
+    drawNumber(4, 1, 23, 120);
+
 
     drawText("JOHN LOBO", 25, 170, 1);
     drawText("@ GLASNOST CORP 2016", 11, 185, 1);
@@ -1243,24 +1289,36 @@ void checkKeyboardMenu() {
 
         waitKeyUp(Key_3);
 
+        help();
+
+        drawMenu();
+
+    }
+
+    else if (( cpct_isKeyPressed(Key_4)) || (((cpct_isKeyPressed(keys.fire) || (cpct_isKeyPressed(Joy0_Fire1))) && (selectedOption == 3)))) {
+
+        waitKeyUp(Key_4);
+
         game();
 
         playing = 1;
         drawMenu();
 
-    } else if ((cpct_isKeyPressed(keys.up)) || (cpct_isKeyPressed(Joy0_Up))) {
+    }
+
+    else if ((cpct_isKeyPressed(keys.up)) || (cpct_isKeyPressed(Joy0_Up))) {
         if (selectedOption > 0) {
             drawMarker();
             selectedOption--;
             drawMarker();
         } else {
             drawMarker();
-            selectedOption = 2;
+            selectedOption = 3;
             drawMarker();
         }
 
     } else if ((cpct_isKeyPressed(keys.down)) || (cpct_isKeyPressed(Joy0_Down))) {
-        if (selectedOption < 2) {
+        if (selectedOption < 3) {
             drawMarker();
             selectedOption++;
             drawMarker();
