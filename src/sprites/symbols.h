@@ -1,6 +1,6 @@
 // Data created with Img2CPC - (c) Retroworks - 2007-2015
-#ifndef _IMAGES_SYMBOLS_H_
-#define _IMAGES_SYMBOLS_H_
+#ifndef _ASSETS_SYMBOLS_H_
+#define _ASSETS_SYMBOLS_H_
 
 #include <types.h>
 #define G_TILE_SYMBOLS_0_W 3

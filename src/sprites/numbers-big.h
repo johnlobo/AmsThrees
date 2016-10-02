@@ -1,6 +1,6 @@
 // Data created with Img2CPC - (c) Retroworks - 2007-2015
-#ifndef _IMAGES_NUMBERS_BIG_H_
-#define _IMAGES_NUMBERS_BIG_H_
+#ifndef _ASSETS_NUMBERS_BIG_H_
+#define _ASSETS_NUMBERS_BIG_H_
 
 #include <types.h>
 #define G_NUMBERS_BIG_00_W 3

@@ -1,6 +1,6 @@
 // Data created with Img2CPC - (c) Retroworks - 2007-2015
-#ifndef _IMAGES_ICONS_H_
-#define _IMAGES_ICONS_H_
+#ifndef _ASSETS_ICONS_H_
+#define _ASSETS_ICONS_H_
 
 #include <types.h>
 #define IC_ICONS_0_W 3

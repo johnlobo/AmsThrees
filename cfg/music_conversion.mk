@@ -50,4 +50,5 @@
 ## will convert the music into a data array called g_mysong that will be
 ## placed at the 0x42A0 memory address in an absolue way.
 ##
-$(eval $(call AKS2C,images/song02.aks,song,src/music/,0x200))
+$(eval $(call AKS2C,assets/song02.aks,song02,src/music/,0x200))
+$(eval $(call AKS2C,assets/song05.aks,song05,src/music/,0x1000))

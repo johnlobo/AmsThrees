@@ -70,9 +70,9 @@ PAL={ 0 1 15 20 6 2 8 10 12 14 5 18 3 24 11 26 }
 
 #$(eval $(call IMG2SPRITES,img/example.png,0,pre,24,12,$(PALETTE),mask,src/,hwpalette))
 
-$(eval $(call IMG2SPRITES,images/icons.png,0,ic,6,11,$(PAL),,src/sprites,))
-$(eval $(call IMG2SPRITES,images/border.png,0,g_tile,4,4,$(PAL),,src/sprites,))
-$(eval $(call IMG2SPRITES,images/marker.png,0,am,10,15,$(PAL),,src/sprites,))
-$(eval $(call IMG2SPRITES,images/symbols.png,0,g_tile,6,11,$(PAL),,src/sprites,))
-$(eval $(call IMG2SPRITES,images/fonts-big.png,0,g,6,11,$(PAL),,src/sprites,))
-$(eval $(call IMG2SPRITES,images/numbers-big.png,0,g,6,11,$(PAL),,src/sprites,))
+$(eval $(call IMG2SPRITES,assets/icons.png,0,ic,6,11,$(PAL),,src/sprites,))
+$(eval $(call IMG2SPRITES,assets/border.png,0,g_tile,4,4,$(PAL),,src/sprites,))
+$(eval $(call IMG2SPRITES,assets/marker.png,0,am,10,15,$(PAL),,src/sprites,))
+$(eval $(call IMG2SPRITES,assets/symbols.png,0,g_tile,6,11,$(PAL),,src/sprites,))
+$(eval $(call IMG2SPRITES,assets/fonts-big.png,0,g,6,11,$(PAL),,src/sprites,))
+$(eval $(call IMG2SPRITES,assets/numbers-big.png,0,g,6,11,$(PAL),,src/sprites,))

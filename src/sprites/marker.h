@@ -1,6 +1,6 @@
 // Data created with Img2CPC - (c) Retroworks - 2007-2015
-#ifndef _IMAGES_MARKER_H_
-#define _IMAGES_MARKER_H_
+#ifndef _ASSETS_MARKER_H_
+#define _ASSETS_MARKER_H_
 
 #include <types.h>
 #define AM_MARKER_W 5

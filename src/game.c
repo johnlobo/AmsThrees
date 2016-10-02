@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "music/song02.h"
+#include "music/song05.h"
 #include "sprites/icons.h"
 #include "sprites/marker.h"
 #include "game.h"
@@ -390,8 +391,8 @@ void initialization() {
 
     // Music on
     playing = 1;
-    cpct_akp_musicInit(song);
-    cpct_akp_SFXInit(song);
+    cpct_akp_musicInit(song02);
+    cpct_akp_SFXInit(song02);
     cpct_setInterruptHandler(interruptHandler);
     cpct_akp_musicPlay();
 
@@ -1023,15 +1024,18 @@ void game(void) {
             cpct_drawSprite(cards[highestCardGame], pvmem, CARD_W, CARD_H);
 
             // Play sound Effect
-            cpct_akp_SFXPlay(3, 8, 50 + (highestCardGame * 2), 1, 0, AY_CHANNEL_A);
+            cpct_akp_SFXPlay(3, 14, 50 + (highestCardGame * 2), 1, 0, AY_CHANNEL_A);
 
             printTouched();
             initCells(1);
 
             moved = 0;
             if (anyMovesLeft() == 0) {
+                cpct_akp_stop();
                 drawScore();
                 wait4UserKeypress();
+                cpct_akp_musicInit(song05);
+                cpct_akp_musicPlay();
                 drawFrame(14, 60, 68, 142);
                 drawText("NO MORE MOVES", 20, 90, 1);
                 drawText("GAME OVER", 22, 70, 1);
@@ -1040,6 +1044,9 @@ void game(void) {
                 wait4UserKeypress();
                 setHighScore(score);
                 drawScoreBoard();
+                cpct_akp_stop();
+                cpct_akp_musicInit(song02);
+                cpct_akp_musicPlay();
                 break;
             }
         }

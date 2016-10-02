@@ -1,6 +1,6 @@
 // Data created with Img2CPC - (c) Retroworks - 2007-2015
-#ifndef _IMAGES_BORDER_H_
-#define _IMAGES_BORDER_H_
+#ifndef _ASSETS_BORDER_H_
+#define _ASSETS_BORDER_H_
 
 #include <types.h>
 #define G_TILE_BORDER_0_W 2
