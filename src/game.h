@@ -41,7 +41,7 @@
 #define FALLING_TEXT_MAX_BOUNCES 6
 #define FALLING_TEXT_MAX_LENGHT  20
 
-#define SWITCH_SCREENS 7000
+#define SWITCH_SCREENS 400
 
 
 #define LEFT 0
@@ -86,7 +86,6 @@ typedef struct Keys{
     cpct_keyID pause;
     cpct_keyID abort;
     cpct_keyID music;
-    cpct_keyID debug;
 } Keys;
 
 typedef struct Coords{

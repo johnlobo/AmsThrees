@@ -414,10 +414,10 @@ void initialization() {
     scoreHallOfFame[6] = 500;
     scoreHallOfFame[7] = 300;
 
-    strcpy(nameHallOfFame[0], "MARTIN");
-    strcpy(nameHallOfFame[1], "DIEGO");
-    strcpy(nameHallOfFame[2], "MARIA");
-    strcpy(nameHallOfFame[3], "DAVID");
+    strcpy(nameHallOfFame[0], "[ MARTIN [");
+    strcpy(nameHallOfFame[1], "\\ DIEGO \\");
+    strcpy(nameHallOfFame[2], "] MARIA ]");
+    strcpy(nameHallOfFame[3], "^ DAVID ^");
     strcpy(nameHallOfFame[4], "MASTER");
     strcpy(nameHallOfFame[5], "EXPERT");
     strcpy(nameHallOfFame[6], "INTERMEDIATE");
@@ -434,7 +434,6 @@ void initialization() {
     keys.pause = Key_Del;
     keys.abort = Key_Esc;
     keys.music = Key_M;
-    keys.debug = Key_D;
 
     selectedOption = 0;
 
@@ -816,7 +815,7 @@ void getName() {
     pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 20, 100);
     cpct_drawSprite(g_tile_symbols_4, pvmem, 3, 11);
     drawText("CHANGE LETTER", 24, 100, 0);
-    drawText(" [ TO END", 20, 115, 1);
+    drawText(" _ TO END", 20, 115, 1);
     drawFrame(12, 130, 70, 160);
     strcpy(newNameHighScore, "A");
     drawText(newNameHighScore, 16, 140, 0);
@@ -839,7 +838,7 @@ void getName() {
             chr--;
             moved = 1;
         } else if ((pos < 14) && ((cpct_isKeyPressed(Joy0_Right)) || (cpct_isKeyPressed(Joy0_Fire1)) || (cpct_isKeyPressed(keys.right)))) {
-            if (chr == 91) {
+            if (chr == 95) {
                 newNameHighScore[pos] = '\0';
                 break;
             }
@@ -1032,10 +1031,10 @@ void game(void) {
             moved = 0;
             if (anyMovesLeft() == 0) {
                 cpct_akp_stop();
-                drawScore();
-                wait4UserKeypress();
                 cpct_akp_musicInit(song05);
                 cpct_akp_musicPlay();
+                drawScore();
+                wait4UserKeypress();
                 drawFrame(14, 60, 68, 142);
                 drawText("NO MORE MOVES", 20, 90, 1);
                 drawText("GAME OVER", 22, 70, 1);
@@ -1055,7 +1054,7 @@ void game(void) {
 }
 
 //////////////////////////////////////////////////////////////////
-// help 
+// help
 //  help screen
 //
 //
@@ -1067,10 +1066,18 @@ void help() {
     u8* pvmem;
 
     clearScreen();
-    drawText("HELP", 0, 0, 1);
-    drawText("COMBINE TWO CARDS TO CREATE",0,20,0);
-    drawText("A NEW ONE",0,35,0);
-    
+    drawText("MOVE THE TABLE     ", 0, 0, 1);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 57, 0);
+    cpct_drawSprite(g_tile_symbols_1, pvmem, 3, 11);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 60, 0);
+    cpct_drawSprite(g_tile_symbols_2, pvmem, 3, 11);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 63, 0);
+    cpct_drawSprite(g_tile_symbols_3, pvmem, 3, 11);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 66, 0);
+    cpct_drawSprite(g_tile_symbols_4, pvmem, 3, 11);
+    drawText("TO COMBINE TWO CARDS", 0, 15, 1);
+    drawText("AND CREATE A NEW ONE", 0, 30, 1);
+
     pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 15, 58);
     cpct_drawSprite(cards[1], pvmem, CARD_W, CARD_H);
     pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 29, 78);
@@ -1093,88 +1100,9 @@ void help() {
     pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 55, 105);
     cpct_drawSprite(cards[4], pvmem, CARD_W, CARD_H);
 
-    drawText("PRESS ANY KEY TO CONTINUE", 0, 180, 1);
+    drawText("WHICH IS THE HIGHEST CARD", 0, 170, 1);
+    drawText("YOU CAN GET??", 0, 185, 1);
     wait4UserKeypress();
-}
-
-void debug() {
-    u8 selected = 0;
-    u8 p[5];
-    u8* pvmem;
-    u8 moved = 1;
-    u8 i;
-
-    p[0] = 1;
-    p[1] = 15;
-    p[2] = 0;
-    p[3] = 0;
-    p[4] = 0;
-    clearScreen();
-    drawText("DEBUG MODE", 0, 0, 1);
-    cpct_setBlendMode(CPCT_BLEND_XOR);
-    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 3 + (selected * 15), 50);
-    cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
-    while (1) {
-        delay(24);
-        if (cpct_isKeyPressed(keys.abort)) {
-            break;
-        } else if (cpct_isKeyPressed(Key_G)) {
-            getName();
-        } else if ((cpct_isKeyPressed(keys.down)) || (cpct_isKeyPressed(Joy0_Down))) {
-            moved = 1;
-            if (p[selected] > 0)
-                p[selected]--;
-            else
-                p[selected] = 255;
-        } else if ((cpct_isKeyPressed(keys.up)) || (cpct_isKeyPressed(Joy0_Up))) {
-            moved = 1;
-            if (p[selected] < 255)
-                p[selected]++;
-            else
-                p[selected] = 0;
-        } else if ((cpct_isKeyPressed(keys.left)) || (cpct_isKeyPressed(Joy0_Left))) {
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 3 + (selected * 15), 50);
-            cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
-            if (selected > 0)
-                selected--;
-            else
-                selected = 4;
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 3 + (selected * 15), 50);
-            cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
-        } else if ((cpct_isKeyPressed(keys.right)) || (cpct_isKeyPressed(Joy0_Right))) {
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 3 + (selected * 15), 50);
-            cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
-            if (selected < 4)
-                selected++;
-            else
-                selected = 0;
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 3 + (selected * 15), 50);
-            cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
-        } else if ((cpct_isKeyPressed(keys.fire)) || (cpct_isKeyPressed(Joy0_Fire1))) {
-            // Play sound Effect
-            cpct_akp_SFXPlay(p[0], p[1], p[2], p[3], p[4], AY_CHANNEL_C);
-        }
-        if (moved) {
-            moved = 0;
-            cpct_waitVSYNC();
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 3, 50);
-            cpct_drawSolidBox(pvmem, #0,64,11);
-            for (i = 0; i < 5; i++) {
-                drawNumber(p[i], 3, 4 + (i * 15), 50);
-            }
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 3 + (selected * 15), 50);
-            cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
-        }
-    }
-
-    wait4UserKeypress();
-    drawFrame(14, 60, 68, 142);
-    drawFallingText("NO MORE MOVES", 20, 90, 96);
-    drawText("GAME OVER", 22, 70, 1);
-    sprintf(aux_txt, "SCORE  %d", score);
-    drawText(aux_txt, 22, 120, 1);
-    wait4UserKeypress();
-
 }
 
 //////////////////////////////////////////////////////////////////
@@ -1342,9 +1270,6 @@ void checkKeyboardMenu() {
             playing = 0;
             cpct_akp_stop ();
         }
-    } else if (cpct_isKeyPressed(keys.debug)) {
-        debug();
-        drawMenu();
     }
 }
 
@@ -1367,7 +1292,7 @@ void threes() {
         lapso = 0;
 
         while (lapso < SWITCH_SCREENS) {
-            cpct_waitVSYNC();
+            //cpct_waitVSYNC();
 
             checkKeyboardMenu();
 

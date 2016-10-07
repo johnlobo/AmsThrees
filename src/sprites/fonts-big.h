@@ -102,23 +102,5 @@ extern const u8 g_fonts_big_31[3 * 11];
 #define G_FONTS_BIG_32_W 3
 #define G_FONTS_BIG_32_H 11
 extern const u8 g_fonts_big_32[3 * 11];
-#define G_FONTS_BIG_33_W 3
-#define G_FONTS_BIG_33_H 11
-extern const u8 g_fonts_big_33[3 * 11];
-#define G_FONTS_BIG_34_W 3
-#define G_FONTS_BIG_34_H 11
-extern const u8 g_fonts_big_34[3 * 11];
-#define G_FONTS_BIG_35_W 3
-#define G_FONTS_BIG_35_H 11
-extern const u8 g_fonts_big_35[3 * 11];
-#define G_FONTS_BIG_36_W 3
-#define G_FONTS_BIG_36_H 11
-extern const u8 g_fonts_big_36[3 * 11];
-#define G_FONTS_BIG_37_W 3
-#define G_FONTS_BIG_37_H 11
-extern const u8 g_fonts_big_37[3 * 11];
-#define G_FONTS_BIG_38_W 1
-#define G_FONTS_BIG_38_H 11
-extern const u8 g_fonts_big_38[1 * 11];
 
 #endif

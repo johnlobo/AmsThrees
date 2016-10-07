@@ -22,8 +22,7 @@ u8* const font[39] = { g_fonts_big_00, g_fonts_big_01, g_fonts_big_02, g_fonts_b
                        g_fonts_big_15, g_fonts_big_16, g_fonts_big_17, g_fonts_big_18, g_fonts_big_19,
                        g_fonts_big_20, g_fonts_big_21, g_fonts_big_22, g_fonts_big_23, g_fonts_big_24,
                        g_fonts_big_25, g_fonts_big_26, g_fonts_big_27, g_fonts_big_28, g_fonts_big_29,
-                       g_fonts_big_30, g_fonts_big_31, g_fonts_big_32, g_fonts_big_33, g_fonts_big_34,
-                       g_fonts_big_35, g_fonts_big_36, g_fonts_big_37, g_fonts_big_38
+                       g_fonts_big_30, g_fonts_big_31, g_fonts_big_32
                      };
 u8* const numbers[10] = { g_numbers_big_00, g_numbers_big_01, g_numbers_big_02, g_numbers_big_03, g_numbers_big_04,
                           g_numbers_big_05, g_numbers_big_06, g_numbers_big_07, g_numbers_big_08, g_numbers_big_09
@@ -101,7 +100,7 @@ void drawText(u8 text[], u8 xPos, u8 yPos, u8 centered) {
 
         else if (character != 32) { //32 = SPACE
 
-            cpct_drawSpriteMaskedAlignedTable(font[character - 64], pvideo, FONT_W, FONT_H, am_tablatrans);
+            cpct_drawSpriteMaskedAlignedTable(font[character - 63], pvideo, FONT_W, FONT_H, am_tablatrans);
         }
 
         character = text[++x];
