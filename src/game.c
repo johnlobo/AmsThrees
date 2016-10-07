@@ -861,10 +861,10 @@ void getName() {
         }
         if (moved) {
             moved = 0;
-            if (chr > 91)
+            if (chr > 95)
                 chr = 65;
             else if (chr < 65)
-                chr = 91;
+                chr = 95;
             newNameHighScore[pos] = chr;
             pvmem = cpct_getScreenPtr(CPCT_VMEM_START, markerX, markerY);
             cpct_drawSpriteBlended(pvmem, AM_MARKER_H, AM_MARKER_W, am_marker);
