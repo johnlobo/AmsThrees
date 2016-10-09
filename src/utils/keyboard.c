@@ -79,12 +79,12 @@ cpct_keyID redefineKey(u8 text[]) {
 
     cpct_keyID key;
 
-    u8* pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 8, 144);
+    u8* pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 8, 154);
     cpct_drawSolidBox(pvideo, cpct_px2byteM0(0,0), 64, FONT_H);
 
     x = strlen(text);
 
-    drawText(text, 8, 144,1);
+    drawText(text, 8, 154,1);
 
     key = esperaUnaTecla();
     waitKeyUp(key);

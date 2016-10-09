@@ -1200,7 +1200,7 @@ void checkKeyboardMenu() {
         keys.abort = redefineKey("ABORT");
         //keys.music = redefineKey("MUSIC");
 
-        pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 8, 144);
+        pvideo = cpct_getScreenPtr(CPCT_VMEM_START, 8, 154);
         cpct_drawSolidBox(pvideo, #0, 64, FONT_H);
 
     }

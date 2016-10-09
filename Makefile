@@ -32,6 +32,7 @@
 ##
 include cfg/build_config.mk
 
+
 ##
 ## USE GLOBAL MAKEFILE (general rules for building CPCtelera projects)
 ##

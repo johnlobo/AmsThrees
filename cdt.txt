@@ -1,0 +1,3 @@
+../cpctelera/cpctelera/tools/2cdt/bin/2cdt -s 1 -n -r "LOADER.BAS" "dsk_files\LOADER.BAS" "final.cdt"
+../cpctelera/cpctelera/tools/2cdt/bin/2cdt -m 0 -s 1 -r "AMSTHRE3.SCR" "dsk_files\AMSTHRE3.SCR" "final.cdt"
+../cpctelera/cpctelera/tools/2cdt/bin/2cdt -m 0 -s 1 -L 0x3000 -X 0x3000 -r "amsthrees.bin" "obj\amsthrees.bin" "final.cdt"
