@@ -34,7 +34,7 @@ void setUpVideo() {
 
     cpct_fw2hw(G_graphics_palette, 16);
     cpct_setPalette  (G_graphics_palette, 16);
-    cpct_setBorder(G_graphics_palette[0]);
+    cpct_setBorder(G_graphics_palette[1]);
     cpct_setVideoMode(0);
     clearScreen();
 

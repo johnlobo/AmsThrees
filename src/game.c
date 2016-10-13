@@ -15,10 +15,23 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "music/song02.h"
-#include "music/song05.h"
+#include "sprites/numbers-big.h"
+#include "sprites/tilemap.h"
+#include "sprites/cards.h"
+#include "sprites/symbols.h"
+#include "sprites/table.h"
+#include "sprites/logo-small.h"
+#include "sprites/logo-micro.h"
+#include "sprites/fonts-big.h"
 #include "sprites/icons.h"
 #include "sprites/marker.h"
+#include "utils/itoa.h"
+#include "utils/keyboard.h"
+#include "text/text.h"
+#include "video/video.h"
+#include "music/song02.h"
+#include "music/song05.h"
+#include "levels/levels.h"
 #include "game.h"
 
 // Global Variables
@@ -46,6 +59,102 @@ u8 touchedCells[4][4];
 
 // Define Transparency mask
 cpctm_createTransparentMaskTable(am_tablatrans, 0x100, M0, 0);
+
+u8 changed;
+extern TChangedCards changedCards[12];
+
+
+void changed_init() __naked
+{
+    __asm
+    _changedCards::
+    .db 0x00, 0x00, 0x00, 0x00
+    .db 0x00, 0x00, 0x00, 0x00
+    .db 0x00, 0x00, 0x00, 0x00
+    .db 0x00, 0x00, 0x00, 0x00
+    .db 0x00, 0x00, 0x00, 0x00
+    .db 0x00, 0x00, 0x00, 0x00
+    .db 0x00, 0x00, 0x00, 0x00
+    .db 0x00, 0x00, 0x00, 0x00
+    .db 0x00, 0x00, 0x00, 0x00
+    .db 0x00, 0x00, 0x00, 0x00
+    .db 0x00, 0x00, 0x00, 0x00
+    .db 0x00, 0x00, 0x00, 0x00
+    __endasm;
+}
+
+void animate(u8 dir) {
+    u8 i, x, y;
+    u8 *pvmem;
+    u8 tempx, tempy, shiftx, shifty;
+    u8* pStartTable = 0xC002;  // Pointer to video memory
+
+    //pStartTable = cpct_getScreenPtr(CPCT_VMEM_START, 2, 0);
+
+    switch (dir)    {
+    case LEFT:
+        shiftx = -1;
+        shifty = 0;
+        break;
+    case RIGHT:
+        shiftx = 1;
+        shifty = 0;
+        break;
+    case UP:
+        shiftx = 0;
+        shifty = -1;
+        break;
+    case DOWN:
+        shiftx = 0;
+        shifty = 1;
+        break;
+    }
+    //Step 1
+    //Erase changed slots and print the moved card
+    cpct_waitVSYNC();
+    for (i = 0; i < changed; i++) {
+        tempx = changedCards[i].x;
+        tempy = changedCards[i].y;
+        cpct_etm_drawTileBox2x4 (2 + (tempx * 6), 1 + (tempy * 12), (CARD_W / 2), (CARD_H / 4), MAP_WIDTH, pStartTable, tmx);
+        //multiply by 6 and 22 to reuse shift in next step
+        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, tempx + (shiftx * 6), tempy + (shifty * 22));
+        cpct_drawSpriteMaskedAlignedTable(cards[changedCards[i].prev], pvmem, CARD_W, CARD_H, am_tablatrans);
+    }
+    //Step 2
+    //Erase moved card and print animation end for sigle movements
+    cpct_waitVSYNC();
+    for (i = 0; i < changed; i++)
+    {
+        tempx = changedCards[i].x;
+        tempy = changedCards[i].y;
+        //Restore touched tiles
+        switch (dir)
+        {
+        case LEFT:
+            cpct_etm_drawTileBox2x4 (2 + ((tempx - 1) * 6), 1 + (tempy * 12), (CARD_W), (CARD_H / 4), MAP_WIDTH, pStartTable, tmx);
+            break;
+        case RIGHT:
+            cpct_etm_drawTileBox2x4 (2 + (tempx * 6), 1 + (tempy * 12), (CARD_W), (CARD_H / 4), MAP_WIDTH, pStartTable, tmx);
+            break;
+        case UP:
+            cpct_etm_drawTileBox2x4 (2 + (tempx * 6), 1 + ((tempy - 1) * 12), (CARD_W / 2), (CARD_H / 2), MAP_WIDTH, pStartTable, tmx);
+            break;
+        case DOWN:
+            cpct_etm_drawTileBox2x4 (2 + (tempx * 6), 1 + (tempy * 12), (CARD_W / 2), (CARD_H / 2), MAP_WIDTH, pStartTable, tmx);
+            break;
+        }
+        //If no upgrade is necessary, print card in final position
+        if (changedCards[i].prev == changedCards[i].post) {
+            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, tempx + shiftx, tempy + shifty);
+            cpct_drawSpriteMaskedAlignedTable(cards[changedCards[i].post], pvmem, CARD_W, CARD_H, am_tablatrans);
+        }
+
+
+    }
+
+}
+
+
 
 //////////////////////////////////////////////////////////////////
 // playmusic
@@ -736,9 +845,9 @@ void printTouched() {
     u8 x;
     u8 y;
     u8* pvmem;
-    u8* pStartTable;  // Pointer to video memory
+    u8* pStartTable = 0xC002;  // Pointer to video memory
 
-    pStartTable = cpct_getScreenPtr(CPCT_VMEM_START, 2, 0);
+    //pStartTable = cpct_getScreenPtr(CPCT_VMEM_START, 2, 0);
 
     for (i = 0; i < 4; i++) {
         y = 4 + (i * 48);
@@ -1054,6 +1163,57 @@ void game(void) {
 }
 
 //////////////////////////////////////////////////////////////////
+// initPuzzleGame
+//
+//
+//
+// Returns:
+//    void
+//
+void initPuzzleGame() {
+
+    initCells(0);
+    initCells(1);
+
+
+}
+
+
+//////////////////////////////////////////////////////////////////
+// puzzle game
+//
+//
+//
+// Returns:
+//    void
+//
+void puzzleGame(void) {
+    u8 moved;
+    u8 *pvmem;
+
+
+    initGame();
+
+    // Clear Screen
+    clearScreen();
+
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 61, 72);
+    cpct_drawSprite(logo_small, pvmem, 15, 55);
+
+    //drawFrame(2, 1, 49, 182);
+    drawTable();
+    drawText("NEXT", 62, 2, 0);
+    printCells();
+    highestCardGame = getHighestCard();
+    drawText("HIGHEST", 59, 138, 0);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 63, 154);
+    cpct_drawSprite(cards[highestCardGame], pvmem, CARD_W, CARD_H);
+
+    moved = 0;
+    // Loop forever
+}
+
+//////////////////////////////////////////////////////////////////
 // help
 //  help screen
 //
@@ -1118,9 +1278,9 @@ void help() {
 void drawMarker() {
     u8* pvmem;
     cpct_setBlendMode(CPCT_BLEND_XOR);
-    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 17, 60 + (20 * selectedOption));
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 15, 40 + (20 * selectedOption));
     cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
-    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 58, 60 + (20 * selectedOption));
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 62, 40 + (20 * selectedOption));
     cpct_drawSpriteBlended(pvmem, IC_ICONS_1_H, IC_ICONS_1_W, ic_icons_1);
 }
 
@@ -1142,23 +1302,25 @@ void drawMenu() {
     pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 20, 0);
     cpct_drawSprite(logo_micro, pvmem, 5, 18);
 
-    drawFrame(15, 43, 63, 149);
+    drawFrame(13, 23, 67, 151);
 
     drawText("AMSTHREES", 35, 3, 1);
 
-    drawText("REDEFINE", 30, 60, 0);
-    drawText("MUSIC", 30, 80, 0);
+    drawText("REDEFINE", 28, 40, 0);
+    drawText("MUSIC", 28, 60, 0);
     if (playing)
-        drawText("OFF", 48, 80, 0);
+        drawText("OFF", 46, 60, 0);
     else
-        drawText("ON", 48, 80, 0);
-    drawText("HELP", 30, 100, 0);
-    drawText("PLAY", 30, 120, 0);
+        drawText("ON", 46, 60, 0);
+    drawText("HELP", 28, 80, 0);
+    drawText("FREE MODE", 28, 100, 0);
+    drawText("PUZZLE MODE", 28, 120, 0);
 
-    drawNumber(1, 1, 23, 60);
-    drawNumber(2, 1, 23, 80);
-    drawNumber(3, 1, 23, 100);
-    drawNumber(4, 1, 23, 120);
+    drawNumber(1, 1, 21, 40);
+    drawNumber(2, 1, 21, 60);
+    drawNumber(3, 1, 21, 80);
+    drawNumber(4, 1, 21, 100);
+    drawNumber(5, 1, 21, 120);
 
 
     drawText("JOHN LOBO", 25, 170, 1);
@@ -1248,12 +1410,12 @@ void checkKeyboardMenu() {
             drawMarker();
         } else {
             drawMarker();
-            selectedOption = 3;
+            selectedOption = 4;
             drawMarker();
         }
 
     } else if ((cpct_isKeyPressed(keys.down)) || (cpct_isKeyPressed(Joy0_Down))) {
-        if (selectedOption < 3) {
+        if (selectedOption < 4) {
             drawMarker();
             selectedOption++;
             drawMarker();
