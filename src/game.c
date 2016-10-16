@@ -18,6 +18,8 @@
 #include "sprites/numbers-big.h"
 #include "sprites/tilemap.h"
 #include "sprites/cards.h"
+#include "sprites/tiles4.h"
+#include "sprites/camelotBadge.h"
 #include "sprites/symbols.h"
 #include "sprites/table.h"
 #include "sprites/logo-small.h"
@@ -40,10 +42,15 @@ u8 cells[4][4];
 const u16 values[15] = { 0, 1, 2, 3, 6, 12, 24, 48, 96, 192, 384, 768, 1536, 3072, 6144};
 const u32 scores[15] = { 0, 0, 0, 3, 9, 27, 81, 243, 729, 2187, 6561, 19683, 59049, 177147, 531441};
 TAdjacents adjacents;
-u8* const cards[15] = {cards_00, cards_00, cards_01, cards_02, cards_03, cards_04,
-                       cards_05, cards_06, cards_07, cards_08, cards_09,
-                       cards_10, cards_11, cards_12, cards_13
-                      };
+u8* const cards1[15] = {cards_00, cards_00, cards_01, cards_02, cards_03, cards_04,
+                        cards_05, cards_06, cards_07, cards_08, cards_09,
+                        cards_10, cards_11, cards_12, cards_13
+                       };
+u8* const cards2[15] = {g_tiles4_00, g_tiles4_00, g_tiles4_01, g_tiles4_02, g_tiles4_03, g_tiles4_04,
+                        g_tiles4_05, g_tiles4_06, g_tiles4_07, g_tiles4_08, g_tiles4_09,
+                        g_tiles4_10, g_tiles4_11, g_tiles4_12, g_tiles4_13
+                       };
+u8** cards;
 u8 highestCardGame, highestCardAll;
 u32 score;
 u32 scoreHallOfFame[8];
@@ -56,105 +63,27 @@ u8 currentCard;
 u8 playing = 0;
 u8 rotatedCells;
 u8 touchedCells[4][4];
+u8 camelotMode;
 
 // Define Transparency mask
-cpctm_createTransparentMaskTable(am_tablatrans, 0x100, M0, 0);
+cpctm_createTransparentMaskTable(am_tablatrans, 0x400, M0, 0);
 
-u8 changed;
-extern TChangedCards changedCards[12];
+TChangedCardBag changedCards;
 
-
-void changed_init() __naked
-{
-    __asm
-    _changedCards::
-    .db 0x00, 0x00, 0x00, 0x00
-    .db 0x00, 0x00, 0x00, 0x00
-    .db 0x00, 0x00, 0x00, 0x00
-    .db 0x00, 0x00, 0x00, 0x00
-    .db 0x00, 0x00, 0x00, 0x00
-    .db 0x00, 0x00, 0x00, 0x00
-    .db 0x00, 0x00, 0x00, 0x00
-    .db 0x00, 0x00, 0x00, 0x00
-    .db 0x00, 0x00, 0x00, 0x00
-    .db 0x00, 0x00, 0x00, 0x00
-    .db 0x00, 0x00, 0x00, 0x00
-    .db 0x00, 0x00, 0x00, 0x00
-    __endasm;
+void resetChangedCards() {
+    changedCards.number = 0;
+    cpct_memset(&changedCards.cards, 0x00, 48);
 }
 
-void animate(u8 dir) {
-    u8 i, x, y;
-    u8 *pvmem;
-    u8 tempx, tempy, shiftx, shifty;
-    u8* pStartTable = 0xC002;  // Pointer to video memory
-
-    //pStartTable = cpct_getScreenPtr(CPCT_VMEM_START, 2, 0);
-
-    switch (dir)    {
-    case LEFT:
-        shiftx = -1;
-        shifty = 0;
-        break;
-    case RIGHT:
-        shiftx = 1;
-        shifty = 0;
-        break;
-    case UP:
-        shiftx = 0;
-        shifty = -1;
-        break;
-    case DOWN:
-        shiftx = 0;
-        shifty = 1;
-        break;
-    }
-    //Step 1
-    //Erase changed slots and print the moved card
-    cpct_waitVSYNC();
-    for (i = 0; i < changed; i++) {
-        tempx = changedCards[i].x;
-        tempy = changedCards[i].y;
-        cpct_etm_drawTileBox2x4 (2 + (tempx * 6), 1 + (tempy * 12), (CARD_W / 2), (CARD_H / 4), MAP_WIDTH, pStartTable, tmx);
-        //multiply by 6 and 22 to reuse shift in next step
-        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, tempx + (shiftx * 6), tempy + (shifty * 22));
-        cpct_drawSpriteMaskedAlignedTable(cards[changedCards[i].prev], pvmem, CARD_W, CARD_H, am_tablatrans);
-    }
-    //Step 2
-    //Erase moved card and print animation end for sigle movements
-    cpct_waitVSYNC();
-    for (i = 0; i < changed; i++)
-    {
-        tempx = changedCards[i].x;
-        tempy = changedCards[i].y;
-        //Restore touched tiles
-        switch (dir)
-        {
-        case LEFT:
-            cpct_etm_drawTileBox2x4 (2 + ((tempx - 1) * 6), 1 + (tempy * 12), (CARD_W), (CARD_H / 4), MAP_WIDTH, pStartTable, tmx);
-            break;
-        case RIGHT:
-            cpct_etm_drawTileBox2x4 (2 + (tempx * 6), 1 + (tempy * 12), (CARD_W), (CARD_H / 4), MAP_WIDTH, pStartTable, tmx);
-            break;
-        case UP:
-            cpct_etm_drawTileBox2x4 (2 + (tempx * 6), 1 + ((tempy - 1) * 12), (CARD_W / 2), (CARD_H / 2), MAP_WIDTH, pStartTable, tmx);
-            break;
-        case DOWN:
-            cpct_etm_drawTileBox2x4 (2 + (tempx * 6), 1 + (tempy * 12), (CARD_W / 2), (CARD_H / 2), MAP_WIDTH, pStartTable, tmx);
-            break;
-        }
-        //If no upgrade is necessary, print card in final position
-        if (changedCards[i].prev == changedCards[i].post) {
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, tempx + shiftx, tempy + shifty);
-            cpct_drawSpriteMaskedAlignedTable(cards[changedCards[i].post], pvmem, CARD_W, CARD_H, am_tablatrans);
-        }
-
-
-    }
-
+void addCardChangedCards(u8 x, u8 y, u8 prev, u8 post){
+    u8 num;
+    num = changedCards.number;
+    changedCards.cards[num].x = x;
+    changedCards.cards[num].y = y;
+    changedCards.cards[num].prev = prev;
+    changedCards.cards[num].post = post;
+    changedCards.number++;
 }
-
-
 
 //////////////////////////////////////////////////////////////////
 // playmusic
@@ -219,6 +148,160 @@ void interruptHandler() {
 //    void
 //
 
+//////////////////////////////////////////////////////////////////
+// initialization
+//
+//  initializes the whole program
+//
+// Returns:
+//    void
+//
+void initialization() {
+    u32 seed;    // Value to initialize the random seed
+
+    // Music on
+    playing = 1;
+    cpct_akp_musicInit(song02);
+    cpct_akp_SFXInit(song02);
+    cpct_setInterruptHandler(interruptHandler);
+    cpct_akp_musicPlay();
+
+    drawText("AMSTHREES IS READY", 31, 76, 1);
+    drawText("PRESS ANY KEY", 20, 90, 1);
+
+    seed = wait4UserKeypress();
+    // Random seed may never be 0, so check first and add 1 if it was 0
+    if (!seed)
+        seed++;
+    cpct_srand(seed);
+
+    //Deactivates Camelot Mode
+    camelotMode = 0;
+    // Asign the classic deck to the game
+    cards = &(*cards1);
+
+    scoreHallOfFame[0] = 20000;
+    scoreHallOfFame[1] = 15000;
+    scoreHallOfFame[2] = 7500;
+    scoreHallOfFame[3] = 5000;
+    scoreHallOfFame[4] = 2500;
+    scoreHallOfFame[5] = 1000;
+    scoreHallOfFame[6] = 500;
+    scoreHallOfFame[7] = 300;
+
+    strcpy(nameHallOfFame[0], "MARTIN [[[");
+    strcpy(nameHallOfFame[1], "DIEGO \\\\\\");
+    strcpy(nameHallOfFame[2], "MARIA ]]]");
+    strcpy(nameHallOfFame[3], "DAVID ^^^");
+    strcpy(nameHallOfFame[4], "MASTER");
+    strcpy(nameHallOfFame[5], "EXPERT");
+    strcpy(nameHallOfFame[6], "INTERMEDIATE");
+    strcpy(nameHallOfFame[7], "BEGINNER");
+
+
+    clearScreen();
+
+    keys.up    = Key_CursorUp;
+    keys.down  = Key_CursorDown;
+    keys.left  = Key_CursorLeft;
+    keys.right = Key_CursorRight;
+    keys.fire  = Key_Space;
+    keys.pause = Key_Del;
+    keys.abort = Key_Esc;
+    keys.music = Key_M;
+
+    selectedOption = 0;
+
+    highestCardAll = 0;
+
+
+    cpct_etm_setTileset2x4(tileset);
+
+    resetChangedCards();
+
+}
+
+
+
+
+
+void animate(u8 dir) 
+{
+    u8 i;
+    u8 *pvmem;
+    u8 tempx, tempy;
+    i8 shiftx = 0;
+    i8 shifty = 0;
+    u8 *pStartTable;  // Pointer to video memory
+
+    pStartTable = cpct_getScreenPtr(CPCT_VMEM_START, 2, 0);
+
+    switch (dir)    {
+    case LEFT:
+        shiftx = -1;
+        shifty = 0;
+        break;
+    case RIGHT:
+        shiftx = 1;
+        shifty = 0;
+        break;
+    case UP:
+        shiftx = 0;
+        shifty = -1;
+        break;
+    case DOWN:
+        shiftx = 0;
+        shifty = 1;
+        break;
+    }
+    //Step 1
+    //Erase changed slots and print the moved card
+    cpct_waitVSYNC();
+    for (i = 0; i < changedCards.number; i++) {
+        tempx = changedCards.cards[i].x;
+        tempy = changedCards.cards[i].y;
+        cpct_etm_drawTileBox2x4 (2 + (tempx * 6), 1 + (tempy * 12), (CARD_W / 2), (CARD_H / 4), MAP_WIDTH, pStartTable, tmx);
+        //multiply by 6 and 22 to reuse shift in next step
+        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, tempx + (shiftx * 6), tempy + (shifty * 22));
+        cpct_drawSpriteMaskedAlignedTable(cards[changedCards.cards[i].prev], pvmem, CARD_W, CARD_H, am_tablatrans);
+    }
+    //Step 2
+    //Erase moved card and print animation end for sigle movements
+    cpct_waitVSYNC();
+    for (i = 0; i < changedCards.number; i++)
+    {
+        tempx = changedCards.cards[i].x;
+        tempy = changedCards.cards[i].y;
+        //Restore touched tiles
+        switch (dir)
+        {
+        case LEFT:
+            cpct_etm_drawTileBox2x4 (2 + ((tempx - 1) * 6), 1 + (tempy * 12), (CARD_W), (CARD_H / 4), MAP_WIDTH, pStartTable, tmx);
+            break;
+        case RIGHT:
+            cpct_etm_drawTileBox2x4 (2 + (tempx * 6), 1 + (tempy * 12), (CARD_W), (CARD_H / 4), MAP_WIDTH, pStartTable, tmx);
+            break;
+        case UP:
+            cpct_etm_drawTileBox2x4 (2 + (tempx * 6), 1 + ((tempy - 1) * 12), (CARD_W / 2), (CARD_H / 2), MAP_WIDTH, pStartTable, tmx);
+            break;
+        case DOWN:
+            cpct_etm_drawTileBox2x4 (2 + (tempx * 6), 1 + (tempy * 12), (CARD_W / 2), (CARD_H / 2), MAP_WIDTH, pStartTable, tmx);
+            break;
+        }
+        //If no upgrade is necessary, print card in final position
+        if (changedCards.cards[i].prev == changedCards.cards[i].post) {
+            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, tempx + shiftx, tempy + shifty);
+            cpct_drawSpriteMaskedAlignedTable(cards[changedCards.cards[i].post], pvmem, CARD_W, CARD_H, am_tablatrans);
+        }
+
+
+    }
+
+}
+
+
+
+
 void renewCardBag() {
     u8 i;
     u8 currentValue = 0;
@@ -248,7 +331,7 @@ void renewCardBag() {
 //    void
 //
 
-void delay(u32 cycles) {
+void delay(u32 cycles){
     u32 i;
     for (i = 0; i < cycles; i++) {
         __asm
@@ -487,71 +570,7 @@ void initCells(u8 touched) {
 }
 
 
-//////////////////////////////////////////////////////////////////
-// initialization
-//
-//  initializes the whole program
-//
-// Returns:
-//    void
-//
-void initialization() {
-    u32 seed;    // Value to initialize the random seed
 
-    // Music on
-    playing = 1;
-    cpct_akp_musicInit(song02);
-    cpct_akp_SFXInit(song02);
-    cpct_setInterruptHandler(interruptHandler);
-    cpct_akp_musicPlay();
-
-    drawText("AMSTHREES IS READY", 31, 76, 1);
-    drawText("PRESS ANY KEY", 20, 90, 1);
-
-    seed = wait4UserKeypress();
-    // Random seed may never be 0, so check first and add 1 if it was 0
-    if (!seed)
-        seed++;
-    cpct_srand(seed);
-
-    scoreHallOfFame[0] = 10000;
-    scoreHallOfFame[1] = 8000;
-    scoreHallOfFame[2] = 6000;
-    scoreHallOfFame[3] = 5000;
-    scoreHallOfFame[4] = 2500;
-    scoreHallOfFame[5] = 1000;
-    scoreHallOfFame[6] = 500;
-    scoreHallOfFame[7] = 300;
-
-    strcpy(nameHallOfFame[0], "[ MARTIN [");
-    strcpy(nameHallOfFame[1], "\\ DIEGO \\");
-    strcpy(nameHallOfFame[2], "] MARIA ]");
-    strcpy(nameHallOfFame[3], "^ DAVID ^");
-    strcpy(nameHallOfFame[4], "MASTER");
-    strcpy(nameHallOfFame[5], "EXPERT");
-    strcpy(nameHallOfFame[6], "INTERMEDIATE");
-    strcpy(nameHallOfFame[7], "BEGINNER");
-
-
-    clearScreen();
-
-    keys.up    = Key_CursorUp;
-    keys.down  = Key_CursorDown;
-    keys.left  = Key_CursorLeft;
-    keys.right = Key_CursorRight;
-    keys.fire  = Key_Space;
-    keys.pause = Key_Del;
-    keys.abort = Key_Esc;
-    keys.music = Key_M;
-
-    selectedOption = 0;
-
-    highestCardAll = 0;
-
-
-    cpct_etm_setTileset2x4(tileset);
-
-}
 
 
 //////////////////////////////////////////////////////////////////
@@ -845,9 +864,9 @@ void printTouched() {
     u8 x;
     u8 y;
     u8* pvmem;
-    u8* pStartTable = 0xC002;  // Pointer to video memory
+    u8* pStartTable;  // Pointer to video memory
 
-    //pStartTable = cpct_getScreenPtr(CPCT_VMEM_START, 2, 0);
+    pStartTable = cpct_getScreenPtr(CPCT_VMEM_START, 2, 0);
 
     for (i = 0; i < 4; i++) {
         y = 4 + (i * 48);
@@ -1014,6 +1033,17 @@ void setHighScore(u32 score) {
         scoreHallOfFame[j] = score;
         strcpy(nameHallOfFame[j], newNameHighScore);
     }
+
+    if ((i <= CAMELOT_MODE_LIMIT) && (!camelotMode)) {
+        // Asign the Camelot deck to the game
+        cards = &(*cards2);
+        drawFrame(10, 60, 70, 130);
+        drawText("CONGRATULATIONS", 0, 70, 1);
+        drawText("CAMELOT MODE", 0, 90, 1);
+        drawText("UNLOCKED [\\]^", 0, 110, 1);
+        camelotMode = 1;
+        wait4UserKeypress();
+    }
     highestCardAll = highestCardGame;
 }
 
@@ -1144,11 +1174,11 @@ void game(void) {
                 cpct_akp_musicPlay();
                 drawScore();
                 wait4UserKeypress();
-                drawFrame(14, 60, 68, 142);
-                drawText("NO MORE MOVES", 20, 90, 1);
-                drawText("GAME OVER", 22, 70, 1);
+                drawFrame(14, 60, 68, 130);
+                drawText("NO MORE MOVES", 20, 70, 1);
+                drawText("GAME OVER", 22, 90, 1);
                 sprintf(aux_txt, "SCORE  %d", score);
-                drawText(aux_txt, 22, 120, 1);
+                drawText(aux_txt, 22, 110, 1);
                 wait4UserKeypress();
                 setHighScore(score);
                 drawScoreBoard();
@@ -1162,56 +1192,7 @@ void game(void) {
     }
 }
 
-//////////////////////////////////////////////////////////////////
-// initPuzzleGame
-//
-//
-//
-// Returns:
-//    void
-//
-void initPuzzleGame() {
 
-    initCells(0);
-    initCells(1);
-
-
-}
-
-
-//////////////////////////////////////////////////////////////////
-// puzzle game
-//
-//
-//
-// Returns:
-//    void
-//
-void puzzleGame(void) {
-    u8 moved;
-    u8 *pvmem;
-
-
-    initGame();
-
-    // Clear Screen
-    clearScreen();
-
-    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 61, 72);
-    cpct_drawSprite(logo_small, pvmem, 15, 55);
-
-    //drawFrame(2, 1, 49, 182);
-    drawTable();
-    drawText("NEXT", 62, 2, 0);
-    printCells();
-    highestCardGame = getHighestCard();
-    drawText("HIGHEST", 59, 138, 0);
-    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 63, 154);
-    cpct_drawSprite(cards[highestCardGame], pvmem, CARD_W, CARD_H);
-
-    moved = 0;
-    // Loop forever
-}
 
 //////////////////////////////////////////////////////////////////
 // help
@@ -1278,9 +1259,9 @@ void help() {
 void drawMarker() {
     u8* pvmem;
     cpct_setBlendMode(CPCT_BLEND_XOR);
-    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 15, 40 + (20 * selectedOption));
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 25, 60 + (20 * selectedOption));
     cpct_drawSpriteBlended(pvmem, IC_ICONS_0_H, IC_ICONS_0_W, ic_icons_0);
-    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 62, 40 + (20 * selectedOption));
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 70, 60 + (20 * selectedOption));
     cpct_drawSpriteBlended(pvmem, IC_ICONS_1_H, IC_ICONS_1_W, ic_icons_1);
 }
 
@@ -1299,28 +1280,39 @@ void drawMenu() {
 
     cpct_memset(CPCT_VMEM_START, cpct_px2byteM0(0, 0), 0x4000);
 
-    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 20, 0);
+    //Small Logo
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 23, 0);
     cpct_drawSprite(logo_micro, pvmem, 5, 18);
 
-    drawFrame(13, 23, 67, 151);
+    drawText("AMSTHREES", 30, 4, 0);
+    
+    // Session Highest Card
+    drawText("SESSION", 1, 57, 0);
+    drawText("HIGH", 5, 72, 0);
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 7, 92);
+    cpct_drawSprite(cards[highestCardAll], pvmem, CARD_W, CARD_H);
 
-    drawText("AMSTHREES", 35, 3, 1);
+    drawFrame(23, 43, 76, 151);
 
-    drawText("REDEFINE", 28, 40, 0);
-    drawText("MUSIC", 28, 60, 0);
+    //Camelot Mode Badgae
+    if (camelotMode){
+        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 80-G_CAMELOTBADGE_W, 8);
+        cpct_drawSpriteMaskedAlignedTable(g_camelotBadge, pvmem, G_CAMELOTBADGE_W, G_CAMELOTBADGE_H, am_tablatrans); 
+    }
+
+    drawText("REDEFINE", 38, 60, 0);
+    drawText("MUSIC", 38, 80, 0);
     if (playing)
-        drawText("OFF", 46, 60, 0);
+        drawText("OFF", 56, 80, 0);
     else
-        drawText("ON", 46, 60, 0);
-    drawText("HELP", 28, 80, 0);
-    drawText("FREE MODE", 28, 100, 0);
-    drawText("PUZZLE MODE", 28, 120, 0);
+        drawText("ON", 56, 80, 0);
+    drawText("HELP", 38, 100, 0);
+    drawText("PLAY", 38, 120, 0);
 
-    drawNumber(1, 1, 21, 40);
-    drawNumber(2, 1, 21, 60);
-    drawNumber(3, 1, 21, 80);
-    drawNumber(4, 1, 21, 100);
-    drawNumber(5, 1, 21, 120);
+    drawNumber(1, 1, 31, 60);
+    drawNumber(2, 1, 31, 80);
+    drawNumber(3, 1, 31, 100);
+    drawNumber(4, 1, 31, 120);
 
 
     drawText("JOHN LOBO", 25, 170, 1);
@@ -1410,12 +1402,12 @@ void checkKeyboardMenu() {
             drawMarker();
         } else {
             drawMarker();
-            selectedOption = 4;
+            selectedOption = 3;
             drawMarker();
         }
 
     } else if ((cpct_isKeyPressed(keys.down)) || (cpct_isKeyPressed(Joy0_Down))) {
-        if (selectedOption < 4) {
+        if (selectedOption < 3) {
             drawMarker();
             selectedOption++;
             drawMarker();
@@ -1465,5 +1457,5 @@ void threes() {
         drawScoreBoard();
 
     }
-    cpct_disableFirmware();
+    //cpct_disableFirmware();
 }

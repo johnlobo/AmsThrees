@@ -13,10 +13,10 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //------------------------------------------------------------------------------
 
-
+#include "../sprites/border.h"
 #include "video.h"
 
-const u8 G_graphics_palette[16] = {0, 1, 15, 20, 6, 2, 8, 10, 12, 14, 16, 18, 3, 24, 11, 26};
+const u8 G_graphics_palette[16] = {0, 1, 15, 20, 6, 2, 8, 10, 12, 14, 5, 18, 3, 24, 11, 26};
 
 //////////////////////////////////////////////////////////////////
 // setupVideo
@@ -34,10 +34,10 @@ void setUpVideo() {
 
     cpct_fw2hw(G_graphics_palette, 16);
     cpct_setPalette  (G_graphics_palette, 16);
-    cpct_setBorder(G_graphics_palette[1]);
+    cpct_setBorder(G_graphics_palette[0]);
     cpct_setVideoMode(0);
-    clearScreen();
 
+    clearScreen();
 }
 
 //////////////////////////////////////////////////////////////////

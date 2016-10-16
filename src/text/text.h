@@ -15,10 +15,7 @@
 
 
 #include <cpctelera.h>
-#include "../video/video.h"
-#include "../utils/itoa.h"
-#include "../sprites/fonts-big.h"
-#include "../sprites/numbers-big.h"
+
 
 #ifndef _TEXT_H_
 #define _TEXT_H_

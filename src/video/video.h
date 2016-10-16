@@ -15,7 +15,6 @@
 
 
 #include <cpctelera.h>
-#include "../sprites/border.h"
 #include "../sprites/tilemap.h"
 #include "../game.h"
 

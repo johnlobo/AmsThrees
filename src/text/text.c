@@ -13,6 +13,10 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //------------------------------------------------------------------------------
 
+#include "../video/video.h"
+#include "../utils/itoa.h"
+#include "../sprites/fonts-big.h"
+#include "../sprites/numbers-big.h"
 #include "../game.h"
 #include "text.h"
 

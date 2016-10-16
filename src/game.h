@@ -23,19 +23,15 @@
 #define FONT_W 3
 
 
-//FALLING TEXT
-#define FALLING_TEXT_SPEED  3
-#define FALLING_TEXT_MAX_BOUNCES 6
-#define FALLING_TEXT_MAX_LENGHT  20
-
 #define SWITCH_SCREENS 400
-
 
 #define LEFT 0
 #define RIGHT 1
 #define UP 2
 #define DOWN 3
 #define NUM_TILES 14
+
+#define CAMELOT_MODE_LIMIT 8
 
 // cells value
 //	0 empty
@@ -86,7 +82,12 @@ typedef struct
     u8 y;
     u8 prev;
     u8 post;
-} TChangedCards;
+} TChangedCard;
+
+typedef struct{
+    u8 number;
+    TChangedCard cards[12];
+} TChangedCardBag;
 
 extern const u8 G_graphics_palette[16];
 
