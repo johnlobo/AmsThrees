@@ -246,14 +246,18 @@ void animate(u8 dir)
     }
     //Step 1
     //Erase changed slots and print the moved card
-    cpct_waitVSYNC();
+ 
     for (i = 0; i < changedCards.number; i++) {
-        tempx = changedCards.cards[i].x;
-        tempy = changedCards.cards[i].y;
-        cpct_etm_drawTileBox2x4 (2 + (tempx * 6), 1 + (tempy * 12), (CARD_W / 2), (CARD_H / 4), MAP_WIDTH, pStartTable, tmx);
-        //multiply by 6 and 22 to reuse shift in next step
-        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 6 + (tempx*12) + (shiftx * 6), 4 + (tempy*48) + (shifty * 22));
-        cpct_drawSpriteMaskedAlignedTable(cards[changedCards.cards[i].prev], pvmem, CARD_W, CARD_H, am_tablatrans);
+        if (((changedCards.cards[i].x >= 0) && (changedCards.cards[i].x <= 3)) && ((changedCards.cards[i].y >= 0) && (changedCards.cards[i].y <= 3))) {
+            tempx = changedCards.cards[i].x;
+            tempy = changedCards.cards[i].y;
+            cpct_waitVSYNC();
+            cpct_etm_drawTileBox2x4 (2 + (tempx * 6), 1 + (tempy * 12), (CARD_W / 2), (CARD_H / 4), MAP_WIDTH, pStartTable, tmx);
+
+            //multiply by 6 and 22 to reuse shift in next step
+            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 6 + (tempx * 12) + (shiftx * 6), 4 + (tempy * 48) + (shifty * 24));
+            cpct_drawSpriteMaskedAlignedTable(cards[changedCards.cards[i].prev], pvmem, CARD_W, CARD_H, am_tablatrans);
+        }
     }
     //Step 2
     //Erase moved card and print animation end for sigle movements
@@ -262,30 +266,37 @@ void animate(u8 dir)
     {
         tempx = changedCards.cards[i].x;
         tempy = changedCards.cards[i].y;
-        //Restore touched tiles
-        switch (dir)
-        {
-        case LEFT:
-            cpct_etm_drawTileBox2x4 (2 + ((tempx - 1) * 6), 1 + (tempy * 12), (CARD_W), (CARD_H / 4), MAP_WIDTH, pStartTable, tmx);
-            break;
-        case RIGHT:
-            cpct_etm_drawTileBox2x4 (2 + (tempx * 6), 1 + (tempy * 12), (CARD_W), (CARD_H / 4), MAP_WIDTH, pStartTable, tmx);
-            break;
-        case UP:
-            cpct_etm_drawTileBox2x4 (2 + (tempx * 6), 1 + ((tempy - 1) * 12), (CARD_W / 2), (CARD_H / 2), MAP_WIDTH, pStartTable, tmx);
-            break;
-        case DOWN:
-            cpct_etm_drawTileBox2x4 (2 + (tempx * 6), 1 + (tempy * 12), (CARD_W / 2), (CARD_H / 2), MAP_WIDTH, pStartTable, tmx);
-            break;
+        if (((changedCards.cards[i].x >= 0) && (changedCards.cards[i].x <= 3)) && ((changedCards.cards[i].y >= 0) && (changedCards.cards[i].y <= 3))) {
+               cpct_waitVSYNC();
+            //Restore touched tiles
+            switch (dir)
+            {
+            case LEFT:
+                cpct_etm_drawTileBox2x4 (2 + ((tempx - 1) * 6), 1 + (tempy * 12), (CARD_W), (CARD_H / 4), MAP_WIDTH, pStartTable, tmx);
+                break;
+            case RIGHT:
+                cpct_etm_drawTileBox2x4 (2 + (tempx * 6), 1 + (tempy * 12), (CARD_W), (CARD_H / 4), MAP_WIDTH, pStartTable, tmx);
+                break;
+            case UP:
+                cpct_etm_drawTileBox2x4 (2 + (tempx * 6), 1 + ((tempy - 1) * 12), (CARD_W / 2), (CARD_H / 2), MAP_WIDTH, pStartTable, tmx);
+                break;
+            case DOWN:
+                cpct_etm_drawTileBox2x4 (2 + (tempx * 6), 1 + (tempy * 12), (CARD_W / 2), (CARD_H / 2), MAP_WIDTH, pStartTable, tmx);
+                break;
+            }
         }
+           cpct_waitVSYNC();
         //If no upgrade is necessary, print card in final position
         //if (changedCards.cards[i].prev == changedCards.cards[i].post) {
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 6 + (tempx*12) + (shiftx*12), 4 + (tempy*48) + (shifty*44));
-            cpct_drawSpriteMaskedAlignedTable(cards[changedCards.cards[i].post], pvmem, CARD_W, CARD_H, am_tablatrans);
+        pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 6 + (tempx * 12) + (shiftx * 12), 4 + (tempy * 48) + (shifty * 48));
+        cpct_drawSpriteMaskedAlignedTable(cards[changedCards.cards[i].post], pvmem, CARD_W, CARD_H, am_tablatrans);
         //}
 
 
     }
+    //Print next card
+    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 63, 18);
+    cpct_drawSprite(cards[cardBag[currentCard]], pvmem, CARD_W, CARD_H);
 
 }
 
@@ -543,7 +554,7 @@ void addRandomCellTurn(u8 dir) {
     }
     cells[i][j] = cardBag[currentCard];
     //touchedCells[i][j] = 1;
-    addCardChangedCards(j+shiftX,i+shiftY,cells[i][j],cells[i][j]);
+    addCardChangedCards(j + shiftX, i + shiftY, cells[i][j], cells[i][j]);
     if (currentCard < 11)
         currentCard++;
     else
@@ -675,15 +686,15 @@ u8 rotateCellsLeft() {
                     addCardChangedCards(j, i, cells[i][j], cells[i][j]);
                     cells[i][j - 1] = cells[i][j];
                     cells[i][j] = 0;
-                    tilesMatched=1;
+                    tilesMatched = 1;
                 } else if (((cells[i][j - 1] == 1) && (cells[i][j] == 2)) ||
                            ((cells[i][j - 1] == 2) && (cells[i][j] == 1))) {
                     addCardChangedCards(j, i, cells[i][j], 3);
                     cells[i][j - 1] = 3;
                     cells[i][j] = 0;
-                    tilesMatched=1;
+                    tilesMatched = 1;
                 } else if ((cells[i][j - 1] == cells[i][j]) && (cells[i][j] > 2)) {
-                    addCardChangedCards(j, i, cells[i][j], cells[i][j + 1]++);
+                    addCardChangedCards(j, i, cells[i][j], cells[i][j-1]+1);
                     tilesMatched = 1;
                     cells[i][j - 1]++;
                     cells[i][j] = 0;
@@ -769,7 +780,7 @@ u8 rotateCellsRight() {
                     cells[i][j + 1] = 3;
                     cells[i][j] = 0;
                 } else if ((cells[i][j + 1] == cells[i][j]) && (cells[i][j] > 2)) {
-                    addCardChangedCards(j, i, cells[i][j], cells[i][j + 1]++);
+                    addCardChangedCards(j, i, cells[i][j], cells[i][j+1]+1);
                     tilesMatched = 1;
                     cells[i][j + 1]++;
                     cells[i][j] = 0;
@@ -847,7 +858,7 @@ u8 rotateCellsUp() {
                     cells[i - 1][j] = 3;
                     cells[i][j] = 0;
                 } else if ((cells[i - 1][j] == cells[i][j]) && (cells[i][j] > 2)) {
-                    addCardChangedCards(j, i, cells[i][j], cells[i][j]++);
+                    addCardChangedCards(j, i, cells[i][j], cells[i-1][j]+1);
                     tilesMatched = 1;
                     cells[i - 1][j]++;
                     cells[i][j] = 0;
@@ -932,7 +943,7 @@ u8 rotateCellsDown() {
                     cells[i + 1][j] = 3;
                     cells[i][j] = 0;
                 } else if ((cells[i + 1][j] == cells[i][j]) && (cells[i][j] > 2)) {
-                    addCardChangedCards(j, i, cells[i][j], cells[i][j]++);
+                    addCardChangedCards(j, i, cells[i][j], cells[i+1][j]+1);
                     tilesMatched = 1;
                     cells[i + 1][j]++;
                     cells[i][j] = 0;
@@ -1305,23 +1316,23 @@ void game(void) {
             //Empty the rotated cells buffer after ending the animation
             //cpct_waitVSYNC();
 
-            if (changedCards.number>0){
+            if (changedCards.number > 0) {
                 animate(dir);
                 resetChangedCards();
 
-            highestCardGame = getHighestCard();
-            pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 63, 154);
-            cpct_drawSprite(cards[highestCardGame], pvmem, CARD_W, CARD_H);
+                highestCardGame = getHighestCard();
+                pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 63, 154);
+                cpct_drawSprite(cards[highestCardGame], pvmem, CARD_W, CARD_H);
 
-            // Play sound Effect
-            cpct_akp_SFXPlay(3, 14, 50 + (highestCardGame * 2), 1, 0, AY_CHANNEL_A);
+                // Play sound Effect
+                cpct_akp_SFXPlay(3, 14, 50 + (highestCardGame * 2), 1, 0, AY_CHANNEL_A);
 
-            /*
-            printTouched();
-            initCells(1);
-            */
+                /*
+                printTouched();
+                initCells(1);
+                */
 
-            
+
             }
 
             moved = 0;
