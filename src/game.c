@@ -31,8 +31,9 @@
 #include "utils/keyboard.h"
 #include "text/text.h"
 #include "video/video.h"
-#include "music/song02.h"
+#include "music/song02-2.h"
 #include "music/song05.h"
+#include "music/song00.h"
 #include "levels/levels.h"
 #include "game.h"
 
@@ -66,15 +67,31 @@ u8 touchedCells[4][4];
 u8 camelotMode;
 
 // Define Transparency mask
-cpctm_createTransparentMaskTable(am_tablatrans, 0x400, M0, 0);
+cpctm_createTransparentMaskTable(am_tablatrans, 0x600, M0, 0);
 
 TChangedCardBag changedCards;
 
+//////////////////////////////////////////////////////////////////
+// resetChangeCards
+//
+//  
+//
+// Returns: void.
+//
+//
 void resetChangedCards() {
     changedCards.number = 0;
     cpct_memset(&changedCards.cards, 0x00, 48);
 }
 
+//////////////////////////////////////////////////////////////////
+// addCardChangeCards
+//
+//  
+//
+// Returns: void.
+//
+//
 void addCardChangedCards(u8 x, u8 y, u8 prev, u8 post) {
     u8 num;
     num = changedCards.number;
@@ -113,6 +130,41 @@ void playmusic() {
 }
 
 //////////////////////////////////////////////////////////////////
+// activateMusic
+//
+//  Activate music
+//
+// Returns:
+//  void
+//
+
+void activateMusic() {
+    playing = 1;
+    cpct_akp_stop();
+    cpct_akp_musicInit(song02);
+    cpct_akp_SFXInit(song02);
+    cpct_akp_musicPlay();
+}
+
+//////////////////////////////////////////////////////////////////
+// deActivateMusic
+//
+//  deActivate music
+//
+// Returns:
+//  void
+//
+
+void deActivateMusic() {
+    playing = 0;
+    cpct_akp_stop();
+    cpct_akp_musicInit(song00);
+    cpct_akp_SFXInit(song00);
+    cpct_akp_musicPlay();
+
+}
+
+//////////////////////////////////////////////////////////////////
 // myInterruptHandler
 //
 //  Interruphandler that subsitutes the default one. Includes calls for reading the keyboard and playing music, if activated
@@ -131,8 +183,7 @@ void interruptHandler() {
         break;
     case 5:
         // Play music
-        if (playing)
-            playmusic();
+        playmusic();
         break;
     case 6:
         i = 0;
@@ -153,11 +204,8 @@ void initialization() {
     u32 seed;    // Value to initialize the random seed
 
     // Music on
-    playing = 1;
-    cpct_akp_musicInit(song02);
-    cpct_akp_SFXInit(song02);
+    activateMusic();
     cpct_setInterruptHandler(interruptHandler);
-    cpct_akp_musicPlay();
 
     drawText("AMSTHREES IS READY", 31, 76, 1);
     drawText("PRESS ANY KEY", 20, 90, 1);
@@ -246,7 +294,7 @@ void animate(u8 dir)
     }
     //Step 1
     //Erase changed slots and print the moved card
- 
+
     for (i = 0; i < changedCards.number; i++) {
         if (((changedCards.cards[i].x >= 0) && (changedCards.cards[i].x <= 3)) && ((changedCards.cards[i].y >= 0) && (changedCards.cards[i].y <= 3))) {
             tempx = changedCards.cards[i].x;
@@ -267,7 +315,7 @@ void animate(u8 dir)
         tempx = changedCards.cards[i].x;
         tempy = changedCards.cards[i].y;
         if (((changedCards.cards[i].x >= 0) && (changedCards.cards[i].x <= 3)) && ((changedCards.cards[i].y >= 0) && (changedCards.cards[i].y <= 3))) {
-               cpct_waitVSYNC();
+            cpct_waitVSYNC();
             //Restore touched tiles
             switch (dir)
             {
@@ -285,7 +333,7 @@ void animate(u8 dir)
                 break;
             }
         }
-           cpct_waitVSYNC();
+        cpct_waitVSYNC();
         //If no upgrade is necessary, print card in final position
         //if (changedCards.cards[i].prev == changedCards.cards[i].post) {
         pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 6 + (tempx * 12) + (shiftx * 12), 4 + (tempy * 48) + (shifty * 48));
@@ -694,7 +742,7 @@ u8 rotateCellsLeft() {
                     cells[i][j] = 0;
                     tilesMatched = 1;
                 } else if ((cells[i][j - 1] == cells[i][j]) && (cells[i][j] > 2)) {
-                    addCardChangedCards(j, i, cells[i][j], cells[i][j-1]+1);
+                    addCardChangedCards(j, i, cells[i][j], cells[i][j - 1] + 1);
                     tilesMatched = 1;
                     cells[i][j - 1]++;
                     cells[i][j] = 0;
@@ -780,7 +828,7 @@ u8 rotateCellsRight() {
                     cells[i][j + 1] = 3;
                     cells[i][j] = 0;
                 } else if ((cells[i][j + 1] == cells[i][j]) && (cells[i][j] > 2)) {
-                    addCardChangedCards(j, i, cells[i][j], cells[i][j+1]+1);
+                    addCardChangedCards(j, i, cells[i][j], cells[i][j + 1] + 1);
                     tilesMatched = 1;
                     cells[i][j + 1]++;
                     cells[i][j] = 0;
@@ -858,7 +906,7 @@ u8 rotateCellsUp() {
                     cells[i - 1][j] = 3;
                     cells[i][j] = 0;
                 } else if ((cells[i - 1][j] == cells[i][j]) && (cells[i][j] > 2)) {
-                    addCardChangedCards(j, i, cells[i][j], cells[i-1][j]+1);
+                    addCardChangedCards(j, i, cells[i][j], cells[i - 1][j] + 1);
                     tilesMatched = 1;
                     cells[i - 1][j]++;
                     cells[i][j] = 0;
@@ -943,7 +991,7 @@ u8 rotateCellsDown() {
                     cells[i + 1][j] = 3;
                     cells[i][j] = 0;
                 } else if ((cells[i + 1][j] == cells[i][j]) && (cells[i][j] > 2)) {
-                    addCardChangedCards(j, i, cells[i][j], cells[i+1][j]+1);
+                    addCardChangedCards(j, i, cells[i][j], cells[i + 1][j] + 1);
                     tilesMatched = 1;
                     cells[i + 1][j]++;
                     cells[i][j] = 0;
@@ -1304,10 +1352,9 @@ void game(void) {
 
         } else if ( cpct_isKeyPressed(keys.music)) {
             if (!playing) {
-                playing = 1;
+                activateMusic();
             } else {
-                playing = 0;
-                cpct_akp_stop ();
+                deActivateMusic();
             }
         } else if (cpct_isKeyPressed(keys.abort))
             break;
@@ -1532,10 +1579,9 @@ void checkKeyboardMenu() {
         drawMarker();
 
         if (!playing) {
-            playing = 1;
+            activateMusic();
         } else {
-            playing = 0;
-            cpct_akp_stop ();
+            deActivateMusic();
         }
 
         drawMenu();
@@ -1558,7 +1604,8 @@ void checkKeyboardMenu() {
 
         game();
 
-        playing = 1;
+        //activateMusic();
+
         drawMenu();
 
     }
@@ -1587,10 +1634,9 @@ void checkKeyboardMenu() {
 
     } else if ( cpct_isKeyPressed(keys.music)) {
         if (!playing) {
-            playing = 1;
+            activateMusic();
         } else {
-            playing = 0;
-            cpct_akp_stop ();
+            deActivateMusic();
         }
     }
 }

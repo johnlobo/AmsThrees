@@ -31,7 +31,7 @@
 #define DOWN 3
 #define NUM_TILES 14
 
-#define CAMELOT_MODE_LIMIT 8
+#define CAMELOT_MODE_LIMIT 3
 
 // cells value
 //	0 empty
