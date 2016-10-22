@@ -74,7 +74,7 @@ TChangedCardBag changedCards;
 //////////////////////////////////////////////////////////////////
 // resetChangeCards
 //
-//  
+//
 //
 // Returns: void.
 //
@@ -87,7 +87,7 @@ void resetChangedCards() {
 //////////////////////////////////////////////////////////////////
 // addCardChangeCards
 //
-//  
+//
 //
 // Returns: void.
 //
@@ -250,6 +250,7 @@ void initialization() {
     keys.pause = Key_Del;
     keys.abort = Key_Esc;
     keys.music = Key_M;
+    keys.camelotmode = Key_C;
 
     selectedOption = 0;
 
@@ -265,7 +266,7 @@ void initialization() {
 
 void animate(u8 dir)
 {
-    u8 i;
+    u8 i, j;
     u8 *pvmem;
     u8 tempx, tempy;
     i8 shiftx = 0;
@@ -295,8 +296,11 @@ void animate(u8 dir)
     //Step 1
     //Erase changed slots and print the moved card
 
-    for (i = 0; i < changedCards.number; i++) {
-        if (((changedCards.cards[i].x >= 0) && (changedCards.cards[i].x <= 3)) && ((changedCards.cards[i].y >= 0) && (changedCards.cards[i].y <= 3))) {
+//    for (i = 0; i < changedCards.number; i++) {
+    i = 0;
+    j = changedCards.number;
+    while (i < j) {
+        if ((changedCards.cards[i].x <= 3) && (changedCards.cards[i].y <= 3)) {
             tempx = changedCards.cards[i].x;
             tempy = changedCards.cards[i].y;
             cpct_waitVSYNC();
@@ -306,15 +310,19 @@ void animate(u8 dir)
             pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 6 + (tempx * 12) + (shiftx * 6), 4 + (tempy * 48) + (shifty * 24));
             cpct_drawSpriteMaskedAlignedTable(cards[changedCards.cards[i].prev], pvmem, CARD_W, CARD_H, am_tablatrans);
         }
+        i++;
     }
     //Step 2
     //Erase moved card and print animation end for sigle movements
     cpct_waitVSYNC();
-    for (i = 0; i < changedCards.number; i++)
-    {
+
+//  for (i = 0; i < changedCards.number; i++){
+    i = 0;
+    j = changedCards.number;
+    while (i < j) {
         tempx = changedCards.cards[i].x;
         tempy = changedCards.cards[i].y;
-        if (((changedCards.cards[i].x >= 0) && (changedCards.cards[i].x <= 3)) && ((changedCards.cards[i].y >= 0) && (changedCards.cards[i].y <= 3))) {
+        if ((changedCards.cards[i].x <= 3) && (changedCards.cards[i].y <= 3)) {
             cpct_waitVSYNC();
             //Restore touched tiles
             switch (dir)
@@ -339,7 +347,7 @@ void animate(u8 dir)
         pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 6 + (tempx * 12) + (shiftx * 12), 4 + (tempy * 48) + (shifty * 48));
         cpct_drawSpriteMaskedAlignedTable(cards[changedCards.cards[i].post], pvmem, CARD_W, CARD_H, am_tablatrans);
         //}
-
+        i++;
 
     }
     //Print next card
@@ -1298,7 +1306,7 @@ void drawScoreBoard() {
 void game(void) {
     u8 moved;
     u8 *pvmem;
-    u8 dir;
+    u8 dir = 0;
 
 
     initGame();
@@ -1394,6 +1402,7 @@ void game(void) {
                 drawText("GAME OVER", 22, 90, 1);
                 sprintf(aux_txt, "SCORE  %d", score);
                 drawText(aux_txt, 22, 110, 1);
+                delay(200);
                 wait4UserKeypress();
                 setHighScore(score);
                 drawScoreBoard();
@@ -1638,8 +1647,26 @@ void checkKeyboardMenu() {
         } else {
             deActivateMusic();
         }
+    } else if ( cpct_isKeyPressed(keys.camelotmode)) {
+        waitKeyUp(keys.camelotmode);
+        if (camelotMode){
+            cards = &(*cards1);
+            camelotMode = 0;
+        }else{
+            cards = &(*cards2);
+            camelotMode = 1;
+        }
+        drawFrame(14, 60, 68, 130);
+        drawText("CAMELOT MODE ", 18, 90, 0);
+        if (camelotMode)
+            drawText("ON", 57, 90, 0);
+        else
+            drawText("OFF", 57, 90, 0);
+        wait4UserKeypress();
+        drawMenu();
     }
-}
+} 
+
 
 
 //////////////////////////////////////////////////////////////////

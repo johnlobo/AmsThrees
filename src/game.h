@@ -69,6 +69,7 @@ typedef struct Keys{
     cpct_keyID pause;
     cpct_keyID abort;
     cpct_keyID music;
+    cpct_keyID camelotmode;
 } Keys;
 
 typedef struct Coords{
