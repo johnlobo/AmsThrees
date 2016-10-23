@@ -220,7 +220,7 @@ void initialization() {
     cards = &(*cards1);
 
     scoreHallOfFame[0] = 10000;
-    scoreHallOfFame[1] = 800;
+    scoreHallOfFame[1] = 8000;
     scoreHallOfFame[2] = 6000;
     scoreHallOfFame[3] = 4000;
     scoreHallOfFame[4] = 2000;
