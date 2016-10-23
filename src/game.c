@@ -34,7 +34,6 @@
 #include "music/song02-2.h"
 #include "music/song05.h"
 #include "music/song00.h"
-#include "levels/levels.h"
 #include "game.h"
 
 // Global Variables
@@ -63,7 +62,6 @@ u8 cardBag[12];
 u8 currentCard;
 u8 playing = 0;
 u8 rotatedCells;
-u8 touchedCells[4][4];
 u8 camelotMode;
 
 // Define Transparency mask
@@ -221,19 +219,19 @@ void initialization() {
     // Asign the classic deck to the game
     cards = &(*cards1);
 
-    scoreHallOfFame[0] = 20000;
-    scoreHallOfFame[1] = 15000;
-    scoreHallOfFame[2] = 7500;
-    scoreHallOfFame[3] = 5000;
-    scoreHallOfFame[4] = 2500;
+    scoreHallOfFame[0] = 10000;
+    scoreHallOfFame[1] = 800;
+    scoreHallOfFame[2] = 6000;
+    scoreHallOfFame[3] = 4000;
+    scoreHallOfFame[4] = 2000;
     scoreHallOfFame[5] = 1000;
     scoreHallOfFame[6] = 500;
     scoreHallOfFame[7] = 300;
 
-    strcpy(nameHallOfFame[0], "MARTIN [[[");
-    strcpy(nameHallOfFame[1], "DIEGO \\\\\\");
-    strcpy(nameHallOfFame[2], "MARIA ]]]");
-    strcpy(nameHallOfFame[3], "DAVID ^^^");
+    strcpy(nameHallOfFame[0], "MARTIN [");
+    strcpy(nameHallOfFame[1], "DIEGO \\");
+    strcpy(nameHallOfFame[2], "MARIA ]");
+    strcpy(nameHallOfFame[3], "DAVID ^");
     strcpy(nameHallOfFame[4], "MASTER");
     strcpy(nameHallOfFame[5], "EXPERT");
     strcpy(nameHallOfFame[6], "INTERMEDIATE");
@@ -278,18 +276,14 @@ void animate(u8 dir)
     switch (dir)    {
     case LEFT:
         shiftx = -1;
-        shifty = 0;
         break;
     case RIGHT:
         shiftx = 1;
-        shifty = 0;
         break;
     case UP:
-        shiftx = 0;
         shifty = -1;
         break;
     case DOWN:
-        shiftx = 0;
         shifty = 1;
         break;
     }
@@ -299,6 +293,7 @@ void animate(u8 dir)
 //    for (i = 0; i < changedCards.number; i++) {
     i = 0;
     j = changedCards.number;
+    cpct_waitVSYNC();
     while (i < j) {
         if ((changedCards.cards[i].x <= 3) && (changedCards.cards[i].y <= 3)) {
             tempx = changedCards.cards[i].x;
@@ -314,11 +309,11 @@ void animate(u8 dir)
     }
     //Step 2
     //Erase moved card and print animation end for sigle movements
-    cpct_waitVSYNC();
 
 //  for (i = 0; i < changedCards.number; i++){
     i = 0;
     j = changedCards.number;
+    cpct_waitVSYNC();
     while (i < j) {
         tempx = changedCards.cards[i].x;
         tempy = changedCards.cards[i].y;
@@ -452,24 +447,6 @@ u8 getHighestCard() {
     return highest;
 }
 
-//////////////////////////////////////////////////////////////////
-// initAdjacents
-//
-//    Initialize the adjacents structure
-//
-//
-// Returns:
-//    void
-//
-
-void initAdjacents() {
-    u8 i;
-
-    for (i = 0; i < 4; i++) {
-        adjacents.values[i] = 255;
-    }
-    adjacents.count = 0;
-}
 
 //////////////////////////////////////////////////////////////////
 // getAdjacents
@@ -483,7 +460,8 @@ void initAdjacents() {
 void getAdjacents(u8 i, u8 j) {
     u8 count;
 
-    initAdjacents();
+    //Init adjacents;
+    cpct_memset(&adjacents.values, 255, 4);
 
     count = 0;
     if (i != 0) {
@@ -619,32 +597,6 @@ void addRandomCellTurn(u8 dir) {
 
 
 //////////////////////////////////////////////////////////////////
-// initCells
-//
-//      Initializes the cells
-//
-//
-// Returns:
-//    void
-//
-void initCells(u8 touched) {
-    u8 i, j;
-
-    for (i = 0; i < 4; i++) {
-        for (j = 0; j < 4; j++) {
-            if (touched)
-                touchedCells[i][j] = 0;
-            else
-                cells[i][j] = 0;
-        }
-    }
-}
-
-
-
-
-
-//////////////////////////////////////////////////////////////////
 // initGame
 //
 //
@@ -655,13 +607,16 @@ void initCells(u8 touched) {
 void initGame() {
     u8 i, j, k;
 
-    initCells(0);
-    //initCells(1);
+    // Intialize the board
+    cpct_memset(&cells, 0, 16);
+
     resetChangedCards();
 
     renewCardBag();
 
-    for (i = 0; i < 9; i++) {
+    i = 9 + 1;
+    while (--i) {
+        //for (i = 0; i < 9; i++) {
         j = cpct_rand() / 64;
         k = cpct_rand() / 64;
         while (cells[j][k] != 0) {
@@ -675,59 +630,17 @@ void initGame() {
     score = 0;
 
     highestCardGame = 0;
-
-
-
-
 }
 
 //////////////////////////////////////////////////////////////////
-// rotateCellsLeft
+// rotateCellsDown
 //
 //
 //
 // Returns:
 //    void
 //
-/*u8 rotateCellsLeft() {
-    u8 i, j;
-    u8 tilesMatched, matched;
 
-    tilesMatched = 0;
-    matched = 0;
-
-    for (i = 0; i < 4; i++) {
-        for (j = 1; j < 4; j++) {
-            if (cells[i][j] != 0) {
-                touchedCells[i][j] = 1;
-                // empty cell on the left
-                if (cells[i][j - 1] == 0) {
-                    cells[i][j - 1] = cells[i][j];
-                    cells[i][j] = 0;
-                    matched = 1;
-                } else if (((cells[i][j - 1] == 1) && (cells[i][j] == 2)) ||
-                           ((cells[i][j - 1] == 2) && (cells[i][j] == 1))) {
-                    cells[i][j - 1] = 3;
-                    cells[i][j] = 0;
-                    matched = 1;
-                } else if ((cells[i][j - 1] == cells[i][j]) && (cells[i][j] > 2)) {
-                    cells[i][j - 1]++;
-                    cells[i][j] = 0;
-                    matched = 1;
-                }
-                if (matched) {
-                    touchedCells[i][j] = 2;
-                    touchedCells[i][j - 1] = 1;
-                    tilesMatched++;
-                    matched = 0;
-                }
-
-            }
-        }
-    }
-    return tilesMatched;
-}
-*/
 u8 rotateCellsLeft() {
     u8 i, j;
     u8 tilesMatched;
@@ -763,55 +676,15 @@ u8 rotateCellsLeft() {
     return tilesMatched;
 }
 
-
 //////////////////////////////////////////////////////////////////
-// rotateCellsRight
+// rotateCellsDown
 //
 //
 //
 // Returns:
 //    void
 //
-/*u8 rotateCellsRight() {
-    u8 i, j;
-    u8 tilesMatched, matched;
 
-    tilesMatched = 0;
-    matched = 0;
-
-    for (i = 0; i < 4; i++) {
-        j = 3;
-        do {
-            j--;
-            if (cells[i][j] != 0) {
-                touchedCells[i][j] = 1;
-                // empty cell on the left
-                if (cells[i][j + 1] == 0) {
-                    cells[i][j + 1] = cells[i][j];
-                    cells[i][j] = 0;
-                    matched = 1;
-                } if (((cells[i][j + 1] == 1) && (cells[i][j] == 2)) ||
-                        ((cells[i][j + 1] == 2) && (cells[i][j] == 1))) {
-                    cells[i][j + 1] = 3;
-                    cells[i][j] = 0;
-                    matched = 1;
-                } else if ((cells[i][j + 1] == cells[i][j]) && (cells[i][j] > 2)) {
-                    cells[i][j + 1]++;
-                    cells[i][j] = 0;
-                    matched = 1;
-                }
-                if (matched) {
-                    touchedCells[i][j] = 2;
-                    touchedCells[i][j + 1] = 1;
-                    tilesMatched++;
-                    matched = 0;
-                }
-            }
-        } while (j > 0);
-    }
-    return tilesMatched;
-}
-*/
 u8 rotateCellsRight() {
     u8 i, j;
     u8 tilesMatched;
@@ -848,50 +721,14 @@ u8 rotateCellsRight() {
 }
 
 //////////////////////////////////////////////////////////////////
-// rotateCellsUp
+// rotateCellsDown
 //
 //
 //
 // Returns:
 //    void
 //
-/*u8 rotateCellsUp() {
-    u8 i, j;
-    u8 tilesMatched, matched;
 
-    tilesMatched = 0;
-    matched = 0;
-
-    for (i = 1; i < 4; i++) {
-        for (j = 0; j < 4; j++) {
-            if (cells[i][j] != 0) {
-                touchedCells[i][j] = 1;
-                // empty cell on the left
-                if (cells[i - 1][j] == 0) {
-                    cells[i - 1][j] = cells[i][j];
-                    cells[i][j] = 0;
-                    matched = 1;
-                } else if (((cells[i - 1][j] == 1) && (cells[i][j] == 2)) ||
-                           ((cells[i - 1][j] == 2) && (cells[i][j] == 1))) {
-                    cells[i - 1][j] = 3;
-                    cells[i][j] = 0;
-                    matched = 1;
-                } else if ((cells[i - 1][j] == cells[i][j]) && (cells[i][j] > 2)) {
-                    cells[i - 1][j]++;
-                    cells[i][j] = 0;
-                    matched = 1;
-                }
-                if (matched) {
-                    touchedCells[i][j] = 2;
-                    touchedCells[i - 1][j] = 1;
-                    tilesMatched++;
-                    matched = 0;
-                }
-            }
-        }
-    }
-    return tilesMatched;
-}*/
 u8 rotateCellsUp() {
     u8 i, j;
     u8 tilesMatched;
@@ -933,48 +770,6 @@ u8 rotateCellsUp() {
 // Returns:
 //    void
 //
-
-/*u8 rotateCellsDown() {
-    u8 i, j;
-    u8 tilesMatched, matched;
-
-    tilesMatched = 0;
-    matched = 0;
-
-    i = 3;
-    do {
-        i--;
-        for (j = 0; j < 4; j++) {
-            if (cells[i][j] != 0) {
-                touchedCells[i][j] = 1;
-                if (cells[i + 1][j] == 0) {
-                    cells[i + 1][j] = cells[i][j];
-                    cells[i][j] = 0;
-                    matched = 1;
-                } else if (((cells[i + 1][j] == 1) && (cells[i][j] == 2)) ||
-                           ((cells[i + 1][j] == 2) && (cells[i][j] == 1))) {
-                    cells[i + 1][j] = 3;
-                    cells[i][j] = 0;
-                    matched = 1;
-                } else if ((cells[i + 1][j] == cells[i][j]) && (cells[i][j] > 2)) {
-                    cells[i + 1][j]++;
-                    cells[i][j] = 0;
-                    matched = 1;
-
-                }
-                if (matched) {
-                    touchedCells[i][j] = 2;
-                    touchedCells[i + 1][j] = 1;
-                    tilesMatched++;
-                    matched = 0;
-                }
-            }
-        }
-    } while (i > 0);
-
-    return tilesMatched;
-}
-*/
 
 u8 rotateCellsDown() {
     u8 i, j;
@@ -1053,41 +848,6 @@ void printCells() {
             if (cells[i][j] > 0) {
                 pvmem = cpct_getScreenPtr(CPCT_VMEM_START, x, y);
                 cpct_drawSpriteMaskedAlignedTable(cards[cells[i][j]], pvmem, CARD_W, CARD_H, am_tablatrans);
-            }
-        }
-    }
-    pvmem = cpct_getScreenPtr(CPCT_VMEM_START, 63, 18);
-    cpct_drawSprite(cards[cardBag[currentCard]], pvmem, CARD_W, CARD_H);
-}
-
-//////////////////////////////////////////////////////////////////
-// printTouched
-//
-//
-//
-// Returns:
-//    void
-//
-void printTouched() {
-    u8 i;
-    u8 j;
-    u8 x;
-    u8 y;
-    u8* pvmem;
-    u8* pStartTable;  // Pointer to video memory
-
-    pStartTable = cpct_getScreenPtr(CPCT_VMEM_START, 2, 0);
-
-    for (i = 0; i < 4; i++) {
-        y = 4 + (i * 48);
-        for (j = 0; j < 4; j++) {
-            x = 6 + (j * 12);
-            if (touchedCells[i][j] == 1) {
-                pvmem = cpct_getScreenPtr(CPCT_VMEM_START, x, y);
-                cpct_drawSpriteMaskedAlignedTable(cards[cells[i][j]], pvmem, CARD_W, CARD_H, am_tablatrans);
-
-            } else if (touchedCells[i][j] == 2) {
-                cpct_etm_drawTileBox2x4 (2 + (j * 6), 1 + (i * 12), (CARD_W / 2), (CARD_H / 4), MAP_WIDTH, pStartTable, tmx);
             }
         }
     }
@@ -1382,12 +1142,6 @@ void game(void) {
                 // Play sound Effect
                 cpct_akp_SFXPlay(3, 14, 50 + (highestCardGame * 2), 1, 0, AY_CHANNEL_A);
 
-                /*
-                printTouched();
-                initCells(1);
-                */
-
-
             }
 
             moved = 0;
@@ -1647,25 +1401,28 @@ void checkKeyboardMenu() {
         } else {
             deActivateMusic();
         }
-    } else if ( cpct_isKeyPressed(keys.camelotmode)) {
-        waitKeyUp(keys.camelotmode);
-        if (camelotMode){
-            cards = &(*cards1);
-            camelotMode = 0;
-        }else{
-            cards = &(*cards2);
-            camelotMode = 1;
-        }
-        drawFrame(14, 60, 68, 130);
-        drawText("CAMELOT MODE ", 18, 90, 0);
-        if (camelotMode)
-            drawText("ON", 57, 90, 0);
-        else
-            drawText("OFF", 57, 90, 0);
-        wait4UserKeypress();
-        drawMenu();
     }
-} 
+    /*
+        else if ( cpct_isKeyPressed(keys.camelotmode)) {
+            waitKeyUp(keys.camelotmode);
+            if (camelotMode) {
+                cards = &(*cards1);
+                camelotMode = 0;
+            } else {
+                cards = &(*cards2);
+                camelotMode = 1;
+            }
+            drawFrame(14, 60, 68, 130);
+            drawText("CAMELOT MODE ", 18, 90, 0);
+            if (camelotMode)
+                drawText("ON", 57, 90, 0);
+            else
+                drawText("OFF", 57, 90, 0);
+            wait4UserKeypress();
+            drawMenu();
+        }
+        */
+}
 
 
 

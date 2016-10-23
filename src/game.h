@@ -72,11 +72,6 @@ typedef struct Keys{
     cpct_keyID camelotmode;
 } Keys;
 
-typedef struct Coords{
-    u8 xPos;
-    u8 yPos;
-} Coords;
-
 typedef struct
 {
     u8 x;

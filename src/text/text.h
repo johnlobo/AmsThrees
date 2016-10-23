@@ -24,7 +24,6 @@ extern u8* const font[39];
 extern u8* const number[10];
 
 u8 strLenght(u8 str[]);
-void strCopy(i8* to, const i8* from);
 void drawNumber(u16 aNumber, u8 length, u8 xPos, u8 yPos);
 void drawText(u8 text[], u8 xPos, u8 yPos, u8 centered);
 

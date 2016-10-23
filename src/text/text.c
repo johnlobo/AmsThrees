@@ -42,17 +42,6 @@ u8 strLength(u8 str[]) {
     return result;
 }
 
-//
-// Copy a string into a given buffer
-//
-void strCopy(i8* to, const i8* from) {
-    u8 i;
-    i = 30;
-    while (i) {
-        *to++ = *from++;
-        i--;
-    }
-}
 
 void drawNumber(u16 aNumber, u8 length, u8 xPos, u8 yPos) {
 
