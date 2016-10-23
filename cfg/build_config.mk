@@ -122,7 +122,7 @@ include $(CPCT_PATH)/cfg/global_paths.mk
 ##   fine for most of the projects, but you may change them for special uses.
 #####
 #Z80CCFLAGS    := 
-Z80CCFLAGS    := --peep-file $(CPCT_PATH)tools/sdcc-3.5.5/peep/z88dk_speculative_peepholes.def --max-allocs-per-node 1000000 --opt-code-speed
+Z80CCFLAGS    := --peep-file $(CPCT_PATH)tools/sdcc-3.5.5/peep/z88dk_speculative_peepholes.def --max-allocs-per-node 2000000 --opt-code-speed
 Z80ASMFLAGS   := -l -o -s
 Z80CCINCLUDE  := -I$(CPCT_SRC)
 Z80CCLINKARGS := -mz80 --no-std-crt0 -Wl-u \
