@@ -15,32 +15,17 @@
 
 
 #include <cpctelera.h>
-#include "../video/video.h"
-#include "../utils/itoa.h"
-#include "../sprites/fonts-big.h"
-#include "../sprites/numbers-big.h"
+
 
 #ifndef _TEXT_H_
 #define _TEXT_H_
-
-typedef struct FChar{
-    u8 phase;
-    u8 xPos;
-    u8 yPos;
-    u8 startyPos;
-    u8 endyPos;
-    u8 destinationyPos;
-    u8 character[2];
-} FChar;
 
 extern u8* const font[39];
 extern u8* const number[10];
 
 u8 strLenght(u8 str[]);
-void strCopy(i8* to, const i8* from);
 void drawNumber(u16 aNumber, u8 length, u8 xPos, u8 yPos);
 void drawText(u8 text[], u8 xPos, u8 yPos, u8 centered);
-u8 moveFallingText(FChar *text, u8 lenght);
-void drawFallingText(u8 text[], u8 xPos, u8 yPos, u8 destinationyPos);
+
 
 #endif

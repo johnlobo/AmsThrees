@@ -15,6 +15,7 @@
 
 
 #include "keyboard.h"
+#include "../text/text.h"
 
 //////////////////////////////////////////////////////////////////
 // wait4UserKeypress
@@ -58,14 +59,14 @@ cpct_keyID esperaUnaTecla() {
     return (keypressed << 8) + (i - 1);
 }
 
-void waitKeyUp(cpct_keyID key) {
+void waitKeyUp(cpct_keyID key){
 
     while (cpct_isKeyPressed(key)) {
         cpct_scanKeyboard_f();
     }
 }
 
-void wait4Key(cpct_keyID key) {
+void wait4Key(cpct_keyID key){
     do
         cpct_scanKeyboard_f();
     while ( ! cpct_isKeyPressed(key) );
@@ -74,7 +75,7 @@ void wait4Key(cpct_keyID key) {
     while ( cpct_isKeyPressed(key) );
 }
 
-cpct_keyID redefineKey(u8 text[]) {
+cpct_keyID redefineKey(u8 text[]){
     u8 x;
 
     cpct_keyID key;

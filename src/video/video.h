@@ -15,7 +15,7 @@
 
 
 #include <cpctelera.h>
-#include "../sprites/border.h"
+#include "../sprites/tilemap.h"
 #include "../game.h"
 
 #ifndef _VIDEO_H_
@@ -29,7 +29,6 @@
 
 extern const u8 G_graphics_palette[16];
 
-void clearWindow(u8 xPos, u8 yPos, u8 width, u8 height);
 void setUpVideo();
 void clearScreen();
 void drawFrame(u8 x1, u8 y1, u8 x2, u8 y2);

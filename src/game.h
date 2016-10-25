@@ -17,38 +17,21 @@
 #define _GAME_H_
 
 #include <cpctelera.h>
-#include "sprites/numbers-big.h"
-#include "sprites/tilemap.h"
-#include "sprites/cards.h"
-#include "sprites/symbols.h"
-#include "sprites/table.h"
-#include "sprites/logo-small.h"
-#include "sprites/logo-micro.h"
-#include "sprites/fonts-big.h"
-#include "utils/itoa.h"
-#include "utils/keyboard.h"
-#include "text/text.h"
-#include "video/video.h"
-
 
 //Sprites Size
 #define FONT_H 11
 #define FONT_W 3
 
 
-//FALLING TEXT
-#define FALLING_TEXT_SPEED  3
-#define FALLING_TEXT_MAX_BOUNCES 6
-#define FALLING_TEXT_MAX_LENGHT  20
-
 #define SWITCH_SCREENS 400
-
 
 #define LEFT 0
 #define RIGHT 1
 #define UP 2
 #define DOWN 3
 #define NUM_TILES 14
+
+#define CAMELOT_MODE_LIMIT 3
 
 // cells value
 //	0 empty
@@ -86,12 +69,21 @@ typedef struct Keys{
     cpct_keyID pause;
     cpct_keyID abort;
     cpct_keyID music;
+    cpct_keyID camelotmode;
 } Keys;
 
-typedef struct Coords{
-    u8 xPos;
-    u8 yPos;
-} Coords;
+typedef struct
+{
+    u8 x;
+    u8 y;
+    u8 prev;
+    u8 post;
+} TChangedCard;
+
+typedef struct{
+    u8 number;
+    TChangedCard cards[12];
+} TChangedCardBag;
 
 extern const u8 G_graphics_palette[16];
 

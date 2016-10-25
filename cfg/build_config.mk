@@ -48,8 +48,8 @@
 
 # Name of the project (without spaces, as it will be used as filename)
 #   and Z80 memory location where code will start in the generated binary
-PROJNAME   := amsthrees
-Z80CODELOC := 0x3000
+PROJNAME   := Amsthrees
+Z80CODELOC := 0x1000
 
 ##
 ## Folders 
@@ -121,7 +121,8 @@ include $(CPCT_PATH)/cfg/global_paths.mk
 ##   Flags used to configure the compilation of your code. They are usually 
 ##   fine for most of the projects, but you may change them for special uses.
 #####
-Z80CCFLAGS    :=
+#Z80CCFLAGS    := 
+Z80CCFLAGS    := --peep-file $(CPCT_PATH)tools/sdcc-3.5.5/peep/z88dk_speculative_peepholes.def --max-allocs-per-node 2000000 --opt-code-speed
 Z80ASMFLAGS   := -l -o -s
 Z80CCINCLUDE  := -I$(CPCT_SRC)
 Z80CCLINKARGS := -mz80 --no-std-crt0 -Wl-u \

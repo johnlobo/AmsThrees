@@ -13,10 +13,10 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //------------------------------------------------------------------------------
 
-
+#include "../sprites/border.h"
 #include "video.h"
 
-const u8 G_graphics_palette[16] = {0, 1, 15, 20, 6, 2, 8, 10, 12, 14, 16, 18, 3, 24, 11, 26};
+const u8 G_graphics_palette[16] = {0, 1, 15, 20, 6, 2, 8, 9, 12, 14, 5, 18, 3, 24, 11, 26};
 
 //////////////////////////////////////////////////////////////////
 // setupVideo
@@ -36,8 +36,8 @@ void setUpVideo() {
     cpct_setPalette  (G_graphics_palette, 16);
     cpct_setBorder(G_graphics_palette[0]);
     cpct_setVideoMode(0);
-    clearScreen();
 
+    clearScreen();
 }
 
 //////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ void clearScreen() {
 }
 
 //////////////////////////////////////////////////////////////////
-// clearVideo
+// clearWindow
 //
 //
 //
@@ -70,20 +70,6 @@ void clearWindow(u8 xPos, u8 yPos, u8 width, u8 height) {
 
 }
 
-//////////////////////////////////////////////////////////////////
-// clearGameScreen
-//
-//
-//
-// Returns:
-//    void
-//
-
-void clearGameScreen() {
-    u8* pvideo = cpct_getScreenPtr(CPCT_VMEM_START, MIN_X, MIN_Y);
-
-    cpct_drawSolidBox(pvideo, 0, MAX_X - MIN_X + 1, MAX_Y - MIN_Y);
-}
 
 //////////////////////////////////////////////////////////////////
 // drawFrame
